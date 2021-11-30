@@ -1,0 +1,23 @@
+dict sa mogucim pozicijama za skok(odusustvo pozicije je postojanje blokade)
+
+evaluacija A* sa udaljenoscu i faktorom za blizinu blokade(broj skokova odredenjog polja je metrika) (treba da se usaglasi odnos u udaljenost/blizina zida za najbolje trazenje)
+
+da li je validno postavljanje bokade-pamti se putanja(nsdovezuje se pomeraj pesaka na predhodnu) dobijena sa A*; a kada se postavi blokada na putanju poziva se opet A*
+a da l je postavljen zid se ispita da li su susedna poslja zida sadrzana u putanji
+
+granicni slucajevi za zid presecanje i ivicne pozicije
+
+minmax(mora da postavlja zidovi) neku dubinu ili vreme
+
+defaultuna vrednost za konzolu u [], provera velicine dimenizija, parne neparne, raste od gore levo0
+
+unose se +1 ili +2 pozicija za pesaka ako nije moguca ide obavestenje
+
+globalne promenljive u fju: trenutma pozicija pesaka, kucice pesaka, postojeca putanja [pesak,sva odredista]	lista zid pozicija(gornje levo polje odredjuje zid) trebaju 2 liste
+
+
+naziv pozicije max 22x28 npr A05, H28...
+"05" i "A" to su stringoviii
+
+
+Vladi: da l mora putanja do svoje kucice, OOP ili funkc, da li sme da se koriste third party biblioteke kao NumPy

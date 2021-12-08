@@ -12,10 +12,12 @@ def show_start_screen():
 
 
 def clear_console():
+    import os
+    os.system('cls' if os.name == 'nt' else 'clear')
     return
 
 
-def read_move():
+def read_move() -> list():
     return
 
 

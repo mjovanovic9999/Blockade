@@ -1,5 +1,6 @@
 from types import NoneType
 from typing import Tuple
+from utility import read_int_from_range_and_prefered, read_yes_no_prefered, read_pawn_position
 
 
 def show_table():
@@ -25,45 +26,28 @@ def read_move() -> list():
     return
 
 
-def read_first_player():
-    allowed_answers = ["Y","YES","YE", " ","","NO","N"]
-    val=None
-    while val not in allowed_answers:
-        val=input("Computer plays first?[YES/no]")
-        val=str.upper(val)
-    return True if val in allowed_answers[:5] else False
-
-def read_table_size()->tuple[int,int]:
-    while True:
-        row=input("Number of rows:[14]")
-        if row=="" or row==" ":
-            row=14
-            break
-        if row.strip().isdigit():
-            row=int(row)
-            if row >=4 and row <=28 and row%2==0:
-                break
-            print("You must enter number between 4 and 28")
-        else:
-            print("You must enter number")
-    while True:
-        column=input("Number of column:[11]")
-        if column=="" or column==" ":
-            column=11
-            break
-        if column.strip().isdigit():
-            column=int(column)
-            if column >=3 and column <=23 and column%2==1:
-                break
-            print("You must enter number between 3 and 23")
-        else:
-            print("You must enter number")   
-    return (row,column)
+def read_first_player() -> bool:
+    return read_yes_no_prefered("Computer plays first", False)
 
 
-def read_wall_count():
-    return
+def read_table_size() -> tuple[int, int]:
+    return (read_int_from_range_and_prefered("columns", 4, 28, 14), read_int_from_range_and_prefered("rows", 3, 23, 11))
 
 
-def read_start_positions():
-    return
+def read_wall_count() -> int:
+    return read_int_from_range_and_prefered("walls", 0, 18, 9)
+
+
+def read_start_positions(table_columns: int, table_rows: int) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
+
+    first_player_1 = read_pawn_position(
+        "first player first pawn", table_columns, table_rows, 4, 4, [])
+    first_player_2 = read_pawn_position(
+        "first player second pawn", table_columns, table_rows, 4, 4, [first_player_1])
+
+    second_player_1 = read_pawn_position(
+        "second player first pawn", table_columns, table_rows, 4, 4, [first_player_1, first_player_2])
+    second_player_2 = read_pawn_position("second player second pawn", table_columns, table_rows, 4, 4, [
+                                         first_player_1, first_player_2, second_player_1])
+
+    return [(first_player_1, first_player_2), (second_player_1, second_player_2)]

@@ -47,7 +47,7 @@ def read_start_positions(table_columns: int, table_rows: int) -> tuple[tuple[tup
 
     second_player_1 = read_pawn_position(
         "second player first pawn", table_columns, table_rows, 4, 4, [first_player_1, first_player_2])
-    second_player_2 = read_pawn_position("second player second pawn", table_columns, table_rows, 4, 4, [
+    second_player_2 = read_pawn_position("second player second pawn", table_columns, table_rows, 4, 4, tuple[
                                          first_player_1, first_player_2, second_player_1])
 
     return [(first_player_1, first_player_2), (second_player_1, second_player_2)]

@@ -36,5 +36,4 @@ def read_pawn_position(what_player: str, table_columns: int, table_rows: int, pr
         what_player+" start column", 0, table_columns, prefered_column if table_columns > prefered_column else table_columns)
     row = read_int_from_range_and_prefered(
         what_player+" start row", 0, table_rows, prefered_row if table_rows > prefered_row else table_rows)
-    print(busy_positions)
     return (column, row) if (column, row) not in busy_positions else print("Enter again") or read_pawn_position(what_player, table_columns, table_rows, prefered_column, prefered_row, busy_positions)

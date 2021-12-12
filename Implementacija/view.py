@@ -109,13 +109,13 @@ def read_wall_count() -> int:
 def read_start_positions(table_columns: int, table_rows: int) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
     # tuple[int, int] je pozicija jednog pesaka
     first_player_1 = input_pawn_position(
-        "first player first pawn", table_columns, table_rows, 4, 4, [])
+        "first player first pawn", table_columns, table_rows, 4, 3, [])
     first_player_2 = input_pawn_position(
         "first player second pawn", table_columns, table_rows, 4, 4, [first_player_1])
 
     second_player_1 = input_pawn_position(
-        "second player first pawn", table_columns, table_rows, 4, 4, [first_player_1, first_player_2])
-    second_player_2 = input_pawn_position("second player second pawn", table_columns, table_rows, 4, 4, tuple[
+        "second player first pawn", table_columns, table_rows, 5, 3, [first_player_1, first_player_2])
+    second_player_2 = input_pawn_position("second player second pawn", table_columns, table_rows, 5, 4, tuple[
         first_player_1, first_player_2, second_player_1])
 
     return [(first_player_1, first_player_2), (second_player_1, second_player_2)]
@@ -164,3 +164,6 @@ def read_int_from_range_and_prefered(what_to_read: str, low: int, high: int, pre
         else:
             print("You must enter whole number")
     return pom
+
+def print_winner(text:str)->None:
+    print(text)

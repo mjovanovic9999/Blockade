@@ -6,4 +6,5 @@ import time
 
 clear_console()
 
-print(game_init())
+
+print(print_table(generate_empty_table(15,12),15,12))

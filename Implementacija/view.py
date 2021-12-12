@@ -1,6 +1,8 @@
 from types import NoneType
 from typing import Tuple
 
+from utility import int_to_table_coordinate
+
 
 def generate_empty_table(table_columns: int, table_rows: int) -> str:
     start="\u2554"+("\u2550"*3+"\u2564")*(table_columns-1) +"\u2550"*3+"\u2557\n"
@@ -40,7 +42,7 @@ def print_table(table: str, table_columns: int, table_rows: int) -> None:
     size = 4*table_columns+2
     print("  "+table[0:size], end="")
     for i in range(table_rows*2):
-        num = (str(i//2+1) if i//2 < 9 else chr(65-9+i//2))
+        num = int_to_table_coordinate(i//2)
         if i % 2 == 0:
             print("" + num + " ", end="")
             print(table[size*(i+1):size*(i+2)-1]+" "+num+"\n", end="")

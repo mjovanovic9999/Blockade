@@ -30,3 +30,6 @@ print_table(table,rowss, columnns)
 
 # is_game_end((1,2,3))
 print(place_wall(None,rowss,columnns,5,4,True))
+
+
+#noviiiiiiiii

@@ -1,61 +1,6 @@
 from types import NoneType
 from typing import Tuple
-from utility import read_int_from_range_and_prefered, read_yes_no_prefered, read_pawn_position
-
-
-# def show_table(table_columns: int, table_rows: int, pawns_x: tuple[tuple[int, int], tuple[int, int]], pawns_o: tuple[tuple[int, int], tuple[int, int]], vertical_walls: list[tuple[int, int]], horisontal_walls: list[tuple[int, int]]) -> str:
-    
-   
-   
-#     table = "   "
-#     for i in range(table_columns+4):
-#         for j in range(table_rows+4):
-#             if i == 0:
-#                 table += (str(j+1) if j < 9 else chr(65-9+j)) + " "
-#                 if j == table_rows-1:
-#                     table += "  \n"
-#                     break
-#             elif i == 1:
-#                 if j == 0:
-#                     table += "   "
-#                 table += "\u003d "
-#                 if j == table_rows-1:
-#                     table += "   \n"
-#                     break
-#             elif i == table_columns+2:
-#                 if j == 0:
-#                     table += "  "
-#                 table += " \u003d"
-#                 if j == table_rows-1:
-#                     table += "   \n"
-#                     break
-#             elif i == table_columns+3:
-#                 if j == 0:
-#                     table += "   "
-#                 table += (str(j+1) if j < 9 else chr(65-9+j)) + " "
-#                 if j == table_rows-1:
-#                     table += "  \n"
-#                     break
-
-#             elif j == 0:
-#                 table += (str(i-1) if i < 9 else chr(65-9+i)) + " \u2551"
-#             elif j == table_rows:
-#                 table += " \u2551 "+(str(i-1) if i < 9 else chr(65-9+i))+"\n"
-#                 table += ("  "+" \u2014"*table_rows +"\n" )if i != table_columns+1 else ""
-#                 break
-#             else:
-#                 if pawns_x[0][0] == i and pawns_x[0][1] == j or pawns_x[1][0] == i and pawns_x[1][1] == j:
-#                     table += "X"
-#                 elif pawns_o[0][0] == i and pawns_o[0][1] == j or pawns_o[1][0] == i and pawns_o[1][1] == j:
-#                     table += "O"
-#                 else:
-#                     table += " "
-#                 if (i-1, j) in vertical_walls:
-#                     table += "\u2551"
-#                 else:
-#                     table += "|"
-
-#     return table
+from utility import read_int_from_range_and_prefered, read_yes_no_prefered, input_pawn_position
 
 
 def generate_empty_table(table_columns: int, table_rows: int) -> str:
@@ -70,60 +15,73 @@ def generate_empty_table(table_columns: int, table_rows: int) -> str:
     return start+(middle_box+down_box)*(table_rows-1)+middle_box+end
 
 
-
-def add_vertical_wall(table:str,table_columns: int, table_rows: int,x:int,y:int):
-    pom=4*(table_columns*(x)+y+x-1+table_columns*(x-1))+2
-    temp= table[:pom]+"\u2503"+table[pom+1:]
-    pom+=table_columns*4+2
-    temp=temp[:pom]+"\u2542"+temp[pom+1:]
-    pom+=table_columns*4+2
+def add_vertical_wall(table: str, table_columns: int, table_rows: int, x: int, y: int) -> str:
+    pom = 4*(table_columns*(x)+y+x-1+table_columns*(x-1))+2
+    temp = table[:pom]+"\u2503"+table[pom+1:]
+    pom += table_columns*4+2
+    temp = temp[:pom]+"\u2542"+temp[pom+1:]
+    pom += table_columns*4+2
     return temp[:pom]+"\u2503"+temp[pom+1:]
 
 
-
-def add_horizontal_wall(table:str,table_columns: int, table_rows: int,x:int,y:int):
-    pom=4*(table_columns*(x+1)+y+x-1+table_columns*(x-1))+2
-    temp= table[:pom-1]+"\u2501"*3+table[pom+2:]
-    pom+=2
-    temp= temp[:pom]+"\u253f"+temp[pom+1:]
-    pom+=1
+def add_horizontal_wall(table: str, table_columns: int, table_rows: int, x: int, y: int) -> str:
+    pom = 4*(table_columns*(x+1)+y+x-1+table_columns*(x-1))+2
+    temp = table[:pom-1]+"\u2501"*3+table[pom+2:]
+    pom += 2
+    temp = temp[:pom]+"\u253f"+temp[pom+1:]
+    pom += 1
     return temp[:pom]+"\u2501"*3+table[pom+3:]
 
-def print_table(table:str,table_columns: int, table_rows: int)->None:
-    print(" ",end="")
+
+def print_table(table: str, table_columns: int, table_rows: int) -> None:
+    print(" ", end="")
     for j in range(table_columns):
-        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "",end="")
+        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "", end="")
     print("")
-    size=4*table_columns+2
-    print("  "+table[0:size],end="")
+    size = 4*table_columns+2
+    print("  "+table[0:size], end="")
     for i in range(table_rows*2):
-        num=(str(i//2+1) if i//2 < 9 else chr(65-9+i//2))
-        if i%2==0:
-            print(""+ num+ " ",end="")
-            print(table[size*(i+1):size*(i+2)-1]+" "+num+"\n",end="")
+        num = (str(i//2+1) if i//2 < 9 else chr(65-9+i//2))
+        if i % 2 == 0:
+            print("" + num + " ", end="")
+            print(table[size*(i+1):size*(i+2)-1]+" "+num+"\n", end="")
         else:
-            print("  ",end="")
-            print(table[size*(i+1):size*(i+2)],end="")
+            print("  ", end="")
+            print(table[size*(i+1):size*(i+2)], end="")
 
-    print(" ",end="")
+    print(" ", end="")
     for j in range(table_columns):
-        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "",end="")
-    
+        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "", end="")
+
     print("")
 
     return
 
-# def move_pawn(table:str,table_columns: int, table_rows: int,x:int,y:int,new_x:int,new_y:int):
-#     pom=4*(table_columns+x*table_rows+y)
-#     pawn=table[pom]
-#     return pawn#table[:pom]+"S"+table[pom+1:]
 
-def show_end_screen():
-    # igraj opet
-    return
+def add_pawn(table: str, table_columns: int, table_rows: int, x: int, y: int, is_X: bool) -> str:
+    pom = 4*(table_columns*(x)+y+x-1+table_columns*(x-1))
+    return table[:pom]+("X" if is_X else "O")+table[pom+1:]
+
+
+def add_start_position(table: str, table_columns: int, table_rows: int, x: int, y: int, is_X: bool) -> str:
+    pom = 4*(table_columns*(x)+y+x-1+table_columns*(x-1))
+    return table[:pom]+("\u24cd" if is_X else "\u24c4")+table[pom+1:]
+
+
+def move_pawn(table: str, table_columns: int, table_rows: int, old_x: int, old_y: int, new_x: int, new_y: int) -> str:
+    pom = 4*(table_columns*(old_x)+old_y+old_x-1+table_columns*(old_x-1))
+    pawn = table[pom:pom+1]
+    temp = table[:pom]+" "+table[pom+1:]
+    pom = 4*(table_columns*(new_x)+new_y+new_x-1+table_columns*(new_x-1))
+    return temp[:pom]+pawn+table[pom+1:]
+
+
+def show_end_screen() -> bool:
+    return read_yes_no_prefered("Play again", False)
 
 
 def show_start_screen():
+    print("Welcome to Blockade! :)")
     return
 
 
@@ -146,20 +104,64 @@ def read_table_size() -> tuple[int, int]:
 
 
 def read_wall_count() -> int:
-    # !!!provera pozicije!!!!!!
     return read_int_from_range_and_prefered("walls", 0, 18, 9)
 
 
 def read_start_positions(table_columns: int, table_rows: int) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
     # tuple[int, int] je pozicija jednog pesaka
-    first_player_1 = read_pawn_position(
+    first_player_1 = input_pawn_position(
         "first player first pawn", table_columns, table_rows, 4, 4, [])
-    first_player_2 = read_pawn_position(
+    first_player_2 = input_pawn_position(
         "first player second pawn", table_columns, table_rows, 4, 4, [first_player_1])
 
-    second_player_1 = read_pawn_position(
+    second_player_1 = input_pawn_position(
         "second player first pawn", table_columns, table_rows, 4, 4, [first_player_1, first_player_2])
-    second_player_2 = read_pawn_position("second player second pawn", table_columns, table_rows, 4, 4, tuple[
-                                         first_player_1, first_player_2, second_player_1])
+    second_player_2 = input_pawn_position("second player second pawn", table_columns, table_rows, 4, 4, tuple[
+        first_player_1, first_player_2, second_player_1])
 
     return [(first_player_1, first_player_2), (second_player_1, second_player_2)]
+
+
+def input_pawn_position(what_player: str, table_columns: int, table_rows: int, prefered_column: int, prefered_row: int, busy_positions) -> tuple[int, int]:
+    column = read_int_from_range_and_prefered(
+        what_player+" start column", 0, table_columns, prefered_column if table_columns > prefered_column else table_columns)
+    row = read_int_from_range_and_prefered(
+        what_player+" start row", 0, table_rows, prefered_row if table_rows > prefered_row else table_rows)
+    return (column, row) if (column, row) not in busy_positions else print("Enter again") or input_pawn_position(what_player, table_columns, table_rows, prefered_column, prefered_row, busy_positions)
+
+
+def read_yes_no_prefered(question: str, prefered_yes: bool) -> bool:
+    allowed_answers = ["Y", "YES", "YE", " ", "", "NO", "N"]
+    val = None
+    while val not in allowed_answers:
+        val = input(
+            question+(" [YES/no]: " if prefered_yes else " [yes/NO]: "))
+        val = str.upper(val)
+    if prefered_yes:
+        return True if val in allowed_answers[:5] else False
+    else:
+        return True if val in allowed_answers[:3] else False
+
+
+def read_int_from_range_and_prefered(what_to_read: str, low: int, high: int, prefered: int) -> int:
+    if low == high:
+        return low
+    if low > high:
+        pom = low
+        low = high
+        high = pom
+    if prefered < low or prefered > high:
+        return False
+    while True:
+        pom = input(what_to_read+"["+str(prefered)+"]: ")
+        if pom == "" or pom == " ":
+            pom = prefered
+            break
+        if pom.strip().isdigit():
+            pom = int(pom)
+            if pom >= low and pom <= high:
+                break
+            print("You must enter number between "+str(low)+" and "+str(high))
+        else:
+            print("You must enter whole number")
+    return pom

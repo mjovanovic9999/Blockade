@@ -18,9 +18,15 @@ globalne promenljive u fju: trenutma pozicija pesaka, kucice pesaka, postojeca p
 
 naziv pozicije max 22x28 npr A05, H28...
 "05" i "A" to su stringoviii
+//ispravka!!!!!!!!!!!!!!!
+1-9A-n
+npr 13 5G C4 
 
 
 Vladi: da l mora putanja do svoje kucice, OOP ili funkc, da li sme da se koriste third party biblioteke kao NumPy
+
+state:dict[str,tuple[int,int,int]]
+polje:tuple[int,int,int]
 
 dict[A05]=(tip_polja,               pozicija_zida/*doleslika*/,     heat_map)
             0 prazno
@@ -29,7 +35,7 @@ dict[A05]=(tip_polja,               pozicija_zida/*doleslika*/,     heat_map)
             3 x_kuca "\u24cd"
             4 o_kuca "\u24c4"
 
-                                        ----
+                                         ----
                                         |    |1
                                         ----
                                           2 

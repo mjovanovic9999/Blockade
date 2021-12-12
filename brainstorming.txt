@@ -25,15 +25,13 @@ npr 13 5G C4
 
 Vladi: da l mora putanja do svoje kucice, OOP ili funkc, da li sme da se koriste third party biblioteke kao NumPy
 
-state:dict[str,tuple[int,int,int]]
-polje:tuple[int,int,int]
+state:dict[str,tuple[int,int]]
+polje:tuple[int,int]
 
-dict[A05]=(tip_polja,               pozicija_zida/*doleslika*/,     heat_map)
-            0 prazno
-            1 x
-            2 o
+dict[A5]=( pozicija_zida/*doleslika*/,     heat_map)
+            
 
-                                         ----
-                                        |    |1
-                                         ---- 
-                                          2 
+                -----
+                |    |1
+                ----- 
+                  2 

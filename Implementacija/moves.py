@@ -16,13 +16,13 @@ def is_game_end(
     return 0
 
 
-def is_player_movement_valid(state:dict[str,tuple[int,int,int]],old_row:int,old_column:int,new_row:int,new_column:int):
+def is_player_movement_valid(state:dict[str,tuple[int,int]],old_row:int,old_column:int,new_row:int,new_column:int):
     #if(state[])
     return
 
 
 def is_wall_place_valid(
-    state:dict[str,tuple[int,int,int]],
+    state:dict[str,tuple[int,int]],
     table_rows: int,
     table_columns: int,
 
@@ -40,7 +40,7 @@ def move_player():
 
 
 def place_wall(
-    state:dict[str,tuple[int,int,int]],
+    state:dict[str,tuple[int,int]],
     table_rows: int,
     table_columns: int,
     row:int,
@@ -50,8 +50,9 @@ def place_wall(
     if(not is_wall_place_valid(state, table_rows,table_columns, row,column)):
         return False
     print("C")
-    if is_horizontal and state(int_to_table_coordinate(row)+int_to_table_coordinate(row))[1]==1:
+    if is_horizontal and state(int_to_table_coordinate(row)+int_to_table_coordinate(column))[0]==1:
         return False
-#tuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+    if not is_horizontal and column!=0 and state(int_to_table_coordinate(row)+int_to_table_coordinate(column))[0]==2:
+        return False
 
     return

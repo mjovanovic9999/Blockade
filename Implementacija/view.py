@@ -37,7 +37,7 @@ def add_horizontal_wall(table: str,  table_rows: int ,table_columns: int, row: i
     return temp[:pom]+"\u2501"*3+table[pom+3:]
 
 
-def print_table_from_dict(state:dict[str,tuple[int,int,int]],table_rows: int, table_columns: int):
+def print_table_from_dict(state:dict[str,tuple[int,int]],table_rows: int, table_columns: int):
     return
 
 

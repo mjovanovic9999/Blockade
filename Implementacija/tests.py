@@ -7,8 +7,8 @@ clear_console()
 #show_start_screen()
 
 
-column=20
-rows=20
+column=5
+rows=5
 table=generate_empty_table(column, rows)
 
 table=add_horizontal_wall (table,column, rows,2,4)

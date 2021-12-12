@@ -1,3 +1,4 @@
-
-def int_to_row_coordinate(val:int)->str:
-    return str(chr(64+val))#nzm treba li
+def str_to_coordinate(val:chr)->int:
+    if val.strip().isdigit():
+        return int(val)
+    return ord(val)-55

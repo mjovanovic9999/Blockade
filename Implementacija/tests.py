@@ -29,5 +29,6 @@ print_table(table,column, rows)
 # print(show_end_screen())
 
 # is_game_end((1,2,3))
+print(str_to_coordinate("Z"))
 
-print(int_to_row_coordinate(1))
+print(read_start_positions(column,rows))

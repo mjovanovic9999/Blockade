@@ -1,4 +1,6 @@
-def is_game_end(#to change
+from Implementacija.utility import int_to_table_coordinate
+
+def is_game_end(
     pawn_x1: tuple[int, int],
     pawn_x2: tuple[int, int],
     pawn_o1: tuple[int, int],
@@ -24,10 +26,10 @@ def is_wall_place_valid(
     table_rows: int,
     table_columns: int,
 
-    i:int,
-    j:int,
+    row:int,
+    column:int,
     )->bool:
-    if table_rows==i or table_columns==j:
+    if table_rows==row or table_columns==column:
         return False
 
     return True
@@ -41,14 +43,14 @@ def place_wall(
     state:dict[str,tuple[int,int,int]],
     table_rows: int,
     table_columns: int,
-    i:int,
-    j:int,
+    row:int,
+    column:int,
     is_horizontal:bool
     )->bool:
-    if(not is_wall_place_valid(state, table_rows,table_columns, i,j)):
+    if(not is_wall_place_valid(state, table_rows,table_columns, row,column)):
         return False
     print("C")
-    if is_horizontal and state("ced")[1]==1:
+    if is_horizontal and state(int_to_table_coordinate(row)+int_to_table_coordinate(row))[1]==1:
         return False
 #tuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 

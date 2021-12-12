@@ -69,6 +69,8 @@ def generate_empty_table(table_columns: int, table_rows: int) -> str:
 
     return start+(middle_box+down_box)*(table_rows-1)+middle_box+end
 
+
+
 def add_vertical_wall(table:str,table_columns: int, table_rows: int,x:int,y:int):
     pom=4*(table_columns*(x)+y+x-1+table_columns*(x-1))+2
     temp= table[:pom]+"\u2503"+table[pom+1:]
@@ -77,13 +79,39 @@ def add_vertical_wall(table:str,table_columns: int, table_rows: int,x:int,y:int)
     pom+=table_columns*4+2
     return temp[:pom]+"\u2503"+temp[pom+1:]
 
+
+
 def add_horizontal_wall(table:str,table_columns: int, table_rows: int,x:int,y:int):
-    pom=4*(table_columns*(x+1)+y+x-1+table_columns*(x-2)+5)+2
+    pom=4*(table_columns*(x+1)+y+x-1+table_columns*(x-1))+2
     temp= table[:pom-1]+"\u2501"*3+table[pom+2:]
     pom+=2
     temp= temp[:pom]+"\u253f"+temp[pom+1:]
     pom+=1
     return temp[:pom]+"\u2501"*3+table[pom+3:]
+
+def print_table(table:str,table_columns: int, table_rows: int)->None:
+    print(" ",end="")
+    for j in range(table_columns):
+        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "",end="")
+    print("")
+    size=4*table_columns+2
+    print("  "+table[0:size],end="")
+    for i in range(table_rows*2):
+        num=(str(i//2+1) if i//2 < 9 else chr(65-9+i//2))
+        if i%2==0:
+            print(""+ num+ " ",end="")
+            print(table[size*(i+1):size*(i+2)-1]+" "+num+"\n",end="")
+        else:
+            print("  ",end="")
+            print(table[size*(i+1):size*(i+2)],end="")
+
+    print(" ",end="")
+    for j in range(table_columns):
+        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "",end="")
+    
+    print("")
+
+    return
 
 # def move_pawn(table:str,table_columns: int, table_rows: int,x:int,y:int,new_x:int,new_y:int):
 #     pom=4*(table_columns+x*table_rows+y)

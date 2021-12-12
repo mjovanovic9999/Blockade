@@ -2,12 +2,13 @@ from view import *
 from utility import *
 
 clear_console()
-table=generate_empty_table(5, 6)
+table=generate_empty_table(10, 9)
 
-table=add_horizontal_wall (table,5,6,2,4)
-table=add_horizontal_wall (table,5,6,2,2)
-table=add_vertical_wall (table,5,6,2,3)
-print(table)
+# table=add_horizontal_wall (table,15,12,2,4)
+table=add_horizontal_wall (table,10,9,7,7)
+table=add_vertical_wall (table,10,9,7,7)
+# print(table)
+print_table(table,10,9)
 #print(show_table(7, 7,((2,2),(3,3)),((4,4),(5,5)),[],[]))
 
 # print("\u2551")

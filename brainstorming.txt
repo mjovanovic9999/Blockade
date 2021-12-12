@@ -32,10 +32,8 @@ dict[A05]=(tip_polja,               pozicija_zida/*doleslika*/,     heat_map)
             0 prazno
             1 x
             2 o
-            3 x_kuca "\u24cd"
-            4 o_kuca "\u24c4"
 
                                          ----
                                         |    |1
-                                        ----
+                                         ---- 
                                           2 

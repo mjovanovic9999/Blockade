@@ -1,6 +1,5 @@
 from types import NoneType
 from typing import Tuple
-from utility import read_int_from_range_and_prefered, read_yes_no_prefered, input_pawn_position
 
 
 def generate_empty_table(table_columns: int, table_rows: int) -> str:

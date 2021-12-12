@@ -90,7 +90,7 @@ def clear_console():
     return
 
 
-def read_move() -> list():
+def read_move() -> list():#to implament phase 2
     return
 
 
@@ -115,13 +115,13 @@ def read_start_positions(table_columns: int, table_rows: int) -> tuple[tuple[tup
 
     second_player_1 = input_pawn_position(
         "second player first pawn", table_columns, table_rows, 5, 3, [first_player_1, first_player_2])
-    second_player_2 = input_pawn_position("second player second pawn", table_columns, table_rows, 5, 4, tuple[
+    second_player_2 = input_pawn_position("second player second pawn", table_columns, table_rows, 5, 4, [
         first_player_1, first_player_2, second_player_1])
 
     return [(first_player_1, first_player_2), (second_player_1, second_player_2)]
 
 
-def input_pawn_position(what_player: str, table_columns: int, table_rows: int, prefered_column: int, prefered_row: int, busy_positions) -> tuple[int, int]:
+def input_pawn_position(what_player: str, table_columns: int, table_rows: int, prefered_column: int, prefered_row: int,busy_positions) -> tuple[int, int]:
     column = read_int_from_range_and_prefered(
         what_player+" start column", 0, table_columns, prefered_column if table_columns > prefered_column else table_columns)
     row = read_int_from_range_and_prefered(
@@ -164,6 +164,3 @@ def read_int_from_range_and_prefered(what_to_read: str, low: int, high: int, pre
         else:
             print("You must enter whole number")
     return pom
-
-def print_winner(text:str)->None:
-    print(text)

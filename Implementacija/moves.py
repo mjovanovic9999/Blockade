@@ -1,6 +1,3 @@
-from Implementacija.view import print_winner
-
-
 def is_game_end(#to change
     pawn_x1: tuple[int, int],
     pawn_x2: tuple[int, int],
@@ -29,5 +26,5 @@ def move_player():
     return
 
 
-def place_wall():
+def place_wall(state,i,j,orj):
     return

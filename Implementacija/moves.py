@@ -132,8 +132,8 @@ def move_player(
     table_rows: int,
     table_columns: int,
     row_new: int,
-    column_new: int,
-    )->bool:
+    column_new: int,s
+    )->tuple[int,int]:
     row_old= my_pawn[0]
     column_old=my_pawn[1]
 
@@ -143,10 +143,7 @@ def move_player(
         move=position_occupied(pawn1,pawn2,row_old,column_old,row_new,column_new)
     else:
         move=(row_new,column_new)
-
-    my_pawn[0]=move[0]
-    my_pawn[1]=move[1]
-    return
+    return move
 
 def place_wall(
     walls_vertical: list[str],

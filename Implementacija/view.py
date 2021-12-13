@@ -84,7 +84,8 @@ def move_pawn(table: str,  table_rows: int, table_columns: int, old_row: int, ol
     return temp[:pom]+pawn+table[pom+1:]
 
 
-def show_end_screen() -> bool:
+def show_end_screen(winner: int) -> bool:
+    print(f'{"X" if winner == 1 else "O"} won!')
     return read_yes_no_prefered("Play again", False)
 
 

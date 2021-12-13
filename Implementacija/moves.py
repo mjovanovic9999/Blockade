@@ -1,4 +1,4 @@
-from Implementacija.utility import int_to_table_coordinate
+from utility import int_to_table_coordinate
 
 def is_game_end(
     pawn_x1: tuple[int, int],

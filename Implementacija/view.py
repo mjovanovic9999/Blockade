@@ -104,7 +104,7 @@ def add_pawn(table: str, table_rows: int, table_columns: int, row: int, column: 
 
 def add_start_position(table: str, table_rows: int, table_columns: int, row: int, column: int, is_X: bool) -> str:
     pom = 4*(table_columns*(row)+column+row-1+table_columns*(row-1))
-    return table[:pom]+("\u24cd" if is_X else "\u24c4")+table[pom+1:]
+    return table[:pom]+("\u25B2" if is_X else "\u25BC")+table[pom+1:]
 
 
 def move_pawn(table: str,  table_rows: int, table_columns: int, old_row: int, old_column: int, new_row: int, new_column: int) -> str:
@@ -117,8 +117,8 @@ def move_pawn(table: str,  table_rows: int, table_columns: int, old_row: int, ol
     return temp[:pom]+pawn+table[pom+1:]
 
 
-def show_end_screen(winner: int) -> bool:
-    print(f'{"X" if winner == 1 else "O"} won!')
+def show_end_screen(computer_on_move: bool) -> bool:
+    print(f'{"Computer" if not computer_on_move else "Player"} won!')
     return read_yes_no_prefered("Play again", False)
 
 

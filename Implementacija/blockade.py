@@ -14,8 +14,11 @@ def blockade() -> bool:
     computer_on_move = read_first_player()
 
     start_positions = read_start_positions(table_size[0], table_size[1])
+    start_positions_o = [start_positions[1][0], start_positions[1][1]]
+    start_positions_x = [start_positions[0][0], start_positions[0][1]]
 
-    pawn_positions = (((1,1),(2,2)),((9,9),(10,10)))
+    pawn_positions = start_positions
+    del start_positions
 
     vertical_walls = list[tuple[int, int]]()
     horizontal_walls = list[tuple[int, int]]()
@@ -26,24 +29,21 @@ def blockade() -> bool:
         for column in range(table_size[1]):
             heat_map[key + int_to_table_coordinate(column)] = 0
 
-    winner = 0
-
-    while winner == 0:
-        pawn_x1 = pawn_positions[0][0]
-        pawn_x2 = pawn_positions[0][1]
-        start_positions_x = [start_positions[0][0], start_positions[0][1]]
-
-        pawn_o1 = pawn_positions[1][0]
-        pawn_o2 = pawn_positions[1][1]
-        start_positions_o = [start_positions[1][0], start_positions[1][1]]
+    game_ended = False
+    show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
+               pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions_x, start_positions_o)
+   
+    while not game_ended:
+        if(computer_on_move):
+            computer_on_move = False
+        else:
+            pawn_positions = (((1, 1), (2, 2)), ((9, 9), start_positions_x[0]))
+            computer_on_move = True
 
         show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
-                   pawn_x1, pawn_x2, pawn_o1, pawn_o2, start_positions_x, start_positions_o)
+                   pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions_x, start_positions_o)
+        
+        game_ended = is_game_end(pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0],
+                                 pawn_positions[1][1], start_positions_x, start_positions_o)
 
-        winner = is_game_end(pawn_x1, pawn_x2, pawn_o1,
-                             pawn_o2, start_positions_x, start_positions_o)
-
-        if input("A") == "A":
-            winner = 1
-
-    return show_end_screen(winner)
+    return show_end_screen(computer_on_move)

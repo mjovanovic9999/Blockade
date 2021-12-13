@@ -25,7 +25,10 @@ npr 13 5G C4
 
 Vladi: da l mora putanja do svoje kucice, OOP ili funkc, da li sme da se koriste third party biblioteke kao NumPy
 
-state:dict[str,tuple[int,int]]
+state:dict[str,int] //za heat heat_map
+nizVert:list[str]
+nizHor:list[str]
+
 polje:tuple[int,int]
 
 dict[A5]=( pozicija_zida/*doleslika*/,     heat_map)

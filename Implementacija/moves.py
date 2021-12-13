@@ -51,26 +51,77 @@ def is_player_movement_valid(
         return False
     
     if row_old-2==row_new:
-        if (row_old-1,column_old) in walls_horizontal:
-            print
+        if (row_old-1,column_old) in walls_horizontal or (row_old-1,column_old-1) in walls_horizontal or  (row_old-2,column_old) in walls_horizontal or (row_old-2,column_old-1) in walls_horizontal:
+            return False
     elif row_old+2==row_new:
-        print 
+        if (row_old,column_old) in walls_horizontal or (row_old,column_old-1) in walls_horizontal or  (row_old+1,column_old) in walls_horizontal or (row_old+1,column_old-1) in walls_horizontal:
+            return False
     elif column_old-2==column_new:
-        print
+        if (row_old,column_old-1) in walls_vertical or (row_old-1,column_old-1) in walls_vertical or  (row_old,column_old-2) in walls_vertical or (row_old-1,column_old-2) in walls_vertical:
+            return False
     elif column_old+2==column_new:
-        print
+        if (row_old,column_old) in walls_vertical or (row_old-1,column_old) in walls_vertical or  (row_old,column_old+1) in walls_vertical or (row_old-1,column_old+1) in walls_vertical:
+            return False
     elif row_old-1==row_new:
         if column_old-1==column_new:
-            print
-        else:
-            print
+            if\
+                ((row_old,column_old-1) in walls_vertical and (row_old-1,column_old) in walls_horizontal)or \
+                ((row_old,column_old-1) in walls_vertical and (row_old-1,column_old-1) in walls_horizontal)or \
+                ((row_old-1,column_old-1) in walls_vertical and (row_old-1,column_old) in walls_horizontal) :
+                return False
+        elif\
+                ((row_old,column_old) in walls_vertical and (row_old-1,column_old-1) in walls_horizontal)or \
+                ((row_old,column_old) in walls_vertical and (row_old-1,column_old) in walls_horizontal)or \
+                ((row_old-1,column_old) in walls_vertical and (row_old-1,column_old-1) in walls_horizontal) :
+                return False
     elif row_old+1==row_new:
         if column_old-1==column_new:
-            print
+            if\
+                ((row_old,column_old-1) in walls_vertical and (row_old,column_old) in walls_horizontal)or \
+                ((row_old,column_old-1) in walls_vertical and (row_old,column_old-1) in walls_horizontal)or \
+                ((row_old-1,column_old-1) in walls_vertical and (row_old,column_old) in walls_horizontal) :
+                return False
         else:
-            print
-    return
+            if\
+                ((row_old-1,column_old) in walls_vertical and (row_old,column_old-1) in walls_horizontal)or \
+                ((row_old,column_old) in walls_vertical and (row_old,column_old-1) in walls_horizontal)or \
+                ((row_old-1,column_old) in walls_vertical and (row_old,column_old) in walls_horizontal) :
+                return False
 
+
+    return True
+
+def position_occupied(
+    pawn1:tuple[int,int],
+    pawn2:tuple[int,int],
+    row_old: int,
+    column_old: int,
+    row_new: int,
+    column_new: int,
+    )->tuple[int,int]:
+
+    if row_old-2==row_new:
+        return (row_new+1,column_new)
+    elif row_old+2==row_new:
+        return (row_new-1,column_new)
+    elif column_old-2==column_new:
+        return (row_new,column_new+1)
+    elif column_old+2==column_new:
+        return (row_new,column_new-1)
+    return(row_old,column_new)
+    # elif row_old-1==row_new:
+    #     if column_old-1==column_new:
+    #         print
+    #     else:
+    #         print
+    # elif row_old+1==row_new:
+    #     if column_old-1==column_new:
+    #         print
+    #     else:
+    #         print
+
+
+    return
 
 def move_player(
     walls_vertical: list[str],
@@ -84,9 +135,13 @@ def move_player(
     row_new: int,
     column_new: int,
     )->bool:
-    if not is_player_movement_valid(walls_vertical,walls_horizontal,pawn1,pawn2,table_rows, table_columns, row_old, column_old, row_new, column_new):
+    if not is_player_movement_valid(walls_vertical,walls_horizontal,table_rows, table_columns, row_old, column_old, row_new, column_new):
         return False
-    
+    if pawn1==(row_new,column_new) or pawn2==(row_new,column_new):
+        move=position_occupied(pawn1,pawn2,row_old,column_old,row_new,column_new)
+    else:
+        move=(row_new,column_new)
+
     return
 
 def place_wall(

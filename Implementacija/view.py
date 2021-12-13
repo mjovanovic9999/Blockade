@@ -4,7 +4,7 @@ from typing import Tuple
 from utility import int_to_table_coordinate
 
 
-def generate_empty_table( table_rows: int,table_columns: int) -> str:
+def generate_empty_table(table_rows: int, table_columns: int) -> str:
     start = "\u2554"+("\u2550"*3+"\u2564") * \
         (table_columns-1) + "\u2550"*3+"\u2557\n"
 
@@ -19,7 +19,7 @@ def generate_empty_table( table_rows: int,table_columns: int) -> str:
     return start+(middle_box+down_box)*(table_rows-1)+middle_box+end
 
 
-def add_vertical_wall(table: str,  table_rows: int,table_columns: int, row: int, column: int) -> str:
+def add_vertical_wall(table: str,  table_rows: int, table_columns: int, row: int, column: int) -> str:
     pom = 4*(table_columns*(row)+column+row-1+table_columns*(row-1))+2
     temp = table[:pom]+"\u2503"+table[pom+1:]
     pom += table_columns*4+2
@@ -28,7 +28,7 @@ def add_vertical_wall(table: str,  table_rows: int,table_columns: int, row: int,
     return temp[:pom]+"\u2503"+temp[pom+1:]
 
 
-def add_horizontal_wall(table: str,  table_rows: int ,table_columns: int, row: int, column: int) -> str:
+def add_horizontal_wall(table: str,  table_rows: int, table_columns: int, row: int, column: int) -> str:
     pom = 4*(table_columns*(row+1)+column+row-1+table_columns*(row-1))+2
     temp = table[:pom-1]+"\u2501"*3+table[pom+2:]
     pom += 2
@@ -37,7 +37,38 @@ def add_horizontal_wall(table: str,  table_rows: int ,table_columns: int, row: i
     return temp[:pom]+"\u2501"*3+table[pom+3:]
 
 
-def print_table_from_dict(state:dict[str,tuple[int,int]],table_rows: int, table_columns: int):
+def show_table(table_rows: int,
+               table_columns: int,
+               vertical_walls: list[tuple[int, int]],
+               horizontal_walls: list[tuple[int, int]],
+               pawn_x1: tuple[int, int],
+               pawn_x2: tuple[int, int],
+               pawn_o1: tuple[int, int],
+               pawn_o2: tuple[int, int],
+               start_positions_x: list[tuple[int, int]],
+               start_positions_o: list[tuple[int, int]]) -> None:
+    table = generate_empty_table(table_rows, table_columns)
+
+    for vertical_wall in vertical_walls:
+        add_vertical_wall(table, table_rows, table_columns,
+                          vertical_wall[0], vertical_wall[1])
+
+    for horizontal_wall in horizontal_walls:
+        add_horizontal_wall(table, table_rows, table_columns,
+                            horizontal_wall[0], horizontal_wall[1])
+
+    table = add_start_position(table, table_rows, table_columns,start_positions_x[0][0], start_positions_x[0][1], True)
+    table = add_start_position(table, table_rows, table_columns,start_positions_x[1][0], start_positions_x[1][1], True)
+    table = add_start_position(table, table_rows, table_columns,start_positions_o[0][0], start_positions_o[0][1], False)
+    table = add_start_position(table, table_rows, table_columns,start_positions_o[1][0], start_positions_o[1][1], False)
+
+    table = add_pawn(table, table_rows, table_columns, pawn_x1[0], pawn_x1[1], True)
+    table = add_pawn(table, table_rows, table_columns, pawn_x2[0], pawn_x2[1], True)
+    table = add_pawn(table, table_rows, table_columns, pawn_o1[0], pawn_o2[1], False)
+    table = add_pawn(table, table_rows, table_columns, pawn_o2[0], pawn_o2[1], False)
+
+    clear_console()
+    print_table(table, table_rows, table_columns)
     return
 
 
@@ -77,10 +108,12 @@ def add_start_position(table: str, table_rows: int, table_columns: int, row: int
 
 
 def move_pawn(table: str,  table_rows: int, table_columns: int, old_row: int, old_column: int, new_row: int, new_column: int) -> str:
-    pom = 4*(table_columns*(old_row)+old_column+old_row-1+table_columns*(old_row-1))
+    pom = 4*(table_columns*(old_row)+old_column +
+             old_row-1+table_columns*(old_row-1))
     pawn = table[pom:pom+1]
     temp = table[:pom]+" "+table[pom+1:]
-    pom = 4*(table_columns*(new_row)+new_column+new_row-1+table_columns*(new_row-1))
+    pom = 4*(table_columns*(new_row)+new_column +
+             new_row-1+table_columns*(new_row-1))
     return temp[:pom]+pawn+table[pom+1:]
 
 

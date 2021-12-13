@@ -1,4 +1,4 @@
-from moves import is_game_end
+from moves import is_game_end, move_player
 from utility import int_to_table_coordinate
 from view import read_table_size, read_wall_count, read_first_player, read_start_positions, show_end_screen, show_table
 
@@ -32,17 +32,21 @@ def blockade() -> bool:
     game_ended = False
     show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
                pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions_x, start_positions_o)
-   
+
     while not game_ended:
         if(computer_on_move):
             computer_on_move = False
+         #   pawn_positions = ((move_player(vertical_walls, horizontal_walls,
+            #                               pawn_positions[0][0], pawn_positions[1][0], pawn_positions[1][1], table_size[0], table_size[1], pawn_positions[0][0][0] + 2, pawn_positions[0][0][1]), (2, 2)), ((9, 9), start_positions_x[0]))
+
         else:
-            pawn_positions = (((1, 1), (2, 2)), ((9, 9), start_positions_x[0]))
+          #  pawn_positions = (((1, 1), (2, 2)), ((9, 9), start_positions_x[0]))
+            input()
             computer_on_move = True
 
         show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
                    pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions_x, start_positions_o)
-        
+
         game_ended = is_game_end(pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0],
                                  pawn_positions[1][1], start_positions_x, start_positions_o)
 

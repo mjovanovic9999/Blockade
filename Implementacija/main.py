@@ -6,3 +6,5 @@ def main():
     show_start_screen()
     while blockade():
         clear_console()
+
+main()

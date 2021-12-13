@@ -15,8 +15,8 @@ def is_game_end(
 
 
 def is_wall_place_valid(
-    walls_vertical: list[str],
-    walls_horizontal: list[str],
+    walls_vertical: list[tuple[int,int]],
+    walls_horizontal: list[tuple[int,int]],
     table_rows: int,
     table_columns: int,
     row: int,
@@ -36,10 +36,8 @@ def is_wall_place_valid(
 
 
 def is_player_movement_valid(
-    walls_vertical: list[str],
-    walls_horizontal: list[str],
-    pawn1:tuple[int,int],
-    pawn2:tuple[int,int],
+    walls_vertical: list[tuple[int,int]],
+    walls_horizontal: list[tuple[int,int]],
     table_rows: int,
     table_columns: int,
     row_old: int,
@@ -132,13 +130,13 @@ def move_player(
     table_rows: int,
     table_columns: int,
     row_new: int,
-    column_new: int,s
+    column_new: int,
     )->tuple[int,int]:
     row_old= my_pawn[0]
     column_old=my_pawn[1]
 
     if not is_player_movement_valid(walls_vertical,walls_horizontal,table_rows, table_columns, row_old, column_old, row_new, column_new):
-        return False
+        return my_pawn
     if pawn1==(row_new,column_new) or pawn2==(row_new,column_new):
         move=position_occupied(pawn1,pawn2,row_old,column_old,row_new,column_new)
     else:
@@ -146,8 +144,8 @@ def move_player(
     return move
 
 def place_wall(
-    walls_vertical: list[str],
-    walls_horizontal: list[str],
+    walls_vertical: list[tuple[int,int]],
+    walls_horizontal: list[tuple[int,int]],
     heat_map: dict[str, int],
     table_rows: int,
     table_columns: int,
@@ -164,10 +162,10 @@ def place_wall(
 
     update_heat_map(heat_map, table_rows, table_columns, row, column)
 
-    return
+    return True
 
 
-def update_heat_map(heat_map: dict[str, int],table_rows: int, table_columns: int, row: int, column: int) -> None:
+def update_heat_map(heat_map: dict[tuple[int, int], int],table_rows: int, table_columns: int, row: int, column: int) -> None:
     position =(row,column)
     heat_map[position]+=1
     #dopuniti!!!!!!!!!!!!

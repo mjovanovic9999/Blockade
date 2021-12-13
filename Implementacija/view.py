@@ -64,8 +64,8 @@ def show_table(table_rows: int,
 
     table = add_pawn(table, table_rows, table_columns, pawn_x1[0], pawn_x1[1], True)
     table = add_pawn(table, table_rows, table_columns, pawn_x2[0], pawn_x2[1], True)
-    table = add_pawn(table, table_rows, table_columns, pawn_o1[0], pawn_o2[1], False)
-    table = add_pawn(table, table_rows, table_columns, pawn_o2[0], pawn_o2[1], False)
+  #  table = add_pawn(table, table_rows, table_columns, pawn_o1[0], pawn_o2[1], False)
+  #  table = add_pawn(table, table_rows, table_columns, pawn_o2[0], pawn_o2[1], False)
 
     clear_console()
     print_table(table, table_rows, table_columns)

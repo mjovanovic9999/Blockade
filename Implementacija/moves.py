@@ -124,8 +124,8 @@ def position_occupied(
     return
 
 def move_player(
-    walls_vertical: list[str],
-    walls_horizontal: list[str],
+    walls_vertical: list[tuple[int,int]],
+    walls_horizontal: list[tuple[int,int]],
     my_pawn:tuple[int,int],
     pawn1:tuple[int,int],
     pawn2:tuple[int,int],

@@ -25,9 +25,9 @@ npr 13 5G C4
 
 Vladi: da l mora putanja do svoje kucice, OOP ili funkc, da li sme da se koriste third party biblioteke kao NumPy
 
-state:dict[str,int] //za heat heat_map
-nizVert:list[str]
-nizHor:list[str]
+heat_map:dict[tuple[int,int],int]
+nizVert:list[tuple[int,int]]
+nizHor:list[tuple[int,int]]
 
 polje:tuple[int,int]
 

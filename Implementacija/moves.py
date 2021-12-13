@@ -119,22 +119,24 @@ def position_occupied(
     #         print
     #     else:
     #         print
-
+    #da opet unese poziciju ako je dijagonala zauzeta
 
     return
 
 def move_player(
     walls_vertical: list[str],
     walls_horizontal: list[str],
+    my_pawn:tuple[int,int],
     pawn1:tuple[int,int],
     pawn2:tuple[int,int],
     table_rows: int,
     table_columns: int,
-    row_old: int,
-    column_old: int,
     row_new: int,
     column_new: int,
     )->bool:
+    row_old= my_pawn[0]
+    column_old=my_pawn[1]
+
     if not is_player_movement_valid(walls_vertical,walls_horizontal,table_rows, table_columns, row_old, column_old, row_new, column_new):
         return False
     if pawn1==(row_new,column_new) or pawn2==(row_new,column_new):
@@ -142,6 +144,8 @@ def move_player(
     else:
         move=(row_new,column_new)
 
+    my_pawn[0]=move[0]
+    my_pawn[1]=move[1]
     return
 
 def place_wall(

@@ -1,3 +1,6 @@
+from utility import int_to_table_coordinate
+
+
 def is_game_end(
     pawn_x1: tuple[int, int],
     pawn_x2: tuple[int, int],
@@ -5,13 +8,10 @@ def is_game_end(
     pawn_o2: tuple[int, int],
     start_positions_x: list[tuple[int, int]],
     start_positions_o: list[tuple[int, int]]
-) -> int:
+) -> bool:
 
-    if pawn_o1 in start_positions_x or pawn_o2 in start_positions_x:
-        return 1
-    if pawn_x1 in start_positions_o or pawn_x2 in start_positions_o:
-        return 2
-    return 0
+    return pawn_x1 in start_positions_o or pawn_x2 in start_positions_o or pawn_o1 in start_positions_x or pawn_o2 in start_positions_x
+        
 
 
 def is_wall_place_valid(

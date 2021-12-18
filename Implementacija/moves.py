@@ -47,7 +47,8 @@ def is_player_movement_valid(
     )->bool:
     if column_new<0 or row_new<0 or column_new>table_columns or row_new>table_rows or (row_old==row_new and column_old==column_new):
         return False
-    
+    if abs(column_new-column_old)>3 or abs(row_new-row_old)>3:
+        return False
     if row_old-2==row_new:
         if (row_old-1,column_old) in walls_horizontal or (row_old-1,column_old-1) in walls_horizontal or  (row_old-2,column_old) in walls_horizontal or (row_old-2,column_old-1) in walls_horizontal:
             return False

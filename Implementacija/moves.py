@@ -36,53 +36,50 @@ def is_wall_place_valid(
 def is_player_movement_valid(
     walls_vertical: list[tuple[int, int]],
     walls_horizontal: list[tuple[int, int]],
-    table_rows: int,
-    table_columns: int,
-    row_old: int,
-    column_old: int,
-    row_new: int,
-    column_new: int,
+    dimensions: tuple[int,int],
+    pawn_old_pos:tuple[int,int],
+    pawn_new_pos:tuple[int,int]
 ) -> bool:
-    if column_new < 0 or row_new < 0 or column_new > table_columns or row_new > table_rows or (row_old == row_new and column_old == column_new):
+    if pawn_new_pos[1] < 0 or pawn_new_pos[0] < 0 or pawn_new_pos[1] > dimensions[1] or pawn_new_pos[0] > dimensions[0] or (pawn_old_pos[0] == pawn_new_pos[0] and pawn_old_pos[1] == pawn_new_pos[1]):
         return False
-    if abs(column_new-column_old) > 3 or abs(row_new-row_old) > 3:
+    if abs(pawn_new_pos[1]-pawn_old_pos[1]) > 3 or abs(pawn_new_pos[0]-pawn_old_pos[0]) > 3:
         return False
-    if row_old-2 == row_new:
-        if (row_old-1, column_old) in walls_horizontal or (row_old-1, column_old-1) in walls_horizontal or (row_old-2, column_old) in walls_horizontal or (row_old-2, column_old-1) in walls_horizontal:
+    if pawn_old_pos[0]-2 == pawn_new_pos[0]:
+        if (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal or (pawn_old_pos[0]-2, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]-2, pawn_old_pos[1]-1) in walls_horizontal:
             return False
-    elif row_old+2 == row_new:
-        if (row_old, column_old) in walls_horizontal or (row_old, column_old-1) in walls_horizontal or (row_old+1, column_old) in walls_horizontal or (row_old+1, column_old-1) in walls_horizontal:
+    elif pawn_old_pos[0]+2 == pawn_new_pos[0]:
+        if (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal or (pawn_old_pos[0]+1, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]+1, pawn_old_pos[1]-1) in walls_horizontal:
             return False
-    elif column_old-2 == column_new:
-        if (row_old, column_old-1) in walls_vertical or (row_old-1, column_old-1) in walls_vertical or (row_old, column_old-2) in walls_vertical or (row_old-1, column_old-2) in walls_vertical:
+    elif pawn_old_pos[1]-2 == pawn_new_pos[1]:
+        if (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical or (pawn_old_pos[0], pawn_old_pos[1]-2) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]-2) in walls_vertical:
             return False
-    elif column_old+2 == column_new:
-        if (row_old, column_old) in walls_vertical or (row_old-1, column_old) in walls_vertical or (row_old, column_old+1) in walls_vertical or (row_old-1, column_old+1) in walls_vertical:
+    elif pawn_old_pos[1]+2 == pawn_new_pos[1]:
+        if (pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical or (pawn_old_pos[0], pawn_old_pos[1]+1) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]+1) in walls_vertical:
             return False
-    elif row_old-1 == row_new:
-        if column_old-1 == column_new:
+    elif pawn_old_pos[0]-1 == pawn_new_pos[0]:
+        if pawn_old_pos[1]-1 == pawn_new_pos[1]:
             if\
-                ((row_old, column_old-1) in walls_vertical and (row_old-1, column_old) in walls_horizontal) or \
-                ((row_old, column_old-1) in walls_vertical and (row_old-1, column_old-1) in walls_horizontal) or \
-                    ((row_old-1, column_old-1) in walls_vertical and (row_old-1, column_old) in walls_horizontal):
+                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal) or \
+                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal) or \
+                    ((pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal):
                 return False
         elif\
-                ((row_old, column_old) in walls_vertical and (row_old-1, column_old-1) in walls_horizontal) or \
-                ((row_old, column_old) in walls_vertical and (row_old-1, column_old) in walls_horizontal) or \
-                ((row_old-1, column_old) in walls_vertical and (row_old-1, column_old-1) in walls_horizontal):
+                ((pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal) or \
+                ((pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal) or \
+                ((pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal):
             return False
-    elif row_old+1 == row_new:
-        if column_old-1 == column_new:
+    elif pawn_old_pos[0]+1 == pawn_new_pos[0]:
+        if pawn_old_pos[1]-1 == pawn_new_pos[1]:
             if\
-                ((row_old, column_old-1) in walls_vertical and (row_old, column_old) in walls_horizontal) or \
-                ((row_old, column_old-1) in walls_vertical and (row_old, column_old-1) in walls_horizontal) or \
-                    ((row_old-1, column_old-1) in walls_vertical and (row_old, column_old) in walls_horizontal):
+                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal) or \
+                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal) or \
+                    ((pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal):
                 return False
         else:
             if\
-                ((row_old-1, column_old) in walls_vertical and (row_old, column_old-1) in walls_horizontal) or \
-                ((row_old, column_old) in walls_vertical and (row_old, column_old-1) in walls_horizontal) or \
-                    ((row_old-1, column_old) in walls_vertical and (row_old, column_old) in walls_horizontal):
+                ((pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal) or \
+                ((pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal) or \
+                    ((pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal):
                 return False
 
     return True

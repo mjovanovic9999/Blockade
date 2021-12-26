@@ -1,40 +1,47 @@
-from types import NoneType
-from typing import Tuple
-
-from utility import int_to_table_coordinate
+import os
+import constants
+from utility import int_to_table_coordinate, replace_substring_in_string_from_index
 
 
 def generate_empty_table(table_rows: int, table_columns: int) -> str:
-    start = "\u2554"+("\u2550"*3+"\u2564") * \
-        (table_columns-1) + "\u2550"*3+"\u2557\n"
+    top = constants.TABLE_TOP_LEFT_CORNER + (constants.TABLE_TOP_BOTTOM * 3 + constants.TABLE_TOP_WITH_WALL_PLACEHOLDER) * \
+        (table_columns - 1) + constants.TABLE_TOP_BOTTOM * \
+        3 + constants.TABLE_TOP_RIGHT_CORNER + constants.NEW_LINE
 
-    middle_box = "\u2551   "+"\u2502   "*(table_columns-1) + "\u2551\n"
+    field_middle_part = constants.TABLE_SIDE + constants.TABLE_FIELD + (constants.TABLE_VERTICAL_WALL_PLACEHOLDER + constants.TABLE_FIELD) * \
+        (table_columns - 1) + constants.TABLE_SIDE + constants.NEW_LINE
 
-    down_box = "\u255F"+("\u2500"*3+"\u253C") * \
-        (table_columns-1)+"\u2500\u2500\u2500\u2562\n"
+    field_bottom_part = constants.TABLE_SIDE_WITH_RIGHT_WALL_PLACEHOLDER + (constants.TABLE_HORIZONTAL_WALL_PLACEHOLDER * 3 + constants.TABLE_WALL_PLACEHOLDER_INTERSECTION) * \
+        (table_columns - 1) + constants.TABLE_HORIZONTAL_WALL_PLACEHOLDER * \
+        3 + constants.TABLE_SIDE_WITH_LEFT_WALL_PLACEHOLDER + constants.NEW_LINE
 
-    end = "\u255A"+("\u2550"*3+"\u2567")*(table_columns-1) + \
-        "\u2550\u2550\u2550\u255D\n"
+    bottom = constants.TABLE_BOTTOM_LEFT_CORNER + \
+        (constants.TABLE_TOP_BOTTOM * 3 +
+         constants.TABLE_BOTTOM_WITH_WALL_PLACEHOLDER) * (table_columns - 1) + 3 * constants.TABLE_TOP_BOTTOM + constants.TABLE_BOTTOM_RIGHT_CORNER + constants.NEW_LINE
 
-    return start+(middle_box+down_box)*(table_rows-1)+middle_box+end
-
-
-def add_vertical_wall(table: str,  table_rows: int, table_columns: int, row: int, column: int) -> str:
-    pom = 4*(table_columns*(row)+column+row-1+table_columns*(row-1))+2
-    temp = table[:pom]+"\u2503"+table[pom+1:]
-    pom += table_columns*4+2
-    temp = temp[:pom]+"\u2542"+temp[pom+1:]
-    pom += table_columns*4+2
-    return temp[:pom]+"\u2503"+temp[pom+1:]
+    return top + (field_middle_part + field_bottom_part) * (table_rows - 1) + field_middle_part + bottom
 
 
-def add_horizontal_wall(table: str,  table_rows: int, table_columns: int, row: int, column: int) -> str:
-    pom = 4*(table_columns*(row+1)+column+row-1+table_columns*(row-1))+2
-    temp = table[:pom-1]+"\u2501"*3+table[pom+2:]
-    pom += 2
-    temp = temp[:pom]+"\u253f"+temp[pom+1:]
-    pom += 1
-    return temp[:pom]+"\u2501"*3+table[pom+3:]
+def add_vertical_wall(table: str, table_columns: int, row: int, column: int) -> str:
+    wall_position = calculate_position_for_insertion(
+        table_columns, row, column) + 2
+
+    temp_table = table[:wall_position] + \
+        constants.TABLE_VERTICAL_WALL + table[wall_position + 1:]
+
+    for wall_symbol in [constants.TABLE_VERTICAL_WALL_INTERSECTION, constants.TABLE_VERTICAL_WALL]:
+        wall_position += table_columns * 4 + 2
+        temp_table = replace_substring_in_string_from_index(
+            temp_table, wall_position, wall_symbol)
+
+    return temp_table
+
+
+def add_horizontal_wall(table: str, table_columns: int, row: int, column: int) -> str:
+    wall_position = calculate_position_for_insertion(
+        table_columns, row, column, 1) + 1
+
+    return replace_substring_in_string_from_index(table, wall_position, 3 * constants.TABLE_HORIZONTAL_WALL + constants.TABLE_HORIZONTAL_WALL_INTERSECTION + 3 * constants.TABLE_HORIZONTAL_WALL)
 
 
 def show_table(table_rows: int,
@@ -50,71 +57,85 @@ def show_table(table_rows: int,
     table = generate_empty_table(table_rows, table_columns)
 
     for vertical_wall in vertical_walls:
-        add_vertical_wall(table, table_rows, table_columns,
-                          vertical_wall[0], vertical_wall[1])
+        table = add_vertical_wall(table, table_columns,
+                                  vertical_wall[0], vertical_wall[1])
 
     for horizontal_wall in horizontal_walls:
-        add_horizontal_wall(table, table_rows, table_columns,
-                            horizontal_wall[0], horizontal_wall[1])
+        table = add_horizontal_wall(table, table_columns,
+                                    horizontal_wall[0], horizontal_wall[1])
 
-    table = add_start_position(table, table_rows, table_columns,start_positions_x[0][0], start_positions_x[0][1], True)
-    table = add_start_position(table, table_rows, table_columns,start_positions_x[1][0], start_positions_x[1][1], True)
-    table = add_start_position(table, table_rows, table_columns,start_positions_o[0][0], start_positions_o[0][1], False)
-    table = add_start_position(table, table_rows, table_columns,start_positions_o[1][0], start_positions_o[1][1], False)
+    table = add_start_position(table, table_columns,
+                               start_positions_x[0][0], start_positions_x[0][1], True)
+    table = add_start_position(table, table_columns,
+                               start_positions_x[1][0], start_positions_x[1][1], True)
+    table = add_start_position(table, table_columns,
+                               start_positions_o[0][0], start_positions_o[0][1], False)
+    table = add_start_position(table, table_columns,
+                               start_positions_o[1][0], start_positions_o[1][1], False)
 
-    table = add_pawn(table, table_rows, table_columns, pawn_x1[0], pawn_x1[1], True)
-    table = add_pawn(table, table_rows, table_columns, pawn_x2[0], pawn_x2[1], True)
-  #  table = add_pawn(table, table_rows, table_columns, pawn_o1[0], pawn_o2[1], False)
-  #  table = add_pawn(table, table_rows, table_columns, pawn_o2[0], pawn_o2[1], False)
+    table = add_pawn(table, table_columns,
+                     pawn_x1[0], pawn_x1[1], True)
+    table = add_pawn(table, table_columns,
+                     pawn_x2[0], pawn_x2[1], True)
+    table = add_pawn(table, table_columns,
+                     pawn_o1[0], pawn_o1[1], False)
+    table = add_pawn(table, table_columns,
+                     pawn_o2[0], pawn_o2[1], False)
 
     clear_console()
     print_table(table, table_rows, table_columns)
-    return
 
 
 def print_table(table: str, table_rows: int, table_columns: int) -> None:
-    print(" ", end="")
+    row_to_print = 2 * constants.SPACE
+
     for j in range(table_columns):
-        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "", end="")
-    print("")
-    size = 4*table_columns+2
-    print("  "+table[0:size], end="")
-    for i in range(table_rows*2):
-        num = int_to_table_coordinate(i//2)
+        row_to_print += constants.TABLE_FIELD + int_to_table_coordinate(j)
+    row_to_print += constants.NEW_LINE
+
+    row_size = 4 * table_columns + 2
+    row_to_print += constants.TABLE_FIELD + table[:row_size]
+
+    for i in range(table_rows * 2):
+        num = int_to_table_coordinate(i // 2)
         if i % 2 == 0:
-            print("" + num + " ", end="")
-            print(table[size*(i+1):size*(i+2)-1]+" "+num+"\n", end="")
+            row_to_print += constants.SPACE + num + constants.SPACE + \
+                table[row_size * (i + 1): row_size * (i + 2) - 1] + \
+                constants.SPACE + num + constants.NEW_LINE
         else:
-            print("  ", end="")
-            print(table[size*(i+1):size*(i+2)], end="")
+            row_to_print += constants.TABLE_FIELD + \
+                table[row_size * (i + 1): row_size * (i + 2)]
 
-    print(" ", end="")
+    row_to_print += constants.SPACE
     for j in range(table_columns):
-        print("   "+(str(j+1) if j < 9 else chr(65-9+j)) + "", end="")
+        row_to_print += constants.TABLE_FIELD + int_to_table_coordinate(j)
 
-    print("")
-
-    return
+    print(constants.NEW_LINE + row_to_print + constants.NEW_LINE)
 
 
-def add_pawn(table: str, table_rows: int, table_columns: int, row: int, column: int, is_X: bool) -> str:
-    pom = 4*(table_columns*(row)+column+row-1+table_columns*(row-1))
-    return table[:pom]+("X" if is_X else "O")+table[pom+1:]
+def calculate_position_for_insertion(table_columns: int, row: int, column: int, row_modifier: int = 0) -> int:
+    return 4 * (table_columns * (row + row_modifier) + column +
+                row - 1 + table_columns * (row - 1))
 
 
-def add_start_position(table: str, table_rows: int, table_columns: int, row: int, column: int, is_X: bool) -> str:
-    pom = 4*(table_columns*(row)+column+row-1+table_columns*(row-1))
-    return table[:pom]+("\u25B2" if is_X else "\u25BC")+table[pom+1:]
+def add_pawn(table: str, table_columns: int, row: int, column: int, is_X: bool) -> str:
+    return replace_substring_in_string_from_index(table, calculate_position_for_insertion(table_columns, row, column), constants.TABLE_X if is_X else constants.TABLE_Y)
 
 
-def move_pawn(table: str,  table_rows: int, table_columns: int, old_row: int, old_column: int, new_row: int, new_column: int) -> str:
-    pom = 4*(table_columns*(old_row)+old_column +
-             old_row-1+table_columns*(old_row-1))
-    pawn = table[pom:pom+1]
-    temp = table[:pom]+" "+table[pom+1:]
-    pom = 4*(table_columns*(new_row)+new_column +
-             new_row-1+table_columns*(new_row-1))
-    return temp[:pom]+pawn+table[pom+1:]
+def add_start_position(table: str, table_columns: int, row: int, column: int, is_X: bool) -> str:
+    return replace_substring_in_string_from_index(table, calculate_position_for_insertion(table_columns, row, column), constants.TABLE_START_POSITION_X if is_X else constants.TABLE_START_POSITION_Y)
+
+
+def move_pawn(table: str, table_columns: int, old_row: int, old_column: int, new_row: int, new_column: int) -> str:
+    pawn_position = calculate_position_for_insertion(
+        table_columns, old_row, old_column)
+    pawn = table[pawn_position: pawn_position + 1]
+    temp_table = replace_substring_in_string_from_index(
+        table, pawn_position, constants.SPACE)
+
+    pawn_position = calculate_position_for_insertion(
+        table_columns, new_row, new_column)
+    return replace_substring_in_string_from_index(temp_table, pawn_position, pawn)
 
 
 def show_end_screen(computer_on_move: bool) -> bool:
@@ -122,15 +143,18 @@ def show_end_screen(computer_on_move: bool) -> bool:
     return read_yes_no_prefered("Play again", False)
 
 
-def show_start_screen():
+def show_start_screen() -> None:
+    resize_terminal(27, 80)
     print("Welcome to Blockade! :)")
-    return
 
 
-def clear_console():
-    import os
+def clear_console() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
-    return
+
+
+def resize_terminal(height: int, width: int) -> None:
+    os.system(f"mode con: cols={width} lines={height}" if os.name ==
+              'nt' else f"printf '\e[8;{height};{width}t'")
 
 
 def read_move() -> list():  # to implament phase 2
@@ -179,11 +203,7 @@ def read_yes_no_prefered(question: str, prefered_yes: bool) -> bool:
         val = input(
             question+(" [YES/no]: " if prefered_yes else " [yes/NO]: "))
         val = str.upper(val)
-    if prefered_yes:
-        return True if val in allowed_answers[:5] else False
-    else:
-        return True if val in allowed_answers[:3] else False
-
+    return val in allowed_answers[:5] if prefered_yes else val in allowed_answers[:3]
 
 def read_int_from_range_and_prefered(what_to_read: str, low: int, high: int, prefered: int) -> int:
     if low == high:

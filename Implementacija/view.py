@@ -52,8 +52,8 @@ def show_table(table_rows: int,
                pawn_x2: tuple[int, int],
                pawn_o1: tuple[int, int],
                pawn_o2: tuple[int, int],
-               start_positions_x: list[tuple[int, int]],
-               start_positions_o: list[tuple[int, int]]) -> None:
+               start_positions_x: tuple[tuple[int, int]],
+               start_positions_o: tuple[tuple[int, int]]) -> None:
     table = generate_empty_table(table_rows, table_columns)
 
     for vertical_wall in vertical_walls:
@@ -119,11 +119,13 @@ def calculate_position_for_insertion(table_columns: int, row: int, column: int, 
 
 
 def add_pawn(table: str, table_columns: int, row: int, column: int, is_X: bool) -> str:
-    return replace_substring_in_string_from_index(table, calculate_position_for_insertion(table_columns, row, column), constants.TABLE_X if is_X else constants.TABLE_Y)
+    return replace_substring_in_string_from_index(table, calculate_position_for_insertion(table_columns, row, column),
+                                                  constants.TABLE_X if is_X else constants.TABLE_O)
 
 
 def add_start_position(table: str, table_columns: int, row: int, column: int, is_X: bool) -> str:
-    return replace_substring_in_string_from_index(table, calculate_position_for_insertion(table_columns, row, column), constants.TABLE_START_POSITION_X if is_X else constants.TABLE_START_POSITION_Y)
+    return replace_substring_in_string_from_index(table, calculate_position_for_insertion(table_columns, row, column),
+                                                  constants.TABLE_START_POSITION_X if is_X else constants.TABLE_START_POSITION_Y)
 
 
 def move_pawn(table: str, table_columns: int, old_row: int, old_column: int, new_row: int, new_column: int) -> str:
@@ -138,14 +140,16 @@ def move_pawn(table: str, table_columns: int, old_row: int, old_column: int, new
     return replace_substring_in_string_from_index(temp_table, pawn_position, pawn)
 
 
-def show_end_screen(computer_on_move: bool) -> bool:
-    print(f'{"Computer" if not computer_on_move else "Player"} won!')
-    return read_yes_no_prefered("Play again", False)
+def show_end_screen(computer_or_x_won: bool, player_vs_player: bool = True) -> bool:
+    messages = (constants.MESSAGE_PLAYER_X_WON, constants.MESSAGE_PLAYER_O_WON) if player_vs_player else (
+        constants.MESSAGE_COMPUTER_WON, constants.MESSAGE_PLAYER_WON)
+    print(messages[0] if not computer_or_x_won else messages[1])
+    return read_yes_no_prefered(constants.MESSAGE_PLAY_AGAIN, False)
 
 
 def show_start_screen() -> None:
     resize_terminal(27, 80)
-    print("Welcome to Blockade! :)")
+    print(constants.MESSAGE_WELCOME)
 
 
 def clear_console() -> None:
@@ -157,43 +161,48 @@ def resize_terminal(height: int, width: int) -> None:
               'nt' else f"printf '\e[8;{height};{width}t'")
 
 
-def read_move() -> list():  # to implament phase 2
+def read_move() -> tuple:
+    
     return
 
 
 def read_first_player() -> bool:
-    return read_yes_no_prefered("Computer plays first", False)
+    return read_yes_no_prefered(constants.MESSAGE_COMPUTER_PLAYS_FIRST, False)
+
+
+def read_game_mode() -> bool:
+    return read_yes_no_prefered(constants.MESSAGE_PLAY_VS_COMPUTER, True)
 
 
 def read_table_size() -> tuple[int, int]:
-    return (read_int_from_range_and_prefered("rows", 3, 23, 11), read_int_from_range_and_prefered("columns", 4, 28, 14))
+    return (read_int_from_range_and_preferred(constants.MESSAGE_NUMBER_OF_ROWS, 3, 23, 11), read_int_from_range_and_preferred(constants.MESSAGE_NUMBER_OF_COLUMNS, 4, 28, 14))
 
 
 def read_wall_count() -> int:
-    return read_int_from_range_and_prefered("walls", 0, 18, 9)
+    return read_int_from_range_and_preferred(constants.MESSAGE_NUMBER_OF_WALLS, 0, 18, 9)
 
 
 def read_start_positions(table_rows: int, table_columns: int) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
     # tuple[int, int] je pozicija jednog pesaka
-    first_player_1 = input_pawn_position(
-        "first player first pawn", table_rows, table_columns, 4, 3, [])
-    first_player_2 = input_pawn_position(
-        "first player second pawn", table_rows, table_columns, 4, 4, [first_player_1])
+    player_x_first_pawn = read_pawn_start_position(
+        constants.MESSAGE_PLAYER_X_FIRST_PAWN, table_rows, table_columns, 4, 3, [])
+    player_x_second_pawn = read_pawn_start_position(
+        constants.MESSAGE_PLAYER_X_SECOND_PAWN, table_rows, table_columns, 4, 4, [player_x_first_pawn])
 
-    second_player_1 = input_pawn_position(
-        "second player first pawn", table_rows,  table_columns, 5, 3, [first_player_1, first_player_2])
-    second_player_2 = input_pawn_position("second player second pawn", table_rows, table_columns,  5, 4, [
-        first_player_1, first_player_2, second_player_1])
+    player_o_first_pawn = read_pawn_start_position(
+        constants.MESSAGE_PLAYER_O_FIRST_PAWN, table_rows,  table_columns, 5, 3, [player_x_first_pawn, player_x_second_pawn])
+    player_o_second_pawn = read_pawn_start_position(constants.MESSAGE_PLAYER_O_SECOND_PAWN, table_rows, table_columns,  5, 4, [
+        player_x_first_pawn, player_x_second_pawn, player_o_first_pawn])
 
-    return [(first_player_1, first_player_2), (second_player_1, second_player_2)]
+    return [(player_x_first_pawn, player_x_second_pawn), (player_o_first_pawn, player_o_second_pawn)]
 
 
-def input_pawn_position(what_player: str,  table_rows: int, table_columns: int, prefered_column: int, prefered_row: int, busy_positions) -> tuple[int, int]:
-    row = read_int_from_range_and_prefered(
-        what_player+" start row", 0, table_rows, prefered_row if table_rows > prefered_row else table_rows)
-    column = read_int_from_range_and_prefered(
-        what_player+" start column", 0, table_columns, prefered_column if table_columns > prefered_column else table_columns)
-    return (row, column) if (row, column) not in busy_positions else print("Enter again") or input_pawn_position(what_player, table_rows, table_columns,  prefered_column, prefered_row, busy_positions)
+def read_pawn_start_position(what_player: str,  table_rows: int, table_columns: int, prefered_column: int, prefered_row: int, occupied_positions) -> tuple[int, int]:
+    row = read_int_from_range_and_preferred(
+        what_player + " start row", 0, table_rows, prefered_row)
+    column = read_int_from_range_and_preferred(
+        what_player + " start column", 0, table_columns, prefered_column)
+    return (row, column) if (row, column) not in occupied_positions else print(constants.MESSAGE_INVALID_INPUT) or read_pawn_start_position(what_player, table_rows, table_columns,  prefered_column, prefered_row, occupied_positions)
 
 
 def read_yes_no_prefered(question: str, prefered_yes: bool) -> bool:
@@ -201,29 +210,38 @@ def read_yes_no_prefered(question: str, prefered_yes: bool) -> bool:
     val = None
     while val not in allowed_answers:
         val = input(
-            question+(" [YES/no]: " if prefered_yes else " [yes/NO]: "))
+            question + (" [YES/no]: " if prefered_yes else " [yes/NO]: "))
         val = str.upper(val)
     return val in allowed_answers[:5] if prefered_yes else val in allowed_answers[:3]
 
-def read_int_from_range_and_prefered(what_to_read: str, low: int, high: int, prefered: int) -> int:
+
+def read_int_from_range_and_preferred(what_to_read: str, low: int, high: int, preferred: int) -> int:
     if low == high:
         return low
+
     if low > high:
-        pom = low
+        temp = low
         low = high
-        high = pom
-    if prefered < low or prefered > high:
-        return False
-    while True:
-        pom = input(what_to_read+"["+str(prefered)+"]: ")
-        if pom == "" or pom == " ":
-            pom = prefered
-            break
-        if pom.strip().isdigit():
-            pom = int(pom)
-            if pom >= low and pom <= high:
-                break
-            print("You must enter number between "+str(low)+" and "+str(high))
-        else:
-            print("You must enter whole number")
-    return pom
+        high = temp
+
+    if preferred < low:
+        preferred = low
+
+    elif preferred > high:
+        preferred = high
+
+    return read_int_from_range_and_preferred_recursion(what_to_read, preferred, low, high)
+
+
+def read_int_from_range_and_preferred_recursion(what_to_read: str, preferred: int, low: int, high: int) -> int:
+    temp = input(f'{what_to_read} [{str(preferred)}]: ')
+    if temp == "" or temp == " ":
+        return preferred
+
+    if temp.strip().isdigit():
+        temp = int(temp)
+        if temp >= low and temp <= high:
+            return temp
+    print(f'{constants.MESSAGE_INVALID_NUMBER_INPUT} ({low}-{high})')
+    read_int_from_range_and_preferred_recursion(
+        what_to_read, preferred, low, high)

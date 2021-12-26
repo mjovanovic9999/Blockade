@@ -19,7 +19,25 @@ TABLE_HORIZONTAL_WALL_INTERSECTION = "\u256A"
 TABLE_START_POSITION_X = "\u25B2"
 TABLE_START_POSITION_Y = "\u25BC"
 TABLE_X = "X"
-TABLE_Y = "Y"
+TABLE_O = "O"
 
 NEW_LINE = "\n"
-SPACE = " " 
+SPACE = " "
+
+MESSAGE_PLAY_AGAIN = "Play again"
+MESSAGE_WELCOME = "Welcome to Blockade! :)"
+MESSAGE_COMPUTER_PLAYS_FIRST = "Computer plays first"
+MESSAGE_COMPUTER_WON = "Computer won!"
+MESSAGE_PLAYER_WON = "Player won!"
+MESSAGE_PLAYER_X_WON = f'Player {TABLE_X} won!'
+MESSAGE_PLAYER_O_WON = f'Player {TABLE_O} won!'
+MESSAGE_NUMBER_OF_ROWS = "Number of table rows"
+MESSAGE_NUMBER_OF_COLUMNS = "Number of table columns"
+MESSAGE_NUMBER_OF_WALLS = "Number of walls"
+MESSAGE_INVALID_INPUT = "Invalid input! Please enter again"
+MESSAGE_PLAY_VS_COMPUTER = "Play against computer"
+MESSAGE_INVALID_NUMBER_INPUT = "Please enter a number in defined range"
+MESSAGE_PLAYER_X_FIRST_PAWN = f'Player {TABLE_X} first pawn position!'
+MESSAGE_PLAYER_X_SECOND_PAWN = f'Player {TABLE_X} second pawn position!'
+MESSAGE_PLAYER_O_FIRST_PAWN = f'Player {TABLE_O} first pawn position!'
+MESSAGE_PLAYER_O_SECOND_PAWN = f'Player {TABLE_O} second pawn position!'

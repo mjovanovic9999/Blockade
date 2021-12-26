@@ -6,4 +6,3 @@ def main():
     while blockade():
         clear_console()
 
-main()

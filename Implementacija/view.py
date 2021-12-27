@@ -1,6 +1,6 @@
 import os
 import constants
-from moves import is_pawn_move_valid, move_pawn
+from moves import move_pawn
 from utility import check_if_string_is_number_in_range, int_to_table_coordinate, replace_substring_in_string_from_index
 
 
@@ -129,7 +129,7 @@ def add_start_position(table: str, table_columns: int, row: int, column: int, is
                                                   constants.TABLE_START_POSITION_X if is_X else constants.TABLE_START_POSITION_Y)
 
 
-def move_pawn(table: str, table_columns: int, old_row: int, old_column: int, new_row: int, new_column: int) -> str:
+def move_pawn_on_table(table: str, table_columns: int, old_row: int, old_column: int, new_row: int, new_column: int) -> str:
     pawn_position = calculate_position_for_insertion(
         table_columns, old_row, old_column)
     pawn = table[pawn_position: pawn_position + 1]
@@ -162,30 +162,47 @@ def resize_terminal(height: int, width: int) -> None:
 
 
 def read_move(current_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
+              oponnent_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
               vertical_walls: list[tuple[int, int]],
               horizontal_walls: list[tuple[int, int]],
               table_size: tuple[int, int],
               x_to_move: bool) -> tuple[tuple[int, int], ]:
     print(constants.MESSAGE_PLAYER_X_TO_MOVE if x_to_move else constants.MESSAGE_PLAYER_O_TO_MOVE)
     selected_pawn_index = read_selected_pawn(current_pawn_positions)
-    new_pawn_position = read_pawn_move()
-    return
+    other_pawn_index = (selected_pawn_index + 1) % 2
+    new_pawn_position = read_pawn_move(
+        current_pawn_positions[selected_pawn_index],
+        current_pawn_positions[other_pawn_index],
+        oponnent_pawn_positions,
+        vertical_walls,
+        horizontal_walls,
+        table_size)
+
+    return new_pawn_position
 
 
 def read_selected_pawn(current_pawn_positions: tuple[tuple[int, int], tuple[int, int]]) -> int:
-    return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, f'1 => {current_pawn_positions[0]} / 2 => {current_pawn_positions[1]}', 1, 2)
+    return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, f'1 => {current_pawn_positions[0]} / 2 => {current_pawn_positions[1]}', 1, 2) - 1
 
 
-def read_pawn_move(current_pawn_position: tuple[int, int],
+def read_pawn_move(pawn_to_move_position: tuple[int, int],
+                   other_pawn_position: tuple[int, int],
+                   oponnent_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
                    vertical_walls: list[tuple[int, int]],
                    horizontal_walls: list[tuple[int, int]],
                    table_size: tuple[int, int]
                    ) -> tuple[int, int]:
-    new_position_row = input()
-    new_position_column = input()
+    new_position_row = read_int_from_range_with_preferred_value_or_options_recursion(
+        "Row ", None, 0, table_size[0])
+    new_position_column = read_int_from_range_with_preferred_value_or_options_recursion(
+        "Col ", None, 0, table_size[1])
 
-    (new_position_row, new_position_column) if move_pawn(vertical_walls, horizontal_walls, ) else read_pawn_move(current_pawn_position, vertical_walls,
-                                                                                                                                                            horizontal_walls, table_size)
+    new_pawn_position = move_pawn(vertical_walls, horizontal_walls, pawn_to_move_position,
+                                  oponnent_pawn_positions, other_pawn_position, table_size,
+                                  (new_position_row, new_position_column))
+
+    return new_pawn_position if new_pawn_position != pawn_to_move_position else read_pawn_move(pawn_to_move_position, other_pawn_position, oponnent_pawn_positions, vertical_walls,
+                                                                                               horizontal_walls, table_size)
 
 
 def read_first_player() -> bool:
@@ -256,11 +273,14 @@ def read_int_from_range_with_preferred_value(what_to_read: str, low: int, high: 
     return read_int_from_range_with_preferred_value_or_options_recursion(what_to_read, preferred, low, high)
 
 
-def read_int_from_range_with_preferred_value_or_options_recursion(what_to_read: str, preferred_or_options: int | str, low: int, high: int) -> int:
+def read_int_from_range_with_preferred_value_or_options_recursion(what_to_read: str, preferred_or_options: int | str | None, low: int, high: int) -> int:
+    message = what_to_read
     include_preferred = isinstance(preferred_or_options, int)
 
-    temp = input(
-        f'{what_to_read} [{str(preferred_or_options) if include_preferred else preferred_or_options}]: ')
+    if preferred_or_options:
+        message += f' [{str(preferred_or_options) if include_preferred else preferred_or_options}]: '
+
+    temp = input(message)
 
     if include_preferred and (temp == "" or temp == " "):
         return preferred_or_options
@@ -270,5 +290,4 @@ def read_int_from_range_with_preferred_value_or_options_recursion(what_to_read: 
         return temp_int
 
     print(f'{constants.MESSAGE_INVALID_NUMBER_INPUT} ({low} - {high})')
-    read_int_from_range_with_preferred_value_or_options_recursion(
-        what_to_read, preferred_or_options, low, high)
+    return read_int_from_range_with_preferred_value_or_options_recursion(what_to_read, preferred_or_options, low, high)

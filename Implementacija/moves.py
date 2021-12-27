@@ -1,4 +1,5 @@
 from utility import int_to_table_coordinate
+from copy import deepcopy
 
 
 def is_game_end(
@@ -32,56 +33,56 @@ def is_wall_place_valid(
 
 
 def is_pawn_move_valid(
-    walls_vertical: list[tuple[int, int]],
-    walls_horizontal: list[tuple[int, int]],
-    dimensions: tuple[int, int],
-    pawn_old_pos: tuple[int, int],
-    pawn_new_pos: tuple[int, int]
+    vertical_walls: list[tuple[int, int]],
+    horizontal_walls: list[tuple[int, int]],
+    table_size: tuple[int, int],
+    old_pawn_position: tuple[int, int],
+    new_pawn_position: tuple[int, int]
 ) -> bool:
-    if pawn_new_pos[1] < 0 or pawn_new_pos[0] < 0 or pawn_new_pos[1] > dimensions[1] or pawn_new_pos[0] > dimensions[0] or (pawn_old_pos[0] == pawn_new_pos[0] and pawn_old_pos[1] == pawn_new_pos[1]):
+    if new_pawn_position[1] < 0 or new_pawn_position[0] < 0 or new_pawn_position[1] > table_size[1]-1 or new_pawn_position[0] > table_size[0]-1 or (old_pawn_position[0] == new_pawn_position[0] and old_pawn_position[1] == new_pawn_position[1]):
         return False
-    if abs(pawn_new_pos[1]-pawn_old_pos[1]) > 2 or abs(pawn_new_pos[0]-pawn_old_pos[0]) > 2:
+    if abs(new_pawn_position[1]-old_pawn_position[1]) + abs(new_pawn_position[0]-old_pawn_position[0]) > 2:
         return False
-    if pawn_old_pos[0]-2 == pawn_new_pos[0]:
-        if (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal or (pawn_old_pos[0]-2, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]-2, pawn_old_pos[1]-1) in walls_horizontal:
+    if old_pawn_position[0]-2 == new_pawn_position[0]:
+        if (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls or (old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls or (old_pawn_position[0]-2, old_pawn_position[1]) in horizontal_walls or (old_pawn_position[0]-2, old_pawn_position[1]-1) in horizontal_walls:
             return False
-    elif pawn_old_pos[0]+2 == pawn_new_pos[0]:
-        if (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal or (pawn_old_pos[0]+1, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]+1, pawn_old_pos[1]-1) in walls_horizontal:
+    elif old_pawn_position[0]+2 == new_pawn_position[0]:
+        if (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls or (old_pawn_position[0], old_pawn_position[1]-1) in horizontal_walls or (old_pawn_position[0]+1, old_pawn_position[1]) in horizontal_walls or (old_pawn_position[0]+1, old_pawn_position[1]-1) in horizontal_walls:
             return False
-    elif pawn_old_pos[1]-2 == pawn_new_pos[1]:
-        if (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical or (pawn_old_pos[0], pawn_old_pos[1]-2) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]-2) in walls_vertical:
+    elif old_pawn_position[1]-2 == new_pawn_position[1]:
+        if (old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls or (old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls or (old_pawn_position[0], old_pawn_position[1]-2) in vertical_walls or (old_pawn_position[0]-1, old_pawn_position[1]-2) in vertical_walls:
             return False
-    elif pawn_old_pos[1]+2 == pawn_new_pos[1]:
-        if (pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical or (pawn_old_pos[0], pawn_old_pos[1]+1) in walls_vertical or (pawn_old_pos[0]-1, pawn_old_pos[1]+1) in walls_vertical:
+    elif old_pawn_position[1]+2 == new_pawn_position[1]:
+        if (old_pawn_position[0], old_pawn_position[1]) in vertical_walls or (old_pawn_position[0]-1, old_pawn_position[1]) in vertical_walls or (old_pawn_position[0], old_pawn_position[1]+1) in vertical_walls or (old_pawn_position[0]-1, old_pawn_position[1]+1) in vertical_walls:
             return False
-    elif pawn_old_pos[0]-1 == pawn_new_pos[0]:
-        if pawn_old_pos[1]-1 == pawn_new_pos[1]:
+    elif old_pawn_position[0]-1 == new_pawn_position[0]:
+        if old_pawn_position[1]-1 == new_pawn_position[1]:
             if\
-                (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical or \
-				(pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal or \
-                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal) or \
-                ((pawn_old_pos[0]-2, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-2, pawn_old_pos[1]-1) in walls_horizontal):
+                (old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls or \
+                (old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls or \
+                ((old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls) or \
+                    ((old_pawn_position[0]-2, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0]-2, old_pawn_position[1]-1) in horizontal_walls):
                 return False
         elif\
-                ((pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal) or \
-                ((pawn_old_pos[0]-2, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]+1) in walls_horizontal) or \
-                (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical or \
-				(pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal: 
+                ((old_pawn_position[0], old_pawn_position[1]) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls) or \
+                ((old_pawn_position[0]-2, old_pawn_position[1]) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]+1) in horizontal_walls) or \
+                (old_pawn_position[0]-1, old_pawn_position[1]) in vertical_walls or \
+            (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls:
             return False
-    elif pawn_old_pos[0]+1 == pawn_new_pos[0]:
-        if pawn_old_pos[1]-1 == pawn_new_pos[1]:
+    elif old_pawn_position[0]+1 == new_pawn_position[0]:
+        if old_pawn_position[1]-1 == new_pawn_position[1]:
             if\
-                (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical or \
-				(pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal or \
-                ((pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal) or \
-                ((pawn_old_pos[0]+1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-2) in walls_horizontal):
+                (old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls or \
+                (old_pawn_position[0], old_pawn_position[1]-1) in horizontal_walls or \
+                ((old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls) or \
+                    ((old_pawn_position[0]+1, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]-2) in horizontal_walls):
                 return False
         else:
             if\
-                (pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical or \
-				(pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal or \
-                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal) or \
-                ((pawn_old_pos[0]+1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]+1) in walls_horizontal):
+                (old_pawn_position[0], old_pawn_position[1]) in vertical_walls or \
+                (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls or \
+                ((old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls) or \
+                    ((old_pawn_position[0]+1, old_pawn_position[1]) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]+1) in horizontal_walls):
                 return False
     return True
 
@@ -89,10 +90,12 @@ def is_pawn_move_valid(
 def transform_position_if_occupied(old_position: tuple[int, int], new_position: tuple[int, int]) -> tuple[int, int]:
 
     if(old_position[0] == new_position[0]):
-        return (new_position[0], new_position[0] + (-1 if old_position[1] < new_position[1] else 1))
+        return (new_position[0], new_position[1] + (-1 if old_position[1] < new_position[1] else 1))
 
     if(old_position[1] == new_position[1]):
         return (new_position[0] + (-1 if old_position[0] < new_position[0] else 1), new_position[1])
+
+    return old_position
 
 
 def move_pawn(
@@ -100,16 +103,14 @@ def move_pawn(
     horizontal_walls: list[tuple[int, int]],
     old_pawn_position: tuple[int, int],
     oponnents_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
+    other_pawn_position: tuple[int, int],
     table_size: tuple[int, int],
     new_pawn_position: tuple[int, int]
 ) -> tuple[int, int]:
-    row_old = old_pawn_position[0]
-    column_old = old_pawn_position[1]
-
-    if not is_pawn_move_valid(vertical_walls, horizontal_walls, table_size, row_old, column_old, new_pawn_position):
+    if not is_pawn_move_valid(vertical_walls, horizontal_walls, table_size, old_pawn_position, new_pawn_position):
         return old_pawn_position
 
-    if oponnents_pawn_positions[0] == new_pawn_position or oponnents_pawn_positions[1] == new_pawn_position:
+    if oponnents_pawn_positions[0] == new_pawn_position or oponnents_pawn_positions[1] == new_pawn_position or other_pawn_position == new_pawn_position:
         return transform_position_if_occupied(old_pawn_position, new_pawn_position)
 
     return new_pawn_position
@@ -120,24 +121,27 @@ def place_wall(
     horizontal_walls: list[tuple[int, int]],
     heat_map: dict[tuple[int, int], int],
     table_size: tuple[int, int],
-    row: int,
-    column: int,
+    wall_position: tuple[int, int],
     is_horizontal: bool
-) -> bool:
-    if(not is_wall_place_valid(vertical_walls, horizontal_walls, table_rows, table_columns, row, column, is_horizontal)):
-        return False
+) -> tuple[list[tuple[int, int]], list[tuple[int, int]], dict[tuple[int, int], int]]:
+    if(not is_wall_place_valid(vertical_walls, horizontal_walls, table_size, wall_position, is_horizontal)):
+        return (vertical_walls, horizontal_walls, heat_map)
+
+    new_vertical_walls = deepcopy(vertical_walls)
+    new_horizontal_walls = deepcopy(horizontal_walls)
+
     if is_horizontal:
-        horizontal_walls.append((row, column))
+        new_horizontal_walls.append(wall_position)
     else:
-        vertical_walls.append((row, column))
+        new_vertical_walls.append(wall_position)
 
-    update_heat_map(heat_map, table_rows, table_columns, row, column)
+    new_heatmap = update_heat_map(heat_map, table_size, wall_position)
 
-    return True
+    return (new_vertical_walls, new_horizontal_walls, new_heatmap)
 
 
-def update_heat_map(heat_map: dict[tuple[int, int], int], table_rows: int, table_columns: int, row: int, column: int) -> None:
-    position = (row, column)
-    heat_map[position] += 1
+def update_heat_map(heat_map: dict[tuple[int, int], int], table_size: tuple[int, int], wall_position: tuple[int, int]) -> dict[tuple[int, int], int]:
+    # position = (row, column)
+    # heat_map[position] += 1
     # dopuniti!!!!!!!!!!!!
-    return
+    return heat_map

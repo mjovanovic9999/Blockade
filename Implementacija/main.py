@@ -1,8 +1,7 @@
 from blockade import blockade
-from view import clear_console, show_start_screen
+from view import clear_console
 
 
 def main():
     while blockade():
         clear_console()
-

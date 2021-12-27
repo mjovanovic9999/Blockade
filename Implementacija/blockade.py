@@ -1,6 +1,5 @@
-from moves import is_game_end, move_pawn
-from utility import int_to_table_coordinate
-from view import read_game_mode, read_table_size, read_wall_count, read_first_player, read_start_positions, resize_terminal, show_end_screen, show_start_screen, show_table
+
+from view import read_table_size, read_wall_count, read_first_player, read_start_positions, resize_terminal, show_end_screen, show_start_screen, show_table
 
 
 def blockade() -> bool:
@@ -31,18 +30,18 @@ def blockade() -> bool:
     computer_or_x_to_move = False
     game_ended = False
     input()
-    while not game_ended:
-        next_move = ()
+    # while not game_ended:
+    #     next_move = ()
 
-        pawn_positions = ((move_pawn(vertical_walls, horizontal_walls,
-                                       pawn_positions[0][0], pawn_positions[1][0], pawn_positions[1][1], table_size[0], table_size[1], pawn_positions[0][0][0], pawn_positions[0][0][1]), (4, 4)), ((3, 5), (4, 5)))
+    #     pawn_positions = ((move_pawn(vertical_walls, horizontal_walls,
+    #                                  pawn_positions[0][0], pawn_positions[1][0], pawn_positions[1][1], table_size[0], table_size[1], pawn_positions[0][0][0], pawn_positions[0][0][1]), (4, 4)), ((3, 5), (4, 5)))
 
-        computer_or_x_to_move = not computer_or_x_to_move
-        show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
-                   pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions[0], start_positions[1])
+    #     computer_or_x_to_move = not computer_or_x_to_move
+    #     show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
+    #                pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions[0], start_positions[1])
 
-        game_ended = is_game_end(pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0],
-                                 pawn_positions[1][1], start_positions[0], start_positions[1])
+    #     game_ended = is_game_end(pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0],
+    #                              pawn_positions[1][1], start_positions[0], start_positions[1])
 
     return show_end_screen(computer_or_x_to_move, False)
 

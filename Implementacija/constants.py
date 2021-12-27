@@ -23,6 +23,7 @@ TABLE_O = "O"
 
 NEW_LINE = "\n"
 SPACE = " "
+COORDINATES = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 MESSAGE_PLAY_AGAIN = "Play again"
 MESSAGE_WELCOME = "Welcome to Blockade! :)"
@@ -34,10 +35,13 @@ MESSAGE_PLAYER_O_WON = f'Player {TABLE_O} won!'
 MESSAGE_NUMBER_OF_ROWS = "Number of table rows"
 MESSAGE_NUMBER_OF_COLUMNS = "Number of table columns"
 MESSAGE_NUMBER_OF_WALLS = "Number of walls"
-MESSAGE_INVALID_INPUT = "Invalid input! Please enter again"
+MESSAGE_INVALID_PAWN_POSITION = "Please enter new position that is not occupied and fits table dimensions"
 MESSAGE_PLAY_VS_COMPUTER = "Play against computer"
 MESSAGE_INVALID_NUMBER_INPUT = "Please enter a number in defined range"
-MESSAGE_PLAYER_X_FIRST_PAWN = f'Player {TABLE_X} first pawn position!'
-MESSAGE_PLAYER_X_SECOND_PAWN = f'Player {TABLE_X} second pawn position!'
-MESSAGE_PLAYER_O_FIRST_PAWN = f'Player {TABLE_O} first pawn position!'
-MESSAGE_PLAYER_O_SECOND_PAWN = f'Player {TABLE_O} second pawn position!'
+MESSAGE_PLAYER_X_FIRST_PAWN = f'Player {TABLE_X} first pawn position'
+MESSAGE_PLAYER_X_SECOND_PAWN = f'Player {TABLE_X} second pawn position'
+MESSAGE_PLAYER_O_FIRST_PAWN = f'Player {TABLE_O} first pawn position'
+MESSAGE_PLAYER_O_SECOND_PAWN = f'Player {TABLE_O} second pawn position'
+MESSAGE_PAWN_SELECTION = "Select pawn to move"
+MESSAGE_PLAYER_X_TO_MOVE = f'Player {TABLE_X}\'s turn:'
+MESSAGE_PLAYER_O_TO_MOVE = f'Player {TABLE_O}\'s turn'

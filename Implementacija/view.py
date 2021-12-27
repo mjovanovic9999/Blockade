@@ -1,6 +1,7 @@
 import os
 import constants
-from utility import int_to_table_coordinate, replace_substring_in_string_from_index
+from moves import is_pawn_move_valid, move_pawn
+from utility import check_if_string_is_number_in_range, int_to_table_coordinate, replace_substring_in_string_from_index
 
 
 def generate_empty_table(table_rows: int, table_columns: int) -> str:
@@ -148,7 +149,6 @@ def show_end_screen(computer_or_x_won: bool, player_vs_player: bool = True) -> b
 
 
 def show_start_screen() -> None:
-    resize_terminal(27, 80)
     print(constants.MESSAGE_WELCOME)
 
 
@@ -161,9 +161,31 @@ def resize_terminal(height: int, width: int) -> None:
               'nt' else f"printf '\e[8;{height};{width}t'")
 
 
-def read_move() -> tuple:
-    
+def read_move(current_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
+              vertical_walls: list[tuple[int, int]],
+              horizontal_walls: list[tuple[int, int]],
+              table_size: tuple[int, int],
+              x_to_move: bool) -> tuple[tuple[int, int], ]:
+    print(constants.MESSAGE_PLAYER_X_TO_MOVE if x_to_move else constants.MESSAGE_PLAYER_O_TO_MOVE)
+    selected_pawn_index = read_selected_pawn(current_pawn_positions)
+    new_pawn_position = read_pawn_move()
     return
+
+
+def read_selected_pawn(current_pawn_positions: tuple[tuple[int, int], tuple[int, int]]) -> int:
+    return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, f'1 => {current_pawn_positions[0]} / 2 => {current_pawn_positions[1]}', 1, 2)
+
+
+def read_pawn_move(current_pawn_position: tuple[int, int],
+                   vertical_walls: list[tuple[int, int]],
+                   horizontal_walls: list[tuple[int, int]],
+                   table_size: tuple[int, int]
+                   ) -> tuple[int, int]:
+    new_position_row = input()
+    new_position_column = input()
+
+    (new_position_row, new_position_column) if move_pawn(vertical_walls, horizontal_walls, ) else read_pawn_move(current_pawn_position, vertical_walls,
+                                                                                                                                                            horizontal_walls, table_size)
 
 
 def read_first_player() -> bool:
@@ -175,11 +197,12 @@ def read_game_mode() -> bool:
 
 
 def read_table_size() -> tuple[int, int]:
-    return (read_int_from_range_and_preferred(constants.MESSAGE_NUMBER_OF_ROWS, 3, 23, 11), read_int_from_range_and_preferred(constants.MESSAGE_NUMBER_OF_COLUMNS, 4, 28, 14))
+    return (read_int_from_range_with_preferred_value(constants.MESSAGE_NUMBER_OF_ROWS, 3, 23, 11),
+            read_int_from_range_with_preferred_value(constants.MESSAGE_NUMBER_OF_COLUMNS, 4, 28, 14))
 
 
 def read_wall_count() -> int:
-    return read_int_from_range_and_preferred(constants.MESSAGE_NUMBER_OF_WALLS, 0, 18, 9)
+    return read_int_from_range_with_preferred_value(constants.MESSAGE_NUMBER_OF_WALLS, 0, 18, 9)
 
 
 def read_start_positions(table_rows: int, table_columns: int) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
@@ -198,11 +221,11 @@ def read_start_positions(table_rows: int, table_columns: int) -> tuple[tuple[tup
 
 
 def read_pawn_start_position(what_player: str,  table_rows: int, table_columns: int, prefered_column: int, prefered_row: int, occupied_positions) -> tuple[int, int]:
-    row = read_int_from_range_and_preferred(
+    row = read_int_from_range_with_preferred_value(
         what_player + " start row", 0, table_rows, prefered_row)
-    column = read_int_from_range_and_preferred(
+    column = read_int_from_range_with_preferred_value(
         what_player + " start column", 0, table_columns, prefered_column)
-    return (row, column) if (row, column) not in occupied_positions else print(constants.MESSAGE_INVALID_INPUT) or read_pawn_start_position(what_player, table_rows, table_columns,  prefered_column, prefered_row, occupied_positions)
+    return (row, column) if (row, column) not in occupied_positions else print(f'{constants.MESSAGE_INVALID_PAWN_POSITION} ({table_rows}x{table_columns})') or read_pawn_start_position(what_player, table_rows, table_columns,  prefered_column, prefered_row, occupied_positions)
 
 
 def read_yes_no_prefered(question: str, prefered_yes: bool) -> bool:
@@ -215,7 +238,7 @@ def read_yes_no_prefered(question: str, prefered_yes: bool) -> bool:
     return val in allowed_answers[:5] if prefered_yes else val in allowed_answers[:3]
 
 
-def read_int_from_range_and_preferred(what_to_read: str, low: int, high: int, preferred: int) -> int:
+def read_int_from_range_with_preferred_value(what_to_read: str, low: int, high: int, preferred: int) -> int:
     if low == high:
         return low
 
@@ -230,18 +253,22 @@ def read_int_from_range_and_preferred(what_to_read: str, low: int, high: int, pr
     elif preferred > high:
         preferred = high
 
-    return read_int_from_range_and_preferred_recursion(what_to_read, preferred, low, high)
+    return read_int_from_range_with_preferred_value_or_options_recursion(what_to_read, preferred, low, high)
 
 
-def read_int_from_range_and_preferred_recursion(what_to_read: str, preferred: int, low: int, high: int) -> int:
-    temp = input(f'{what_to_read} [{str(preferred)}]: ')
-    if temp == "" or temp == " ":
-        return preferred
+def read_int_from_range_with_preferred_value_or_options_recursion(what_to_read: str, preferred_or_options: int | str, low: int, high: int) -> int:
+    include_preferred = isinstance(preferred_or_options, int)
 
-    if temp.strip().isdigit():
-        temp = int(temp)
-        if temp >= low and temp <= high:
-            return temp
-    print(f'{constants.MESSAGE_INVALID_NUMBER_INPUT} ({low}-{high})')
-    read_int_from_range_and_preferred_recursion(
-        what_to_read, preferred, low, high)
+    temp = input(
+        f'{what_to_read} [{str(preferred_or_options) if include_preferred else preferred_or_options}]: ')
+
+    if include_preferred and (temp == "" or temp == " "):
+        return preferred_or_options
+
+    temp_int = check_if_string_is_number_in_range(temp, low, high)
+    if temp_int:
+        return temp_int
+
+    print(f'{constants.MESSAGE_INVALID_NUMBER_INPUT} ({low} - {high})')
+    read_int_from_range_with_preferred_value_or_options_recursion(
+        what_to_read, preferred_or_options, low, high)

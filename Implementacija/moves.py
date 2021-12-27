@@ -13,32 +13,30 @@ def is_game_end(
 
 
 def is_wall_place_valid(
-    walls_vertical: list[tuple[int, int]],
-    walls_horizontal: list[tuple[int, int]],
-    table_rows: int,
-    table_columns: int,
-    row: int,
-    column: int,
+    vertical_walls: list[tuple[int, int]],
+    horizontal_walls: list[tuple[int, int]],
+    table_size: tuple[int, int],
+    wall_position: tuple[int, int],
     is_horizontal: bool
 ) -> bool:
-    if table_rows == row or table_columns == column:
+    if table_size[0] <= wall_position[0] or table_size[1] <= wall_position[1] or wall_position[0] < 0 or wall_position[1] < 0:
         return False
 
-    if is_horizontal and ((row, column) in walls_horizontal or (row, column-1) in walls_horizontal or (row, column) in walls_vertical):
+    if is_horizontal and (wall_position in horizontal_walls or (wall_position[0], wall_position[1] - 1) in horizontal_walls or (wall_position[0], wall_position[1] + 1) in horizontal_walls or wall_position in vertical_walls):
         return False
 
-    if not is_horizontal and ((row, column) in walls_vertical or (row-1, column) in walls_vertical or (row, column) in walls_horizontal):
+    if not is_horizontal and (wall_position in vertical_walls or (wall_position[0] - 1, wall_position[1]) in vertical_walls or (wall_position[0] + 1, wall_position[1]) in vertical_walls or wall_position in horizontal_walls):
         return False
 
     return True
 
 
-def is_player_movement_valid(
+def is_pawn_move_valid(
     walls_vertical: list[tuple[int, int]],
     walls_horizontal: list[tuple[int, int]],
-    dimensions: tuple[int,int],
-    pawn_old_pos:tuple[int,int],
-    pawn_new_pos:tuple[int,int]
+    dimensions: tuple[int, int],
+    pawn_old_pos: tuple[int, int],
+    pawn_new_pos: tuple[int, int]
 ) -> bool:
     if pawn_new_pos[1] < 0 or pawn_new_pos[0] < 0 or pawn_new_pos[1] > dimensions[1] or pawn_new_pos[0] > dimensions[0] or (pawn_old_pos[0] == pawn_new_pos[0] and pawn_old_pos[1] == pawn_new_pos[1]):
         return False
@@ -85,79 +83,50 @@ def is_player_movement_valid(
     return True
 
 
-def position_occupied(
-    pawn1: tuple[int, int],
-    pawn2: tuple[int, int],
-    row_old: int,
-    column_old: int,
-    row_new: int,
-    column_new: int,
+def transform_position_if_occupied(old_position: tuple[int, int], new_position: tuple[int, int]) -> tuple[int, int]:
+
+    if(old_position[0] == new_position[0]):
+        return (new_position[0], new_position[0] + (-1 if old_position[1] < new_position[1] else 1))
+
+    if(old_position[1] == new_position[1]):
+        return (new_position[0] + (-1 if old_position[0] < new_position[0] else 1), new_position[1])
+
+
+def move_pawn(
+    vertical_walls: list[tuple[int, int]],
+    horizontal_walls: list[tuple[int, int]],
+    old_pawn_position: tuple[int, int],
+    oponnents_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
+    table_size: tuple[int, int],
+    new_pawn_position: tuple[int, int]
 ) -> tuple[int, int]:
+    row_old = old_pawn_position[0]
+    column_old = old_pawn_position[1]
 
-    if row_old-2 == row_new:
-        return (row_new+1, column_new)
-    elif row_old+2 == row_new:
-        return (row_new-1, column_new)
-    elif column_old-2 == column_new:
-        return (row_new, column_new+1)
-    elif column_old+2 == column_new:
-        return (row_new, column_new-1)
-    return(row_old, column_new)
-    # elif row_old-1==row_new:
-    #     if column_old-1==column_new:
-    #         print
-    #     else:
-    #         print
-    # elif row_old+1==row_new:
-    #     if column_old-1==column_new:
-    #         print
-    #     else:
-    #         print
-    # da opet unese poziciju ako je dijagonala zauzeta
+    if not is_pawn_move_valid(vertical_walls, horizontal_walls, table_size, row_old, column_old, new_pawn_position):
+        return old_pawn_position
 
-    return
+    if oponnents_pawn_positions[0] == new_pawn_position or oponnents_pawn_positions[1] == new_pawn_position:
+        return transform_position_if_occupied(old_pawn_position, new_pawn_position)
 
-
-def move_player(
-    walls_vertical: list[tuple[int, int]],
-    walls_horizontal: list[tuple[int, int]],
-    my_pawn: tuple[int, int],
-    pawn1: tuple[int, int],
-    pawn2: tuple[int, int],
-    table_rows: int,
-    table_columns: int,
-    row_new: int,
-    column_new: int,
-) -> tuple[int, int]:
-    row_old = my_pawn[0]
-    column_old = my_pawn[1]
-
-    if not is_player_movement_valid(walls_vertical, walls_horizontal, table_rows, table_columns, row_old, column_old, row_new, column_new):
-        return my_pawn
-    if pawn1 == (row_new, column_new) or pawn2 == (row_new, column_new):
-        move = position_occupied(
-            pawn1, pawn2, row_old, column_old, row_new, column_new)
-    else:
-        move = (row_new, column_new)
-    return move
+    return new_pawn_position
 
 
 def place_wall(
-    walls_vertical: list[tuple[int, int]],
-    walls_horizontal: list[tuple[int, int]],
-    heat_map: dict[str, int],
-    table_rows: int,
-    table_columns: int,
+    vertical_walls: list[tuple[int, int]],
+    horizontal_walls: list[tuple[int, int]],
+    heat_map: dict[tuple[int, int], int],
+    table_size: tuple[int, int],
     row: int,
     column: int,
     is_horizontal: bool
 ) -> bool:
-    if(not is_wall_place_valid(walls_vertical, walls_horizontal, table_rows, table_columns, row, column, is_horizontal)):
+    if(not is_wall_place_valid(vertical_walls, horizontal_walls, table_rows, table_columns, row, column, is_horizontal)):
         return False
     if is_horizontal:
-        walls_horizontal.append((row, column))
+        horizontal_walls.append((row, column))
     else:
-        walls_vertical.append((row, column))
+        vertical_walls.append((row, column))
 
     update_heat_map(heat_map, table_rows, table_columns, row, column)
 

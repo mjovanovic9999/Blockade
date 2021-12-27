@@ -40,7 +40,7 @@ def is_pawn_move_valid(
 ) -> bool:
     if pawn_new_pos[1] < 0 or pawn_new_pos[0] < 0 or pawn_new_pos[1] > dimensions[1] or pawn_new_pos[0] > dimensions[0] or (pawn_old_pos[0] == pawn_new_pos[0] and pawn_old_pos[1] == pawn_new_pos[1]):
         return False
-    if abs(pawn_new_pos[1]-pawn_old_pos[1]) > 3 or abs(pawn_new_pos[0]-pawn_old_pos[0]) > 3:
+    if abs(pawn_new_pos[1]-pawn_old_pos[1]) > 2 or abs(pawn_new_pos[0]-pawn_old_pos[0]) > 2:
         return False
     if pawn_old_pos[0]-2 == pawn_new_pos[0]:
         if (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal or (pawn_old_pos[0]-2, pawn_old_pos[1]) in walls_horizontal or (pawn_old_pos[0]-2, pawn_old_pos[1]-1) in walls_horizontal:
@@ -57,29 +57,32 @@ def is_pawn_move_valid(
     elif pawn_old_pos[0]-1 == pawn_new_pos[0]:
         if pawn_old_pos[1]-1 == pawn_new_pos[1]:
             if\
+                (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical or \
+				(pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal or \
                 ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal) or \
-                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal) or \
-                    ((pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal):
+                ((pawn_old_pos[0]-2, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-2, pawn_old_pos[1]-1) in walls_horizontal):
                 return False
         elif\
                 ((pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal) or \
-                ((pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal) or \
-                ((pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_horizontal):
+                ((pawn_old_pos[0]-2, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]+1) in walls_horizontal) or \
+                (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical or \
+				(pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal: 
             return False
     elif pawn_old_pos[0]+1 == pawn_new_pos[0]:
         if pawn_old_pos[1]-1 == pawn_new_pos[1]:
             if\
-                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal) or \
-                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal) or \
-                    ((pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal):
+                (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical or \
+				(pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal or \
+                ((pawn_old_pos[0]-1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal) or \
+                ((pawn_old_pos[0]+1, pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-2) in walls_horizontal):
                 return False
         else:
             if\
-                ((pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal) or \
-                ((pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]-1) in walls_horizontal) or \
-                    ((pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal):
+                (pawn_old_pos[0], pawn_old_pos[1]) in walls_vertical or \
+				(pawn_old_pos[0], pawn_old_pos[1]) in walls_horizontal or \
+                ((pawn_old_pos[0], pawn_old_pos[1]-1) in walls_vertical and (pawn_old_pos[0]-1, pawn_old_pos[1]) in walls_horizontal) or \
+                ((pawn_old_pos[0]+1, pawn_old_pos[1]) in walls_vertical and (pawn_old_pos[0], pawn_old_pos[1]+1) in walls_horizontal):
                 return False
-
     return True
 
 

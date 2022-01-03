@@ -44,4 +44,6 @@ MESSAGE_PLAYER_O_FIRST_PAWN = f'Player {TABLE_O} first pawn position'
 MESSAGE_PLAYER_O_SECOND_PAWN = f'Player {TABLE_O} second pawn position'
 MESSAGE_PAWN_SELECTION = "Select pawn to move"
 MESSAGE_PLAYER_X_TO_MOVE = f'Player {TABLE_X}\'s turn:'
-MESSAGE_PLAYER_O_TO_MOVE = f'Player {TABLE_O}\'s turn'
+MESSAGE_PLAYER_O_TO_MOVE = f'Player {TABLE_O}\'s turn:'
+MESSAGE_PAWN_NEW_ROW = "Selected pawn's new row:"
+MESSAGE_PAWN_NEW_COLUMN = "Selected pawn's new column:"

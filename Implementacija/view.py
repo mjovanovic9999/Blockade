@@ -161,24 +161,37 @@ def resize_terminal(height: int, width: int) -> None:
               'nt' else f"printf '\e[8;{height};{width}t'")
 
 
-def read_move(current_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
-              oponnent_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
+def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
               vertical_walls: list[tuple[int, int]],
               horizontal_walls: list[tuple[int, int]],
               table_size: tuple[int, int],
               x_to_move: bool) -> tuple[tuple[int, int], ]:
     print(constants.MESSAGE_PLAYER_X_TO_MOVE if x_to_move else constants.MESSAGE_PLAYER_O_TO_MOVE)
-    selected_pawn_index = read_selected_pawn(current_pawn_positions)
-    other_pawn_index = (selected_pawn_index + 1) % 2
+
+    selected_player_index = 0 if x_to_move else 1
+
+    selected_pawn_index = read_selected_pawn(
+        current_pawn_positions[selected_player_index])
+
     new_pawn_position = read_pawn_move(
-        current_pawn_positions[selected_pawn_index],
-        current_pawn_positions[other_pawn_index],
-        oponnent_pawn_positions,
+        current_pawn_positions[selected_player_index][selected_pawn_index],
+        current_pawn_positions[selected_player_index][(
+            selected_pawn_index + 1) % 2],
+        current_pawn_positions[selected_player_index][(
+            selected_player_index + 1) % 2],
         vertical_walls,
         horizontal_walls,
         table_size)
 
-    return new_pawn_position
+    new_pawn_positions_list = list(current_pawn_positions)
+    selected_player_new_positions_list = list(
+        new_pawn_positions_list[selected_player_index])
+
+    selected_player_new_positions_list[selected_pawn_index] = new_pawn_position
+    new_pawn_positions_list[selected_player_index] = tuple(
+        selected_player_new_positions_list)
+
+    return (tuple(new_pawn_positions_list), )
 
 
 def read_selected_pawn(current_pawn_positions: tuple[tuple[int, int], tuple[int, int]]) -> int:
@@ -193,9 +206,9 @@ def read_pawn_move(pawn_to_move_position: tuple[int, int],
                    table_size: tuple[int, int]
                    ) -> tuple[int, int]:
     new_position_row = read_int_from_range_with_preferred_value_or_options_recursion(
-        "Row ", None, 0, table_size[0])
+        constants.MESSAGE_PAWN_NEW_ROW, None, 0, table_size[0])
     new_position_column = read_int_from_range_with_preferred_value_or_options_recursion(
-        "Col ", None, 0, table_size[1])
+        constants.MESSAGE_PAWN_NEW_COLUMN, None, 0, table_size[1])
 
     new_pawn_position = move_pawn(vertical_walls, horizontal_walls, pawn_to_move_position,
                                   oponnent_pawn_positions, other_pawn_position, table_size,

@@ -38,3 +38,20 @@ dict[A5]=( pozicija_zida/*doleslika*/,     heat_map)
                 |    |1
                 ----- 
                   2 
+
+
+yt link:
+https://www.youtube.com/watch?v=BfG7eoE6Mww&list=PLWLPHZCdUNsNulbWQdfIwOperY6ra7iu2
+
+
+pre bilo po 30s po potezu
+vrv odbrana i takmicenje u isti dan
+moze da testiramo neki dan pre tj stelovanje da najoblje igra za 30s
+uvek ce moze svi zidovi da se smeste na tablu
+takmicenje za 14x11
+ako pc izbaci nevalidan potez gubi se partija
+pion blikira piona osim za pocetno polje
+vrv ce smanje dimenzije zbog mng mogucnosti i manje zidova
+bar dubina 3
+ne treba nikakva optimizacija za poene al ce traba za takmicnje npr da se pamte odigrana stanja
+provera da ne bude pat: https://youtu.be/NXCs2lDwrMM?list=PLWLPHZCdUNsNulbWQdfIwOperY6ra7iu2&t=1844

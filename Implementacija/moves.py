@@ -206,6 +206,6 @@ def find_path_to_one(dimensions:tuple[int,int],vertical_walls: list[tuple[int,in
     return path
 
 def generate_next_moves(dimensions:tuple[int,int],vertical_walls: list[tuple[int,int]], horizontal_walls: list[tuple[int, int]], pawn_pos : tuple[int, int],dest_pos:tuple[int, int])->list[tuple[int,int]]:
-	if abs(dest_pos[0]-pawn_pos[0])+abs(dest_pos[1]-pawn_pos[1])==1 and is_player_movement_valid(vertical_walls,horizontal_walls,dimensions,pawn_pos,dest_pos)==True:
+	if abs(dest_pos[0]-pawn_pos[0])+abs(dest_pos[1]-pawn_pos[1])==1 and is_pawn_move_valid(vertical_walls,horizontal_walls,dimensions,pawn_pos,dest_pos)==True:
 		return[dest_pos]
-	return list(filter(lambda x:is_player_movement_valid(vertical_walls,horizontal_walls,dimensions,pawn_pos,x),map( lambda x:(pawn_pos[0]+x[0],pawn_pos[1]+x[1]) ,[(-2,0),(-1,-1),(-1,1),(0,-2),(0,2),(1,-1),(1,1),(2,0)])))
+	return list(filter(lambda x:is_pawn_move_valid(vertical_walls,horizontal_walls,dimensions,pawn_pos,x),map( lambda x:(pawn_pos[0]+x[0],pawn_pos[1]+x[1]) ,[(-2,0),(-1,-1),(-1,1),(0,-2),(0,2),(1,-1),(1,1),(2,0)])))

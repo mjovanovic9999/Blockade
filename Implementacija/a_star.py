@@ -1,7 +1,3 @@
-# 7. Odrediti najkradi put između startnog i ciljnog polja  na tabli 6x6. Igrač na tabli može da se krede 
-# samo na susedna polja po horizontali i vertikali.  Zapamtiti put kojim se kretao igrač od starta do 
-# cilja. 
-
 def h_calculate(src,dst):
     return abs(src[0]-dst[0])+abs(src[1]-dst[1])
 
@@ -11,7 +7,7 @@ def get_children(node):
         ),
     ((node[0]-1,node[1]),(node[0],node[1]-1),(node[0]+1,node[1]),(node[0],node[1]+1)) ) )
 
-def find_best_path(start,end):
+def find_best_path(start:tuple[int,int],end:tuple[int,int],dimensions:tuple[int,int])->list[tuple[int,int]]:
     if start[0]<0 or start[0]>5 or end[0]<0 or end[0]>5 or start[1]<0 or start[1]>5 or end[1]<0 or end[1]>5:
         return "Losi parametri"
     if start[0]==end[0] and start[1]==end[1]:

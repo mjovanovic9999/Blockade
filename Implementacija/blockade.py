@@ -1,5 +1,6 @@
 
-from view import read_table_size, read_wall_count, read_first_player, read_start_positions, resize_terminal, show_end_screen, show_start_screen, show_table
+from moves import is_game_end
+from view import read_game_mode, read_move, read_table_size, read_wall_count, read_first_player, read_start_positions, resize_terminal, show_end_screen, show_start_screen, show_table
 
 
 def blockade() -> bool:
@@ -24,32 +25,40 @@ def blockade() -> bool:
         for column in range(table_size[1]):
             heat_map[(row, column)] = 0
 
+    computer_or_x_to_move = True
+    game_mode = multiplayer
+    if read_game_mode():
+        computer_or_x_to_move = read_first_player()
+        game_mode = singleplayer
+
     resize_terminal(2 * table_size[0] + 10, 4 * table_size[1] + 9)
     show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
                pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions[0], start_positions[1])
-    computer_or_x_to_move = False
+
     game_ended = False
-    input()
-    # while not game_ended:
-    #     next_move = ()
+    while not game_ended:
+        pawn_positions, = game_mode(pawn_positions, vertical_walls,
+                                    horizontal_walls, table_size, computer_or_x_to_move)
 
-    #     pawn_positions = ((move_pawn(vertical_walls, horizontal_walls,
-    #                                  pawn_positions[0][0], pawn_positions[1][0], pawn_positions[1][1], table_size[0], table_size[1], pawn_positions[0][0][0], pawn_positions[0][0][1]), (4, 4)), ((3, 5), (4, 5)))
+        computer_or_x_to_move = not computer_or_x_to_move
+        show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
+                   pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions[0], start_positions[1])
 
-    #     computer_or_x_to_move = not computer_or_x_to_move
-    #     show_table(table_size[0], table_size[1], vertical_walls, horizontal_walls,
-    #                pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0], pawn_positions[1][1], start_positions[0], start_positions[1])
-
-    #     game_ended = is_game_end(pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0],
-    #                              pawn_positions[1][1], start_positions[0], start_positions[1])
+        game_ended = is_game_end(pawn_positions[0][0], pawn_positions[0][1], pawn_positions[1][0],
+                                 pawn_positions[1][1], start_positions[0], start_positions[1])
 
     return show_end_screen(computer_or_x_to_move, False)
 
 
-def multiplayer(x_to_move: bool) -> bool:
+def multiplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+                vertical_walls: list[tuple[int, int]],
+                horizontal_walls: list[tuple[int, int]],
+                table_size: tuple[int, int],
+                x_to_move: bool) -> tuple[tuple[int, int]]:
 
-    pass
+    return read_move(pawn_positions, vertical_walls,
+                     horizontal_walls, table_size, x_to_move)
 
 
-def singleplayer() -> bool:
+def singleplayer(computer_to_move: bool) -> bool:
     pass

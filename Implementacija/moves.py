@@ -29,7 +29,7 @@ def is_wall_place_valid(
 
 
 def is_pawn_move_valid(
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple, tuple],#vertical pa horizontal walls
     table_size: tuple[int, int],
     old_pawn_position: tuple[int, int],
     new_pawn_position: tuple[int, int]

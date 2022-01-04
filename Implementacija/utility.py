@@ -21,3 +21,8 @@ def check_if_string_is_number_in_range(str: str, low: int, high: int) -> int | N
         if str >= low and str <= high:
             return str
     return None
+
+def update_tuple(tuple_to_update: tuple, index_to_update: int, new_value) -> tuple:
+    tuple_list = list(tuple_to_update)
+    tuple_list[index_to_update] = new_value
+    return tuple(tuple_list)

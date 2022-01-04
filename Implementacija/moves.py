@@ -40,89 +40,89 @@ def is_pawn_move_valid(
         return False
     if old_pawn_position[0]-2 == new_pawn_position[0]:
         if\
-        (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls or\
-        (old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls or\
-        (old_pawn_position[0]-2, old_pawn_position[1]) in horizontal_walls or\
-        (old_pawn_position[0]-2, old_pawn_position[1]-1) in horizontal_walls:
+        (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or\
+        (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1] or\
+        (old_pawn_position[0]-2, old_pawn_position[1]) in walls[1] or\
+        (old_pawn_position[0]-2, old_pawn_position[1]-1) in walls[1]:
             return False
     elif old_pawn_position[0]+2 == new_pawn_position[0]:
         if\
-            (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls or\
-            (old_pawn_position[0], old_pawn_position[1]-1) in horizontal_walls or\
-            (old_pawn_position[0]+1, old_pawn_position[1]) in horizontal_walls or\
-            (old_pawn_position[0]+1, old_pawn_position[1]-1) in horizontal_walls:
+            (old_pawn_position[0], old_pawn_position[1]) in walls[1] or\
+            (old_pawn_position[0], old_pawn_position[1]-1) in walls[1] or\
+            (old_pawn_position[0]+1, old_pawn_position[1]) in walls[1] or\
+            (old_pawn_position[0]+1, old_pawn_position[1]-1) in walls[1]:
             return False
     elif old_pawn_position[1]-2 == new_pawn_position[1]:
         if\
-            (old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls or\
-            (old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls or\
-            (old_pawn_position[0], old_pawn_position[1]-2) in vertical_walls or\
-            (old_pawn_position[0]-1, old_pawn_position[1]-2) in vertical_walls:
+            (old_pawn_position[0], old_pawn_position[1]-1) in walls[0] or\
+            (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] or\
+            (old_pawn_position[0], old_pawn_position[1]-2) in walls[0] or\
+            (old_pawn_position[0]-1, old_pawn_position[1]-2) in walls[0]:
             return False
     elif old_pawn_position[1]+2 == new_pawn_position[1]:
         if\
-            (old_pawn_position[0], old_pawn_position[1]) in vertical_walls or\
-            (old_pawn_position[0]-1, old_pawn_position[1]) in vertical_walls or\
-            (old_pawn_position[0], old_pawn_position[1]+1) in vertical_walls or\
-            (old_pawn_position[0]-1, old_pawn_position[1]+1) in vertical_walls:
+            (old_pawn_position[0], old_pawn_position[1]) in walls[0] or\
+            (old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] or\
+            (old_pawn_position[0], old_pawn_position[1]+1) in walls[0] or\
+            (old_pawn_position[0]-1, old_pawn_position[1]+1) in walls[0]:
             return False
     elif old_pawn_position[0]-1 == new_pawn_position[0]:
         if old_pawn_position[1]-1 == new_pawn_position[1]:
             if\
-                (old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls or \
-                (old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls or \
-                ((old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls) or \
-                ((old_pawn_position[0]-2, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]-2) in horizontal_walls)or\
-                ((old_pawn_position[0]-2, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls)or\
-                ((old_pawn_position[0]-1, old_pawn_position[1]-2) in horizontal_walls and (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls):
+                (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] or \
+                (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1] or \
+                ((old_pawn_position[0], old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1]) or \
+                ((old_pawn_position[0]-2, old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0]-1, old_pawn_position[1]-2) in walls[1])or\
+                ((old_pawn_position[0]-2, old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0], old_pawn_position[1]-1) in walls[0])or\
+                ((old_pawn_position[0]-1, old_pawn_position[1]-2) in walls[1] and (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1]):
                 return False
         elif\
-                ((old_pawn_position[0], old_pawn_position[1]) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls) or \
-                ((old_pawn_position[0]-2, old_pawn_position[1]) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]+1) in horizontal_walls) or \
-                (old_pawn_position[0]-1, old_pawn_position[1]) in vertical_walls or \
-                (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls or\
-                ((old_pawn_position[0]-2, old_pawn_position[1]) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]) in vertical_walls)or\
-                ((old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls and (old_pawn_position[0]-1, old_pawn_position[1]+1) in horizontal_walls):
+                ((old_pawn_position[0], old_pawn_position[1]) in walls[0] and (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]) or \
+                ((old_pawn_position[0]-2, old_pawn_position[1]) in walls[0] and (old_pawn_position[0]-1, old_pawn_position[1]+1) in walls[1]) or \
+                (old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] or \
+                (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or\
+                ((old_pawn_position[0]-2, old_pawn_position[1]) in walls[0] and (old_pawn_position[0], old_pawn_position[1]) in walls[0])or\
+                ((old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1] and (old_pawn_position[0]-1, old_pawn_position[1]+1) in walls[1]):
                 return False
     elif old_pawn_position[0]+1 == new_pawn_position[0]:
         if old_pawn_position[1]-1 == new_pawn_position[1]:
             if\
-                (old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls or \
-                (old_pawn_position[0], old_pawn_position[1]-1) in horizontal_walls or \
-                ((old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls) or \
-                ((old_pawn_position[0]+1, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]-2) in horizontal_walls)or\
-                ((old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0]+1, old_pawn_position[1]-1) in vertical_walls)or\
-                ((old_pawn_position[0], old_pawn_position[1]-2) in horizontal_walls and (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls):
+                (old_pawn_position[0], old_pawn_position[1]-1) in walls[0] or \
+                (old_pawn_position[0], old_pawn_position[1]-1) in walls[1] or \
+                ((old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0], old_pawn_position[1]) in walls[1]) or \
+                ((old_pawn_position[0]+1, old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0], old_pawn_position[1]-2) in walls[1])or\
+                ((old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0]+1, old_pawn_position[1]-1) in walls[0])or\
+                ((old_pawn_position[0], old_pawn_position[1]-2) in walls[1] and (old_pawn_position[0], old_pawn_position[1]) in walls[1]):
                 return False
         else:
             if\
-                (old_pawn_position[0], old_pawn_position[1]) in vertical_walls or \
-                (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls or \
-                ((old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls and (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls) or \
-                ((old_pawn_position[0]+1, old_pawn_position[1]) in vertical_walls and (old_pawn_position[0], old_pawn_position[1]+1) in horizontal_walls) or\
-                ((old_pawn_position[0]-1, old_pawn_position[1]) in vertical_walls and (old_pawn_position[0]+1, old_pawn_position[1]) in vertical_walls)or\
-                ((old_pawn_position[0], old_pawn_position[1]-1) in horizontal_walls and (old_pawn_position[0], old_pawn_position[1]+1) in horizontal_walls):
+                (old_pawn_position[0], old_pawn_position[1]) in walls[0] or \
+                (old_pawn_position[0], old_pawn_position[1]) in walls[1] or \
+                ((old_pawn_position[0], old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1]) or \
+                ((old_pawn_position[0]+1, old_pawn_position[1]) in walls[0] and (old_pawn_position[0], old_pawn_position[1]+1) in walls[1]) or\
+                ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] and (old_pawn_position[0]+1, old_pawn_position[1]) in walls[0])or\
+                ((old_pawn_position[0], old_pawn_position[1]-1) in walls[1] and (old_pawn_position[0], old_pawn_position[1]+1) in walls[1]):
                 return False
         #pomeraj za jednu poziciju na dest (ne dijagonalno)       
     elif old_pawn_position[0]-1 == new_pawn_position[0]:
         if\
-        (old_pawn_position[0]-1, old_pawn_position[1]-1) in horizontal_walls or\
-        (old_pawn_position[0]-1, old_pawn_position[1]) in horizontal_walls:
+        (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1] or\
+        (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1]:
             return False  
     elif old_pawn_position[0]+1 == new_pawn_position[0]:
         if\
-        (old_pawn_position[0], old_pawn_position[1]-1) in horizontal_walls or\
-        (old_pawn_position[0], old_pawn_position[1]) in horizontal_walls:
+        (old_pawn_position[0], old_pawn_position[1]-1) in walls[1] or\
+        (old_pawn_position[0], old_pawn_position[1]) in walls[1]:
             return False
     elif old_pawn_position[1]-1 == new_pawn_position[1]:
         if\
-        (old_pawn_position[0]-1, old_pawn_position[1]-1) in vertical_walls or\
-        (old_pawn_position[0], old_pawn_position[1]-1) in vertical_walls:
+        (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] or\
+        (old_pawn_position[0], old_pawn_position[1]-1) in walls[0]:
             return False 
     elif old_pawn_position[1]+1 == new_pawn_position[1]:
         if\
-        (old_pawn_position[0]-1, old_pawn_position[1]) in vertical_walls or\
-        (old_pawn_position[0], old_pawn_position[1]) in vertical_walls:
+        (old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] or\
+        (old_pawn_position[0], old_pawn_position[1]) in walls[0]:
             return False 
     return True#nije uvek npr uslov za skok na 0 1 na dst
 

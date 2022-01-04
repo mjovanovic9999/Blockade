@@ -1,4 +1,4 @@
-from Implementacija.moves import is_pawn_move_valid
+from moves import is_pawn_move_valid
 
 
 # sto manja to bolja
@@ -12,19 +12,19 @@ def h_calculate_optimized(dimensions: tuple[int, int], next_pos: tuple[int, int]
     real = h_calculate_raw(next_pos, dest_pos)
     pom = (half_height-next_pos[0] if half_height >=
            next_pos[0] else next_pos[0]-half_height)
-    rez = real-pom
+    rez = real-pom*real/2.5#bilo je /2
     return rez
+
+#mozda optimizacija za gore dole src i dst
 
 
 def find_path(dimensions: tuple[int, int], vertical_walls: list[tuple[int, int]], horizontal_walls: list[tuple[int, int]], pawn_pos: tuple[int, int], dest_pos: tuple[tuple[int, int], tuple[int, int]], heat_map: dict[tuple[int, int], int]) -> list[tuple[int, int]]:
     return(find_path_to_one(dimensions, vertical_walls, horizontal_walls, pawn_pos, dest_pos[0], heat_map), find_path_to_one(dimensions, vertical_walls, horizontal_walls, pawn_pos, dest_pos[0], heat_map))
 
-
+#najoptimalnije na zatvaranje da se proveri da l je neka putanja presecena; ako jeste opet se poziva
 def find_path_to_one(dimensions: tuple[int, int], vertical_walls: list[tuple[int, int]], horizontal_walls: list[tuple[int, int]], pawn_pos: tuple[int, int], dest_pos: tuple[int, int], heat_map: dict[tuple[int, int], int]) -> list[tuple[int, int]]:
-    # if start[0]<0 or start[0]>5 or end[0]<0 or end[0]>5 or start[1]<0 or start[1]>5 or end[1]<0 or end[1]>5:
-    #     return "Losi parametri"
-    # if start[0]==end[0] and start[1]==end[1]:
-    #     return []
+    #[] -> ako ne postoji putanja
+    #[(x,y)] -> ako je src i dst isto polje
     found_end = False
     open_set = set([pawn_pos])
     closed_set = set()
@@ -68,3 +68,13 @@ def generate_next_moves(table_size: tuple[int, int], vertical_walls: list[tuple[
     if abs(destination_position[0] - pawn_position[0]) + abs(destination_position[1] - pawn_position[1]) == 1 and is_pawn_move_valid(vertical_walls, horizontal_walls, table_size, pawn_position, destination_position) == True:
         return[destination_position]
     return list(filter(lambda x: is_pawn_move_valid(vertical_walls, horizontal_walls, table_size, pawn_position, x), map(lambda x: (pawn_position[0] + x[0], pawn_position[1] + x[1]), [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0)])))
+
+
+#to delete: ptrptr
+print(find_path_to_one((6,6),[],[],(2 ,0),(2,4),{}))
+print('\n')
+
+for i in range(0,6):
+    for j in range(0,6):
+        print("("+str(i)+","+str(j)+")", end=" ")
+    print('\n')

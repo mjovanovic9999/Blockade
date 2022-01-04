@@ -161,6 +161,7 @@ def resize_terminal(height: int, width: int) -> None:
 
 
 def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+              start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
               walls: tuple[tuple, tuple],
               number_of_walls: tuple[tuple[int, int], tuple[int, int]],
               table_size: tuple[int, int],
@@ -173,22 +174,20 @@ def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, in
         current_pawn_positions[selected_player_index])
 
     new_pawn_position = read_pawn_move(
-        current_pawn_positions[selected_player_index][selected_pawn_index],
-        current_pawn_positions[selected_player_index][(
-            selected_pawn_index + 1) % 2],
-        current_pawn_positions[selected_player_index][(
-            selected_player_index + 1) % 2],
+        current_pawn_positions,
+        start_positions,
         walls,
-        table_size)
+        table_size,
+        selected_player_index,
+        selected_pawn_index)
 
     selected_wall_index = read_selected_wall(
         number_of_walls[selected_player_index])
 
-    return (update_tuple(current_pawn_positions,
-                         selected_player_index,
-                         update_tuple(current_pawn_positions[selected_player_index],
-                                      selected_pawn_index,
-                                      new_pawn_position)),
+    if selected_wall_index != -1:
+        read_wall_place()
+
+    return (new_pawn_position,
             )
 
 
@@ -198,39 +197,49 @@ def read_selected_wall(current_players_number_of_walls: tuple[int, int]) -> int:
     if has_horizontal_walls_left and has_vertical_walls_left:
         return read_int_from_range_with_preferred_value_or_options_recursion("Select type of wall to place", "1 => vertical / 2 => horizontal", 1, 2)
     if has_horizontal_walls_left:
-        print("You only have horizontal walls left")
+        print("You only have horizontal walls remaining")
         return 1
     if has_vertical_walls_left:
-        print("You only have vertical walls left")
+        print("You only have vertical walls remaining")
         return 0
+    print("You don't have any remaining walls")
+    return -1
+
 
 def read_wall_place():
     pass
+
 
 def read_selected_pawn(current_players_pawn_positions: tuple[tuple[int, int], tuple[int, int]]) -> int:
     return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, f'1 => {current_players_pawn_positions[0]} / 2 => {current_players_pawn_positions[1]}', 1, 2) - 1
 
 
-def read_pawn_move(pawn_to_move_position: tuple[int, int],
-                   other_pawn_position: tuple[int, int],
-                   oponnent_pawn_positions: tuple[tuple[int, int], tuple[int, int]],
+def read_pawn_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+                   start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
                    walls: tuple[tuple, tuple],
-                   table_size: tuple[int, int]
-                   ) -> tuple[int, int]:
+                   table_size: tuple[int, int],
+                   selected_player_index: int,
+                   selected_pawn_index: int,
+                   ) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
     new_position_row = read_int_from_range_with_preferred_value_or_options_recursion(
         constants.MESSAGE_PAWN_NEW_ROW, None, 0, table_size[0])
     new_position_column = read_int_from_range_with_preferred_value_or_options_recursion(
         constants.MESSAGE_PAWN_NEW_COLUMN, None, 0, table_size[1])
 
-    new_pawn_position = move_pawn(walls, pawn_to_move_position,
-                                  oponnent_pawn_positions, other_pawn_position, table_size,
-                                  (new_position_row, new_position_column))
+    new_pawn_position = move_pawn(current_pawn_positions,
+                                  start_positions,
+                                  (new_position_row, new_position_column),
+                                  walls,
+                                  table_size,
+                                  selected_player_index,
+                                  selected_pawn_index)
 
-    return new_pawn_position if new_pawn_position != pawn_to_move_position else read_pawn_move(pawn_to_move_position,
-                                                                                               other_pawn_position,
-                                                                                               oponnent_pawn_positions,
-                                                                                               walls,
-                                                                                               table_size)
+    return new_pawn_position if new_pawn_position != current_pawn_positions[selected_player_index][selected_pawn_index] else read_pawn_move(current_pawn_positions,
+                                                                                                                                            start_positions,
+                                                                                                                                            walls,
+                                                                                                                                            table_size,
+                                                                                                                                            selected_player_index,
+                                                                                                                                            selected_pawn_index)
 
 
 def read_first_player() -> bool:

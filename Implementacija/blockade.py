@@ -32,7 +32,7 @@ def blockade() -> bool:
 
     game_ended = False
     while not game_ended:
-        pawn_positions, = game_mode(pawn_positions, walls, number_of_walls , table_size, computer_or_x_to_move)
+        pawn_positions, = game_mode(pawn_positions, start_positions, walls, number_of_walls , table_size, computer_or_x_to_move)
 
         computer_or_x_to_move = not computer_or_x_to_move
         show_table(table_size, walls,
@@ -44,12 +44,13 @@ def blockade() -> bool:
 
 
 def multiplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+                start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
                 walls: tuple[tuple, tuple],
                 number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                 table_size: tuple[int, int],
                 x_to_move: bool) -> tuple[tuple[int, int]]:
 
-    return read_move(pawn_positions, walls, number_of_walls, table_size, x_to_move)
+    return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move)
 
 
 def singleplayer(computer_to_move: bool) -> bool:

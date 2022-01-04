@@ -29,6 +29,13 @@ def is_wall_place_valid(
 
 
 def is_pawn_move_valid(
+    # current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    # start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    # new_pawn_position: tuple[int, int],
+    # walls: tuple[tuple, tuple],
+    # table_size: tuple[int, int],
+    # selected_player_index: int,
+    # selected_pawn_index: int
     walls: tuple[tuple, tuple],#vertical pa horizontal walls
     table_size: tuple[int, int],
     old_pawn_position: tuple[int, int],

@@ -12,7 +12,7 @@ def h_calculate_optimized(dimensions: tuple[int, int], next_position: tuple[int,
     real = h_calculate_raw(next_position, dest_pos)
     pom = (half_height-next_position[0] if half_height >=
            next_position[0] else next_position[0]-half_height)
-    rez = real-pom*real/3#bilo je /2
+    rez = real-pom*real/2.5#bilo je /2
     return rez
 
 #mozda optimizacija za gore dole src i dst
@@ -25,7 +25,8 @@ def find_path(
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int,
-    heat_map: dict[tuple[int, int], int]):
+    heat_map: dict[tuple[int, int], int]
+    ):
 
     my_both_destinations = list(start_positions[not selected_player_index])
     return(find_path_to_one(current_pawns_positions,start_positions, walls, table_size, selected_player_index, selected_pawn_index,my_both_destinations[0], heat_map),

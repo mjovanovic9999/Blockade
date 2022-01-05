@@ -1,7 +1,7 @@
 import os
 import constants
 from moves import move_pawn, place_wall
-from utility import check_if_string_is_number_in_range, int_to_table_coordinate, replace_substring_in_string_from_index, update_tuple
+from utility import check_if_string_is_number_in_range, int_to_table_coordinate, replace_substring_in_string_from_index, table_coordinate_to_int, update_tuple
 
 
 def generate_empty_table(table_size: tuple[int, int]) -> str:
@@ -199,7 +199,7 @@ def read_selected_wall(current_players_number_of_walls: tuple[int, int]) -> int:
     has_horizontal_walls_left = current_players_number_of_walls[1] > 0
     has_vertical_walls_left = current_players_number_of_walls[0] > 0
     if has_horizontal_walls_left and has_vertical_walls_left:
-        return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_WALL_SELECTION, constants.MESSAGE_WALL_TYPES, 1, 2) - 1
+        return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_WALL_SELECTION, 1, 2, constants.MESSAGE_WALL_TYPES) - 1
     if has_horizontal_walls_left:
         print(constants.MESSAGE_HORIZONTAL_WALLS_REMAINING)
         return 1
@@ -242,15 +242,13 @@ def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
 def read_row_and_column(table_size: tuple[int, int],
                         row_message: str,
                         column_message: str) -> tuple[int, int]:
-    new_position_row = read_int_from_range_with_preferred_value_or_options_recursion(
-        row_message, None, 0, table_size[0])
-    new_position_column = read_int_from_range_with_preferred_value_or_options_recursion(
-        column_message, None, 0, table_size[1])
+    new_position_row = read_coordinate(row_message, table_size[0])
+    new_position_column = read_coordinate(column_message, table_size[1])
     return (new_position_row, new_position_column)
 
 
 def read_selected_pawn(current_players_pawn_positions: tuple[tuple[int, int], tuple[int, int]]) -> int:
-    return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, f'1 => {current_players_pawn_positions[0]} / 2 => {current_players_pawn_positions[1]}', 1, 2) - 1
+    return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, 1, 2, f'1 => ({int_to_table_coordinate(current_players_pawn_positions[0][0] - 1)}, {int_to_table_coordinate(current_players_pawn_positions[0][1] - 1)}) / 2 => ({int_to_table_coordinate(current_players_pawn_positions[1][0] - 1)}, {int_to_table_coordinate(current_players_pawn_positions[1][1] - 1)})') - 1
 
 
 def read_pawn_position_and_move_pawn(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -354,12 +352,13 @@ def read_int_from_range_with_preferred_value(what_to_read: str, low: int, high: 
     elif preferred > high:
         preferred = high
 
-    return read_int_from_range_with_preferred_value_or_options_recursion(what_to_read, preferred, low, high)
+    return read_int_from_range_with_preferred_value_or_options_recursion(what_to_read, low, high, preferred)
 
 
 def read_int_from_range_with_preferred_value_or_options_recursion(what_to_read: str,
-                                                                  preferred_or_options: int | str | None,
-                                                                  low: int, high: int) -> int:
+                                                                  low: int,
+                                                                  high: int,
+                                                                  preferred_or_options: int | str | None = None) -> int:
     message = what_to_read
     include_preferred = isinstance(preferred_or_options, int)
 
@@ -378,6 +377,14 @@ def read_int_from_range_with_preferred_value_or_options_recursion(what_to_read: 
 
     print(f'{constants.MESSAGE_INVALID_NUMBER_INPUT} ({low} - {high})')
     return read_int_from_range_with_preferred_value_or_options_recursion(what_to_read,
-                                                                         preferred_or_options,
                                                                          low,
-                                                                         high)
+                                                                         high,
+                                                                         preferred_or_options)
+
+
+def read_coordinate(message: str, high: int) -> int:
+    coordinate = table_coordinate_to_int(input(message + ": ").upper())
+    if coordinate > 0 and coordinate <= high:
+        return coordinate
+    print(constants.MESSAGE_INVALID_COORDINATE)
+    return read_coordinate(message, high)

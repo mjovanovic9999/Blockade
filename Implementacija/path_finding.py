@@ -18,8 +18,18 @@ def h_calculate_optimized(dimensions: tuple[int, int], next_position: tuple[int,
 #mozda optimizacija za gore dole src i dst
 
 
-def find_path(dimensions: tuple[int, int], vertical_walls: list[tuple[int, int]], horizontal_walls: list[tuple[int, int]], pawn_pos: tuple[int, int], dest_pos: tuple[tuple[int, int], tuple[int, int]], heat_map: dict[tuple[int, int], int]) -> list[tuple[int, int]]:
-    return(find_path_to_one(dimensions, vertical_walls, horizontal_walls, pawn_pos, dest_pos[0], heat_map), find_path_to_one(dimensions, vertical_walls, horizontal_walls, pawn_pos, dest_pos[0], heat_map))
+def find_path(
+    current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    walls: tuple[tuple, tuple],
+    table_size: tuple[int, int],
+    selected_player_index: int,
+    selected_pawn_index: int,
+    heat_map: dict[tuple[int, int], int]):
+
+    my_both_destinations = list(start_positions[not selected_player_index])
+    return(find_path_to_one(current_pawns_positions,start_positions, walls, table_size, selected_player_index, selected_pawn_index,my_both_destinations[0], heat_map),
+     find_path_to_one(current_pawns_positions,start_positions, walls, table_size, selected_player_index, selected_pawn_index,my_both_destinations[1], heat_map))
 
 #najoptimalnije na zatvaranje da se proveri da l je neka putanja presecena; ako jeste opet se poziva
 def find_path_to_one(

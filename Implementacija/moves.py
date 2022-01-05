@@ -99,8 +99,8 @@ def is_pawn_move_valid(
                 return False
         else:  # samo ako je piun za 2 gore
             if\
-                ((old_pawn_position[0]-2, old_pawn_position[1]) in all_pawns or
-                 (old_pawn_position[0]-2, old_pawn_position[1]) in my_both_destinations) and\
+                not ((old_pawn_position[0]-2, old_pawn_position[1]) in all_pawns or
+                 (old_pawn_position[0]-2, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or
                  (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]):
                 return False
@@ -125,23 +125,23 @@ def is_pawn_move_valid(
                 return False
         else:  # samo ako je piun za 2 dole
             if\
-                ((old_pawn_position[0]+2, old_pawn_position[1]) in all_pawns or
-                 (old_pawn_position[0]+2, old_pawn_position[1]) in my_both_destinations) and\
+                not ((old_pawn_position[0]+2, old_pawn_position[1]) in all_pawns or
+                 (old_pawn_position[0]+2, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0], old_pawn_position[1]) in walls[1] or
                  (old_pawn_position[0], old_pawn_position[1]-1) in walls[1]):
                 return False
     # ako je pesak na +-2 po levo pa desno
     elif old_pawn_position[1]-1 == new_pawn_position[1]:
         if\
-            ((old_pawn_position[0], old_pawn_position[1]-2) in all_pawns or
-             (old_pawn_position[0], old_pawn_position[1]-2) in my_both_destinations) and\
+            not ((old_pawn_position[0], old_pawn_position[1]-2) in all_pawns or
+            (old_pawn_position[0], old_pawn_position[1]-2) in my_both_destinations) or\
             ((old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] or
              (old_pawn_position[0], old_pawn_position[1]-1) in walls[0]):
             return False
     elif old_pawn_position[1]+1 == new_pawn_position[1]:
         if\
-            ((old_pawn_position[0], old_pawn_position[1]+2) in all_pawns or
-             (old_pawn_position[0], old_pawn_position[1]+2) in my_both_destinations) and\
+            not ((old_pawn_position[0], old_pawn_position[1]+2) in all_pawns or
+             (old_pawn_position[0], old_pawn_position[1]+2) in my_both_destinations) or\
             (old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] or\
                 (old_pawn_position[0], old_pawn_position[1]) in walls[0]:
             return False

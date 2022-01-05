@@ -92,7 +92,6 @@ def generate_next_moves(
     selected_player_index: int,#zbog prvo
     selected_pawn_index: int, #zbog prvo
     ) -> list[tuple[int, int]]:
-    # == 2
     pawn_position = current_pawns_positions[selected_player_index][selected_pawn_index]
     return list(filter(lambda x: is_pawn_move_valid(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index, x), map(lambda x: (pawn_position[0] + x[0], pawn_position[1] + x[1]), [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0), (-1, 0),(1, 0),(0, -1),(0, 1)])))
 

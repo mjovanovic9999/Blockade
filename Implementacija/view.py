@@ -231,12 +231,12 @@ def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
         return new_wall_state
 
     print(constants.MESSAGE_INVALID_WALL_POSITION)
-    read_wall_position_and_place_wall(walls,
-                                      number_of_walls,
-                                      heat_map,
-                                      table_size,
-                                      wall_index,
-                                      player_index)
+    return read_wall_position_and_place_wall(walls,
+                                             number_of_walls,
+                                             heat_map,
+                                             table_size,
+                                             wall_index,
+                                             player_index)
 
 
 def read_row_and_column(table_size: tuple[int, int],

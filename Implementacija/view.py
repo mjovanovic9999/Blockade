@@ -273,12 +273,12 @@ def read_pawn_position_and_move_pawn(current_pawn_positions: tuple[tuple[tuple[i
         return new_pawn_positions
 
     print(constants.MESSAGE_INVALID_PAWN_MOVE)
-    read_pawn_position_and_move_pawn(current_pawn_positions,
-                                     start_positions,
-                                     walls,
-                                     table_size,
-                                     selected_player_index,
-                                     selected_pawn_index)
+    return read_pawn_position_and_move_pawn(current_pawn_positions,
+                                            start_positions,
+                                            walls,
+                                            table_size,
+                                            selected_player_index,
+                                            selected_pawn_index)
 
 
 def read_first_player() -> bool:

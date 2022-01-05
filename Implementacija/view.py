@@ -217,8 +217,8 @@ def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
                                       wall_index: int,
                                       player_index: int) -> tuple[tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]], dict[tuple[int, int], int]]:
     wall_position = read_row_and_column(table_size,
-                                        "Wall row",
-                                        "Wall column")
+                                        constants.MESSAGE_WALL_ROW,
+                                        constants.MESSAGE_WALL_COLUMN)
 
     new_wall_state = place_wall(walls,
                                 number_of_walls,
@@ -227,13 +227,15 @@ def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
                                 wall_position,
                                 wall_index,
                                 player_index)
-
-    return new_wall_state if new_wall_state != (walls, number_of_walls, heat_map) else read_wall_position_and_place_wall(walls,
-                                                                                                                         number_of_walls,
-                                                                                                                         heat_map,
-                                                                                                                         table_size,
-                                                                                                                         wall_index,
-                                                                                                                         player_index)
+    if new_wall_state != (walls, number_of_walls, heat_map):
+        return new_wall_state
+    print(constants.MESSAGE_INVALID_WALL_POSITION)
+    read_wall_position_and_place_wall(walls,
+                                      number_of_walls,
+                                      heat_map,
+                                      table_size,
+                                      wall_index,
+                                      player_index)
 
 
 def read_row_and_column(table_size: tuple[int, int],
@@ -268,13 +270,16 @@ def read_pawn_position_and_move_pawn(current_pawn_positions: tuple[tuple[tuple[i
                                    table_size,
                                    selected_player_index,
                                    selected_pawn_index)
+    if new_pawn_positions != current_pawn_positions[selected_player_index][selected_pawn_index]:
+        return new_pawn_positions
 
-    return new_pawn_positions if new_pawn_positions != current_pawn_positions[selected_player_index][selected_pawn_index] else read_pawn_position_and_move_pawn(current_pawn_positions,
-                                                                                                                                                                start_positions,
-                                                                                                                                                                walls,
-                                                                                                                                                                table_size,
-                                                                                                                                                                selected_player_index,
-                                                                                                                                                                selected_pawn_index)
+    print(constants.MESSAGE_INVALID_PAWN_MOVE)
+    read_pawn_position_and_move_pawn(current_pawn_positions,
+                                     start_positions,
+                                     walls,
+                                     table_size,
+                                     selected_player_index,
+                                     selected_pawn_index)
 
 
 def read_first_player() -> bool:

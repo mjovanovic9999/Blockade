@@ -43,7 +43,7 @@ def is_pawn_move_valid(
     if abs(new_pawn_position[1]-old_pawn_position[1]) + abs(new_pawn_position[0]-old_pawn_position[0]) > 2:
         return False
 
-    all_pawns=list(current_pawns_positions[0]+current_pawns_positions[1])
+    all_pawns = list(current_pawns_positions[0]+current_pawns_positions[1])
     if new_pawn_position in all_pawns:
         return False
 
@@ -173,13 +173,13 @@ def move_pawn(
     selected_player_index: int,
     selected_pawn_index: int
 ) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
-    if not is_pawn_move_valid(walls,
+    if not is_pawn_move_valid(current_pawn_positions,
                               start_positions,
-                              new_pawn_position,
                               walls,
                               table_size,
                               selected_player_index,
-                              selected_pawn_index):
+                              selected_pawn_index,
+                              new_pawn_position):
         return current_pawn_positions
 
     return update_tuple(current_pawn_positions,

@@ -1,10 +1,11 @@
 from constants import COORDINATES
 
 
-def str_to_coordinate(val: chr) -> tuple[int, int]:
-    if val.strip().isdigit():
-        return int(val)
-    return ord(val)-55
+def table_coordinate_to_int(table_coordinate: str) -> int:
+    if len(table_coordinate) > 1 or table_coordinate not in COORDINATES:
+        return -1
+
+    return COORDINATES.index(table_coordinate) + 1
 
 
 def int_to_table_coordinate(int: int) -> str:

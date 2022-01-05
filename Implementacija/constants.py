@@ -45,5 +45,14 @@ MESSAGE_PLAYER_O_SECOND_PAWN = f'Player {TABLE_O} second pawn position'
 MESSAGE_PAWN_SELECTION = "Select pawn to move"
 MESSAGE_PLAYER_X_TO_MOVE = f'Player {TABLE_X}\'s turn:'
 MESSAGE_PLAYER_O_TO_MOVE = f'Player {TABLE_O}\'s turn:'
-MESSAGE_PAWN_NEW_ROW = "Selected pawn's new row:"
-MESSAGE_PAWN_NEW_COLUMN = "Selected pawn's new column:"
+MESSAGE_PAWN_NEW_ROW = "Selected pawn's new row"
+MESSAGE_PAWN_NEW_COLUMN = "Selected pawn's new column"
+MESSAGE_HORIZONTAL_WALLS_REMAINING = "You only have horizontal walls remaining"
+MESSAGE_VERTICAL_WALLS_REMAINING = "You only have vertical walls remaining"
+MESSAGE_NO_WALLS_REMAINING = "You don't have any remaining walls"
+MESSAGE_WALL_SELECTION = "Select type of wall to place"
+MESSAGE_WALL_TYPES = "1 => vertical / 2 => horizontal"
+MESSAGE_WALL_ROW = "Wall row"
+MESSAGE_WALL_COLUMN = "Wall column"
+MESSAGE_INVALID_PAWN_MOVE = "Invalid pawn position! Please enter again"
+MESSAGE_INVALID_WALL_POSITION = "Invalid wall position! Please enter again"

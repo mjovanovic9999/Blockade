@@ -1,4 +1,4 @@
-from utility import int_to_table_coordinate, update_tuple
+from utility import add_to_tuple, int_to_table_coordinate, update_tuple
 from copy import deepcopy
 
 
@@ -19,10 +19,10 @@ def is_wall_place_valid(
     if table_size[0] <= wall_position[0] or table_size[1] <= wall_position[1] or wall_position[0] < 0 or wall_position[1] < 0:
         return False
 
-    if is_horizontal and (wall_position in walls[1] or (wall_position[0], wall_position[1] - 1) in walls[1] or (wall_position[0], wall_position[1] + 1) in walls[1] or wall_position in walls[1]):
+    if is_horizontal and (wall_position in walls[1] or (wall_position[0], wall_position[1] - 1) in walls[1] or (wall_position[0], wall_position[1] + 1) in walls[1] or wall_position in walls[0]):
         return False
 
-    if not is_horizontal and (wall_position in walls[0] or (wall_position[0] - 1, wall_position[1]) in walls[0] or (wall_position[0] + 1, wall_position[1]) in walls[0] or wall_position in walls[0]):
+    if not is_horizontal and (wall_position in walls[0] or (wall_position[0] - 1, wall_position[1]) in walls[0] or (wall_position[0] + 1, wall_position[1]) in walls[0] or wall_position in walls[1]):
         return False
 
     return True
@@ -163,9 +163,11 @@ def transform_position_if_occupied(old_position: tuple[int, int], new_position: 
 
     return old_position
 
+
 def transform_position_if_pawn_skips_start_position(new_position: tuple[int, int], opponent_start_positions: tuple[tuple[int, int], tuple[int, int]]) -> tuple[int, int]:
     if(new_position[0] == new_position[0]):
         return (new_position[0], new_position[1] + (-1 if new_position[1] < new_position[1] else 1))
+
 
 def move_pawn(
     current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -182,7 +184,8 @@ def move_pawn(
 
     opponent_index = (selected_player_index + 1) % 2
     if new_pawn_position not in start_positions[opponent_index] and (current_pawn_positions[opponent_index][0] == new_pawn_position or current_pawn_positions[opponent_index][1] == new_pawn_position or current_pawn_positions[selected_player_index][(selected_pawn_index + 1) % 2] == new_pawn_position):
-        new_pawn_position = transform_position_if_occupied(old_pawn_position, new_pawn_position)
+        new_pawn_position = transform_position_if_occupied(
+            old_pawn_position, new_pawn_position)
 
     return update_tuple(current_pawn_positions,
                         selected_player_index,
@@ -197,19 +200,17 @@ def place_wall(
     heat_map: dict[tuple[int, int], int],
     table_size: tuple[int, int],
     wall_position: tuple[int, int],
-    is_horizontal: bool,
-    x_to_move: bool
+    wall_index: int,
+    player_index: int
 ) -> tuple[tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]], dict[tuple[int, int], int]]:
-    if(not is_wall_place_valid(walls, table_size, wall_position, is_horizontal)):
-        return (walls, heat_map)
+    if not is_wall_place_valid(walls, table_size, wall_position, wall_index == 1):
+        return (walls, number_of_walls, heat_map)
 
-    wall_index = 1 if is_horizontal else 0
-    player_index = 0 if x_to_move else 1
     new_heatmap = update_heat_map(heat_map, table_size, wall_position)
 
     return (update_tuple(walls,
                          wall_index,
-                         walls[wall_index] + wall_position),
+                         add_to_tuple(walls[wall_index], wall_position)),
             update_tuple(number_of_walls,
                          player_index,
                          update_tuple(number_of_walls[player_index],

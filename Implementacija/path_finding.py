@@ -12,7 +12,7 @@ def h_calculate_optimized(dimensions: tuple[int, int], next_position: tuple[int,
     real = h_calculate_raw(next_position, dest_pos)
     pom = (half_height-next_position[0] if half_height >=
            next_position[0] else next_position[0]-half_height)
-    rez = real-pom*real/2.5#bilo je /2
+    rez = real-pom*real/3#bilo je /2
     return rez
 
 #mozda optimizacija za gore dole src i dst
@@ -62,7 +62,7 @@ def find_path_to_one(
             found_end = True
             break
         # print(node,end="")
-        for m in generate_next_moves(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index):
+        for m in generate_next_moves(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index,node):
             cost = h_calculate_optimized(table_size, m, destination_position, heat_map)
             if m not in open_set and m not in closed_set:
                 open_set.add(m)
@@ -91,16 +91,6 @@ def generate_next_moves(
     table_size: tuple[int, int],#
     selected_player_index: int,#zbog prvo
     selected_pawn_index: int, #zbog prvo
+    current_position:tuple[int,int]
     ) -> list[tuple[int, int]]:
-    pawn_position = current_pawns_positions[selected_player_index][selected_pawn_index]
-    return list(filter(lambda x: is_pawn_move_valid(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index, x), map(lambda x: (pawn_position[0] + x[0], pawn_position[1] + x[1]), [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0), (-1, 0),(1, 0),(0, -1),(0, 1)])))
-
-
-#to delete: ptrptr
-# print(find_path_to_one((6,6),(((0,2),(2,2)),(1 ,0)),(2,4),{}))
-# print('\n')
-
-# for i in range(0,6):
-#     for j in range(0,6):
-#         print("("+str(i)+","+str(j)+")", end=" ")
-#     print('\n')
+    return list(filter(lambda x: is_pawn_move_valid(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index,current_position, x), map(lambda x: (current_position[0] + x[0], current_position[1] + x[1]), [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0), (-1, 0),(1, 0),(0, -1),(0, 1)])))

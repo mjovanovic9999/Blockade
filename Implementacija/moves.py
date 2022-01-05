@@ -34,17 +34,22 @@ def is_pawn_move_valid(
     walls: tuple[tuple, tuple],
     table_size: tuple[int, int],
     selected_player_index: int,
-    selected_pawn_index: int,
+    selected_pawn_index: int,#da se izbaci mzd
+    old_pawn_position: tuple[int, int],
     new_pawn_position: tuple[int, int]
 ) -> bool:
-    old_pawn_position = current_pawns_positions[selected_player_index][selected_pawn_index]
+    #da moze da ga istera!!!!!!!!!!!!!!!!!!!!!!
+
+
     if new_pawn_position[1] < 0 or new_pawn_position[0] < 0 or new_pawn_position[1] > table_size[1]-1 or new_pawn_position[0] > table_size[0]-1 or (old_pawn_position[0] == new_pawn_position[0] and old_pawn_position[1] == new_pawn_position[1]):
         return False
     if abs(new_pawn_position[1]-old_pawn_position[1]) + abs(new_pawn_position[0]-old_pawn_position[0]) > 2:
         return False
 
     all_pawns = list(current_pawns_positions[0]+current_pawns_positions[1])
-    if new_pawn_position in all_pawns:
+    all_pawns.remove(current_pawns_positions[selected_player_index][selected_pawn_index])
+
+    if new_pawn_position in list(current_pawns_positions[selected_player_index]):
         return False
 
     my_both_destinations = list(start_positions[not selected_player_index])
@@ -100,7 +105,7 @@ def is_pawn_move_valid(
         else:  # samo ako je piun za 2 gore
             if\
                 not ((old_pawn_position[0]-2, old_pawn_position[1]) in all_pawns or
-                 (old_pawn_position[0]-2, old_pawn_position[1]) in my_both_destinations) or\
+                 (old_pawn_position[0]-1, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or
                  (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]):
                 return False
@@ -126,7 +131,7 @@ def is_pawn_move_valid(
         else:  # samo ako je piun za 2 dole
             if\
                 not ((old_pawn_position[0]+2, old_pawn_position[1]) in all_pawns or
-                 (old_pawn_position[0]+2, old_pawn_position[1]) in my_both_destinations) or\
+                 (old_pawn_position[0]+1, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0], old_pawn_position[1]) in walls[1] or
                  (old_pawn_position[0], old_pawn_position[1]-1) in walls[1]):
                 return False
@@ -134,16 +139,16 @@ def is_pawn_move_valid(
     elif old_pawn_position[1]-1 == new_pawn_position[1]:
         if\
             not ((old_pawn_position[0], old_pawn_position[1]-2) in all_pawns or
-            (old_pawn_position[0], old_pawn_position[1]-2) in my_both_destinations) or\
+            (old_pawn_position[0], old_pawn_position[1]-1) in my_both_destinations) or\
             ((old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] or
              (old_pawn_position[0], old_pawn_position[1]-1) in walls[0]):
             return False
     elif old_pawn_position[1]+1 == new_pawn_position[1]:
         if\
             not ((old_pawn_position[0], old_pawn_position[1]+2) in all_pawns or
-             (old_pawn_position[0], old_pawn_position[1]+2) in my_both_destinations) or\
+             (old_pawn_position[0], old_pawn_position[1]+1) in my_both_destinations) or\
             (old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] or\
-                (old_pawn_position[0], old_pawn_position[1]) in walls[0]:
+            (old_pawn_position[0], old_pawn_position[1]) in walls[0]:
             return False
     return True
 

@@ -34,3 +34,6 @@ def add_to_tuple(tuple_to_update: tuple, new_value) -> tuple:
     tuple_list = list(tuple_to_update)
     tuple_list.append(new_value)
     return tuple(tuple_list)
+
+def tuple_4_positions(first1row:int,first1column,first2row:int,first2column:int,second1row:int,second1column:int,second2row:int,second2column:int)->tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
+    return (((first1row,first1column),(first2row,first2column)),((second1row,second1column),(second2row,second2column)))

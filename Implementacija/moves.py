@@ -54,6 +54,10 @@ def is_pawn_move_valid(
 
     my_both_destinations = list(start_positions[not selected_player_index])
 
+    if new_pawn_position in list(current_pawns_positions[not selected_player_index]) and not new_pawn_position in my_both_destinations:
+        return False
+
+
     if old_pawn_position[0]-2 == new_pawn_position[0]:
         if\
             (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or\
@@ -105,9 +109,9 @@ def is_pawn_move_valid(
         else:  # samo ako je piun za 2 gore
             if\
                 not ((old_pawn_position[0]-2, old_pawn_position[1]) in all_pawns or
-                 (old_pawn_position[0]-1, old_pawn_position[1]) in my_both_destinations) or\
+                (old_pawn_position[0]-1, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or
-                 (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]):
+                (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]):
                 return False
     elif old_pawn_position[0]+1 == new_pawn_position[0]:
         if old_pawn_position[1]-1 == new_pawn_position[1]:

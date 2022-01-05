@@ -57,3 +57,6 @@ MESSAGE_WALL_COLUMN = "Wall column"
 MESSAGE_INVALID_PAWN_MOVE = "Invalid pawn position! Please enter again"
 MESSAGE_INVALID_WALL_POSITION = "Invalid wall position! Please enter again"
 MESSAGE_INVALID_COORDINATE = "Invalid coordinate! Please enter again"
+
+MAX_VALUE=10000
+MIN_VALUE=-10000

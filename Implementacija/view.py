@@ -1,6 +1,6 @@
 import os
 import constants
-from moves import move_pawn, place_wall
+from moves import is_wall_connected_with_two_or_more_walls, move_pawn, place_wall
 from utility import check_if_string_is_number_in_range, int_to_table_coordinate, replace_substring_in_string_from_index, table_coordinate_to_int, update_tuple
 
 
@@ -228,6 +228,8 @@ def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
                                 wall_index,
                                 player_index)
     if new_wall_state != (walls, number_of_walls, heat_map):
+        print(is_wall_connected_with_two_or_more_walls(
+            wall_position, wall_index == 1, table_size, walls))
         return new_wall_state
 
     print(constants.MESSAGE_INVALID_WALL_POSITION)

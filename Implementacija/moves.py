@@ -34,12 +34,11 @@ def is_pawn_move_valid(
     walls: tuple[tuple, tuple],
     table_size: tuple[int, int],
     selected_player_index: int,
-    selected_pawn_index: int,#da se izbaci mzd
+    selected_pawn_index: int,  # da se izbaci mzd
     old_pawn_position: tuple[int, int],
     new_pawn_position: tuple[int, int]
 ) -> bool:
-    #da moze da ga istera!!!!!!!!!!!!!!!!!!!!!!
-
+    # da moze da ga istera!!!!!!!!!!!!!!!!!!!!!!
 
     if new_pawn_position[1] < 0 or new_pawn_position[0] < 0 or new_pawn_position[1] > table_size[1]-1 or new_pawn_position[0] > table_size[0]-1 or (old_pawn_position[0] == new_pawn_position[0] and old_pawn_position[1] == new_pawn_position[1]):
         return False
@@ -47,7 +46,8 @@ def is_pawn_move_valid(
         return False
 
     all_pawns = list(current_pawns_positions[0]+current_pawns_positions[1])
-    all_pawns.remove(current_pawns_positions[selected_player_index][selected_pawn_index])
+    all_pawns.remove(
+        current_pawns_positions[selected_player_index][selected_pawn_index])
 
     if new_pawn_position in list(current_pawns_positions[selected_player_index]):
         return False
@@ -105,7 +105,7 @@ def is_pawn_move_valid(
         else:  # samo ako je piun za 2 gore
             if\
                 not ((old_pawn_position[0]-2, old_pawn_position[1]) in all_pawns or
-                 (old_pawn_position[0]-1, old_pawn_position[1]) in my_both_destinations) or\
+                     (old_pawn_position[0]-1, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or
                  (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]):
                 return False
@@ -131,7 +131,7 @@ def is_pawn_move_valid(
         else:  # samo ako je piun za 2 dole
             if\
                 not ((old_pawn_position[0]+2, old_pawn_position[1]) in all_pawns or
-                 (old_pawn_position[0]+1, old_pawn_position[1]) in my_both_destinations) or\
+                     (old_pawn_position[0]+1, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0], old_pawn_position[1]) in walls[1] or
                  (old_pawn_position[0], old_pawn_position[1]-1) in walls[1]):
                 return False
@@ -139,16 +139,16 @@ def is_pawn_move_valid(
     elif old_pawn_position[1]-1 == new_pawn_position[1]:
         if\
             not ((old_pawn_position[0], old_pawn_position[1]-2) in all_pawns or
-            (old_pawn_position[0], old_pawn_position[1]-1) in my_both_destinations) or\
+                 (old_pawn_position[0], old_pawn_position[1]-1) in my_both_destinations) or\
             ((old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[0] or
              (old_pawn_position[0], old_pawn_position[1]-1) in walls[0]):
             return False
     elif old_pawn_position[1]+1 == new_pawn_position[1]:
         if\
             not ((old_pawn_position[0], old_pawn_position[1]+2) in all_pawns or
-             (old_pawn_position[0], old_pawn_position[1]+1) in my_both_destinations) or\
+                 (old_pawn_position[0], old_pawn_position[1]+1) in my_both_destinations) or\
             (old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] or\
-            (old_pawn_position[0], old_pawn_position[1]) in walls[0]:
+                (old_pawn_position[0], old_pawn_position[1]) in walls[0]:
             return False
     return True
 
@@ -184,6 +184,7 @@ def move_pawn(
                               table_size,
                               selected_player_index,
                               selected_pawn_index,
+                              current_pawn_positions[selected_player_index][selected_pawn_index],
                               new_pawn_position):
         return current_pawn_positions
 
@@ -224,3 +225,49 @@ def update_heat_map(heat_map: dict[tuple[int, int], int], table_size: tuple[int,
     # heat_map[position] += 1
     # dopuniti!!!!!!!!!!!!
     return heat_map
+
+
+def is_wall_connected_with_two_or_more_walls(wall: tuple[int, int],
+                                             is_horizontal: bool,
+                                             table_size: tuple[int, int],
+                                             walls: tuple[tuple, tuple]) -> bool:
+
+    if is_horizontal:
+        left_neighbor = wall[1] == 1
+        right_neighbor = wall[1] + 1 == table_size[1]
+        for horizontal_wall in walls[1]:
+            if not left_neighbor and horizontal_wall[0] == wall[0] and horizontal_wall[1] == wall[1] - 2:
+                left_neighbor = True
+            if not right_neighbor and horizontal_wall[0] == wall[0] and horizontal_wall[1] == wall[1] + 2:
+                right_neighbor = True
+            if right_neighbor and left_neighbor:
+                return True
+
+        for vertical_wall in walls[0]:
+            if not left_neighbor and vertical_wall[1] == wall[1] - 1 and (vertical_wall[0] == wall[0] or vertical_wall[0] == wall[0] - 1 or vertical_wall[0] == wall[0] + 1):
+                left_neighbor = True
+            if not right_neighbor and vertical_wall[1] == wall[1] + 1 and (vertical_wall[0] == wall[0] or vertical_wall[0] == wall[0] - 1 or vertical_wall[0] == wall[0] + 1):
+                right_neighbor = True
+            if right_neighbor and left_neighbor:
+                return True
+
+    else:
+        top_neighbor = wall[0] == 1
+        bottom_neighbor = wall[0] + 1 == table_size[0]
+        for horizontal_wall in walls[1]:
+            if not top_neighbor and horizontal_wall[0] == wall[0] - 1 and (horizontal_wall[1] == wall[1] or horizontal_wall[1] == wall[1] - 1 or horizontal_wall[1] == wall[1] + 1):
+                top_neighbor = True
+            if not bottom_neighbor and horizontal_wall[0] == wall[0] + 1 and (horizontal_wall[1] == wall[1] or horizontal_wall[1] == wall[1] - 1 or horizontal_wall[1] == wall[1] + 1):
+                bottom_neighbor = True
+            if bottom_neighbor and top_neighbor:
+                return True
+
+        for vertical_wall in walls[0]:
+            if not top_neighbor and vertical_wall[1] == wall[1] and vertical_wall[0] == wall[0] - 2:
+                top_neighbor = True
+            if not bottom_neighbor and vertical_wall[1] == wall[1] and vertical_wall[0] == wall[0] + 2:
+                bottom_neighbor = True
+            if bottom_neighbor and top_neighbor:
+                return True
+
+    return False

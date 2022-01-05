@@ -6,6 +6,7 @@ from view import read_game_mode, read_move, read_table_size, read_wall_count, re
 def blockade() -> bool:
     resize_terminal(30, 90)
     show_start_screen()
+
     table_size = read_table_size()
 
     number_of_walls = read_wall_count()
@@ -14,7 +15,10 @@ def blockade() -> bool:
 
     pawn_positions = start_positions
 
-    walls = (((2,2),),())
+    walls = ((), ())
+
+    paths = (((), ()), ((), ()))
+
     heat_map = dict[tuple[int, int], int]()
     for row in range(table_size[0]):
         for column in range(table_size[1]):
@@ -32,7 +36,8 @@ def blockade() -> bool:
 
     game_ended = False
     while not game_ended:
-        pawn_positions, walls, number_of_walls = game_mode(pawn_positions, start_positions, walls, number_of_walls , table_size, computer_or_x_to_move)
+        pawn_positions, walls, number_of_walls = game_mode(
+            pawn_positions, start_positions, walls, number_of_walls, table_size, computer_or_x_to_move)
 
         computer_or_x_to_move = not computer_or_x_to_move
         show_table(table_size, walls,

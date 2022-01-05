@@ -63,11 +63,22 @@ def find_path_to_one(dimensions: tuple[int, int], vertical_walls: list[tuple[int
     return path
 
 
-def generate_next_moves(table_size: tuple[int, int], vertical_walls: list[tuple[int, int]], horizontal_walls: list[tuple[int, int]], pawn_position: tuple[int, int], destination_position: tuple[int, int]) -> list[tuple[int, int]]:
+def generate_next_moves(
+    current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    walls: tuple[tuple, tuple],
+    table_size: tuple[int, int],
+    selected_player_index: int,
+    selected_pawn_index: int,
+    destination_position: tuple[int, int],
+    new_pawn_position: tuple[int, int],
+    ) -> list[tuple[int, int]]:
     # == 2
-    if abs(destination_position[0] - pawn_position[0]) + abs(destination_position[1] - pawn_position[1]) == 1 and is_pawn_move_valid(vertical_walls, horizontal_walls, table_size, pawn_position, destination_position):
+    pawn_position = current_pawns_positions[selected_player_index][selected_pawn_index]
+    if abs(destination_position[0] - pawn_position[0]) + abs(destination_position[1] - pawn_position[1]) == 1 and is_pawn_move_valid(current_pawns_positions, start_positions, new_pawn_position, walls, table_size, selected_player_index, selected_pawn_index):
         return[destination_position]
-    return list(filter(lambda x: is_pawn_move_valid(vertical_walls, horizontal_walls, table_size, pawn_position, x), map(lambda x: (pawn_position[0] + x[0], pawn_position[1] + x[1]), [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0)])))
+####################################################################### dodati promenu za +1 gore dole levo desno samo i ti potezi i gen hahahhh
+    return list(filter(lambda x: is_pawn_move_valid(current_pawns_positions, start_positions, new_pawn_position, walls, table_size, selected_player_index, selected_pawn_index, x), map(lambda x: (pawn_position[0] + x[0], pawn_position[1] + x[1]), [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0)])))
 
 
 #to delete: ptrptr

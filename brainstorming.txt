@@ -55,3 +55,8 @@ vrv ce smanje dimenzije zbog mng mogucnosti i manje zidova
 bar dubina 3
 ne treba nikakva optimizacija za poene al ce traba za takmicnje npr da se pamte odigrana stanja
 provera da ne bude pat: https://youtu.be/NXCs2lDwrMM?list=PLWLPHZCdUNsNulbWQdfIwOperY6ra7iu2&t=1844
+
+
+
+walls: tuple[tuple, tuple],#vertical pa horizontal
+

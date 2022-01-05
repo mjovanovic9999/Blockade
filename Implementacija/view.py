@@ -229,6 +229,7 @@ def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
                                 player_index)
     if new_wall_state != (walls, number_of_walls, heat_map):
         return new_wall_state
+
     print(constants.MESSAGE_INVALID_WALL_POSITION)
     read_wall_position_and_place_wall(walls,
                                       number_of_walls,
@@ -270,7 +271,7 @@ def read_pawn_position_and_move_pawn(current_pawn_positions: tuple[tuple[tuple[i
                                    table_size,
                                    selected_player_index,
                                    selected_pawn_index)
-    if new_pawn_positions != current_pawn_positions[selected_player_index][selected_pawn_index]:
+    if new_pawn_positions != current_pawn_positions:
         return new_pawn_positions
 
     print(constants.MESSAGE_INVALID_PAWN_MOVE)

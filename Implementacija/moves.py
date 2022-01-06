@@ -34,11 +34,10 @@ def is_pawn_move_valid(
     walls: tuple[tuple, tuple],
     table_size: tuple[int, int],
     selected_player_index: int,
-    selected_pawn_index: int,  # da se izbaci mzd
+    selected_pawn_index: int,
     old_pawn_position: tuple[int, int],
     new_pawn_position: tuple[int, int]
 ) -> bool:
-    # da moze da ga istera!!!!!!!!!!!!!!!!!!!!!!
 
     if new_pawn_position[1] < 1 or new_pawn_position[0] < 1 or new_pawn_position[1] > table_size[1] or new_pawn_position[0] > table_size[0] or (old_pawn_position[0] == new_pawn_position[0] and old_pawn_position[1] == new_pawn_position[1]):
         return False
@@ -156,6 +155,18 @@ def is_pawn_move_valid(
     return True
 
 
+def is_pawn_move_valid(
+    current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    walls: tuple[tuple, tuple],
+    table_size: tuple[int, int],
+    selected_player_index: int,
+    selected_pawn_index: int,
+    new_pawn_position: tuple[int, int]
+) -> bool:
+    return is_pawn_move_valid(current_pawns_positions,start_positions,walls,table_size,selected_player_index,selected_pawn_index,current_pawns_positions[selected_player_index][selected_pawn_index],new_pawn_position)
+
+
 def transform_position_if_occupied(old_position: tuple[int, int], new_position: tuple[int, int]) -> tuple[int, int]:
 
     if(old_position[0] == new_position[0]):
@@ -207,7 +218,7 @@ def place_wall(
     wall_index: int,
     player_index: int
 ) -> tuple[tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]], dict[tuple[int, int], int]]:
-    if not is_wall_place_valid(walls, table_size, wall_position, wall_index == 1):
+    if not is_wall_place_valid(walls, table_size, wall_position, wall_index):
         return (walls, number_of_walls, heat_map)
 
     new_heatmap = update_heat_map(heat_map, table_size, wall_position)

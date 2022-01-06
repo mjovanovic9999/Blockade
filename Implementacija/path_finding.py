@@ -88,10 +88,10 @@ def find_path_to_one(
 def generate_next_moves(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],#
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],#ovo je bio destination
-    walls: tuple[tuple, tuple],#
-    table_size: tuple[int, int],#
-    selected_player_index: int,#zbog prvo
-    selected_pawn_index: int, #zbog prvo
+    walls: tuple[tuple, tuple],
+    table_size: tuple[int, int],
+    selected_player_index: int,
+    selected_pawn_index: int,
     current_position:tuple[int,int]
     ) -> list[tuple[int, int]]:
     return list(filter(lambda x: is_pawn_move_valid(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index,current_position, x), map(lambda x: (current_position[0] + x[0], current_position[1] + x[1]), [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0), (-1, 0),(1, 0),(0, -1),(0, 1)])))

@@ -40,7 +40,7 @@ def is_pawn_move_valid(
 ) -> bool:
     # da moze da ga istera!!!!!!!!!!!!!!!!!!!!!!
 
-    if new_pawn_position[1] < 0 or new_pawn_position[0] < 0 or new_pawn_position[1] > table_size[1]-1 or new_pawn_position[0] > table_size[0]-1 or (old_pawn_position[0] == new_pawn_position[0] and old_pawn_position[1] == new_pawn_position[1]):
+    if new_pawn_position[1] < 1 or new_pawn_position[0] < 1 or new_pawn_position[1] > table_size[1] or new_pawn_position[0] > table_size[0] or (old_pawn_position[0] == new_pawn_position[0] and old_pawn_position[1] == new_pawn_position[1]):
         return False
     if abs(new_pawn_position[1]-old_pawn_position[1]) + abs(new_pawn_position[0]-old_pawn_position[0]) > 2:
         return False

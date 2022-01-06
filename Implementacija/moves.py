@@ -1,5 +1,5 @@
-from utility import add_to_tuple, int_to_table_coordinate, update_tuple
-from copy import deepcopy
+from queue import Queue
+from utility import add_to_tuple, update_tuple
 
 
 def is_game_end(
@@ -57,7 +57,6 @@ def is_pawn_move_valid(
     if new_pawn_position in list(current_pawns_positions[not selected_player_index]) and not new_pawn_position in my_both_destinations:
         return False
 
-
     if old_pawn_position[0]-2 == new_pawn_position[0]:
         if\
             (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or\
@@ -109,9 +108,9 @@ def is_pawn_move_valid(
         else:  # samo ako je piun za 2 gore
             if\
                 not ((old_pawn_position[0]-2, old_pawn_position[1]) in all_pawns or
-                (old_pawn_position[0]-1, old_pawn_position[1]) in my_both_destinations) or\
+                     (old_pawn_position[0]-1, old_pawn_position[1]) in my_both_destinations) or\
                 ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[1] or
-                (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]):
+                 (old_pawn_position[0]-1, old_pawn_position[1]-1) in walls[1]):
                 return False
     elif old_pawn_position[0]+1 == new_pawn_position[0]:
         if old_pawn_position[1]-1 == new_pawn_position[1]:
@@ -275,3 +274,65 @@ def is_wall_connected_with_two_or_more_walls(wall: tuple[int, int],
                 return True
 
     return False
+
+
+def get_pawns_for_path_finding(wall: tuple[int, int],
+                               is_horizontal: bool,
+                               walls: tuple[tuple, tuple],
+                               paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]],
+                               table_size: tuple[int, int]) -> list[tuple[int, int]]:
+    pawns_for_path_finding = []
+    visited_walls = set()
+    walls_to_visit = Queue()
+
+    for wall in get_neighbor_walls_indexes(wall, is_horizontal, walls):
+        walls_to_visit.put(wall)
+
+    print(walls_to_visit)
+
+    while not walls_to_visit.empty() and len(pawns_for_path_finding) < 4:
+        current_wall_tuple = walls_to_visit.get()
+        current_wall = walls[current_wall[0]][current_wall[1]]
+        is_horizontal = current_wall[0] == 1
+        visited_walls.add(current_wall_tuple)
+
+        if is_wall_connected_with_two_or_more_walls(current_wall, is_horizontal, table_size):
+            for wall in get_neighbor_walls_indexes(wall, is_horizontal, walls):
+                if wall not in visited_walls:
+                    walls_to_visit.put(wall)
+
+        pass
+
+    return pawns_for_path_finding
+
+
+def get_indexes_of_pawns_whose_path_is_cut(wall: tuple[int, int],
+                                           is_horizontal: bool,
+                                           paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]]) -> list:
+    pass
+
+
+def get_neighbor_walls_indexes(wall: tuple[int, int],
+                               is_horizontal: bool,
+                               walls: tuple[tuple, tuple]) -> list[tuple[int, int]]:
+    neighbors = []
+
+    if is_horizontal:
+        for index, horizontal_wall in enumerate(walls[1]):
+            if horizontal_wall[0] == wall[0] and (horizontal_wall[1] == wall[1] - 2 or horizontal_wall[1] == wall[1] + 2):
+                neighbors.append((1, index))
+
+        for index, vertical_wall in enumerate(walls[0]):
+            if (vertical_wall[1] == wall[1] - 1 or vertical_wall[1] == wall[1] + 1 or vertical_wall[1] == wall[1]) and (vertical_wall[0] == wall[0] or vertical_wall[0] == wall[0] - 1 or vertical_wall[0] == wall[0] + 1):
+                neighbors.append((0, index))
+
+    else:
+        for index, horizontal_wall in enumerate(walls[1]):
+            if (horizontal_wall[0] == wall[0] - 1 or horizontal_wall[0] == wall[0] + 1) and (horizontal_wall[1] == wall[1] or horizontal_wall[1] == wall[1] - 1 or horizontal_wall[1] == wall[1] + 1):
+                neighbors.append((1, index))
+
+        for index, vertical_wall in enumerate(walls[0]):
+            if vertical_wall[1] == wall[1] and (vertical_wall[0] == wall[0] - 2 or vertical_wall[0] == wall[0] + 2):
+                neighbors.append((0, index))
+
+    return neighbors

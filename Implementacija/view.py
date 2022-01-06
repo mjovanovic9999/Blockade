@@ -1,6 +1,6 @@
 import os
 import constants
-from moves import is_wall_connected_with_two_or_more_walls, move_pawn, place_wall
+from moves import get_neighbor_walls_indexes, get_pawns_for_path_finding, is_wall_connected_with_two_or_more_walls, move_pawn, place_wall
 from utility import check_if_string_is_number_in_range, int_to_table_coordinate, replace_substring_in_string_from_index, table_coordinate_to_int, update_tuple
 
 
@@ -84,25 +84,25 @@ def show_table(table_size: tuple[int, int],
 def print_table(table: str, table_size: tuple[int, int]) -> None:
     row_to_print = 2 * constants.SPACE
 
-    for j in range(table_size[1]):
+    for j in range(1, table_size[1] + 1):
         row_to_print += constants.TABLE_FIELD + int_to_table_coordinate(j)
     row_to_print += constants.NEW_LINE
 
     row_size = 4 * table_size[1] + 2
     row_to_print += constants.TABLE_FIELD + table[:row_size]
 
-    for i in range(table_size[0] * 2):
-        num = int_to_table_coordinate(i // 2)
-        if i % 2 == 0:
+    for i in range(1, table_size[0] * 2 + 1):
+        num = int_to_table_coordinate(i // 2 + 1)
+        if i % 2 == 1:
             row_to_print += constants.SPACE + num + constants.SPACE + \
-                table[row_size * (i + 1): row_size * (i + 2) - 1] + \
+                table[row_size * i: row_size * (i + 1) - 1] + \
                 constants.SPACE + num + constants.NEW_LINE
         else:
             row_to_print += constants.TABLE_FIELD + \
-                table[row_size * (i + 1): row_size * (i + 2)]
+                table[row_size * i: row_size * (i + 1)]
 
-    row_to_print += constants.SPACE
-    for j in range(table_size[1]):
+    row_to_print += 2 * constants.SPACE
+    for j in range(1, table_size[1] + 1):
         row_to_print += constants.TABLE_FIELD + int_to_table_coordinate(j)
 
     print(constants.NEW_LINE + row_to_print + constants.NEW_LINE)
@@ -228,8 +228,11 @@ def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
                                 wall_index,
                                 player_index)
     if new_wall_state != (walls, number_of_walls, heat_map):
-        print(is_wall_connected_with_two_or_more_walls(
-            wall_position, wall_index == 1, table_size, walls))
+      #  print(is_wall_connected_with_two_or_more_walls(
+        #    wall_position, wall_index == 1, table_size, walls))
+      #  print(get_neighbor_walls_indexes(wall_position, wall_index == 1, walls))
+        #get_pawns_for_path_finding(wall_position, wall_index == 1, walls, None)
+        # input()
         return new_wall_state
 
     print(constants.MESSAGE_INVALID_WALL_POSITION)
@@ -250,7 +253,7 @@ def read_row_and_column(table_size: tuple[int, int],
 
 
 def read_selected_pawn(current_players_pawn_positions: tuple[tuple[int, int], tuple[int, int]]) -> int:
-    return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, 1, 2, f'1 => ({int_to_table_coordinate(current_players_pawn_positions[0][0] - 1)}, {int_to_table_coordinate(current_players_pawn_positions[0][1] - 1)}) / 2 => ({int_to_table_coordinate(current_players_pawn_positions[1][0] - 1)}, {int_to_table_coordinate(current_players_pawn_positions[1][1] - 1)})') - 1
+    return read_int_from_range_with_preferred_value_or_options_recursion(constants.MESSAGE_PAWN_SELECTION, 1, 2, f'1 => ({int_to_table_coordinate(current_players_pawn_positions[0][0])}, {int_to_table_coordinate(current_players_pawn_positions[0][1])}) / 2 => ({int_to_table_coordinate(current_players_pawn_positions[1][0])}, {int_to_table_coordinate(current_players_pawn_positions[1][1])})') - 1
 
 
 def read_pawn_position_and_move_pawn(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -323,9 +326,9 @@ def read_pawn_start_position(which_player: str,
                              prefered_column: int,
                              occupied_positions) -> tuple[int, int]:
     row = read_int_from_range_with_preferred_value(
-        which_player + " start row", 0, table_size[0], prefered_row)
+        which_player + " start row", 1, table_size[0], prefered_row)
     column = read_int_from_range_with_preferred_value(
-        which_player + " start column", 0, table_size[1], prefered_column)
+        which_player + " start column", 1, table_size[1], prefered_column)
     return (row, column) if (row, column) not in occupied_positions else print(f'{constants.MESSAGE_INVALID_PAWN_POSITION} ({table_size[0]}x{table_size[1]})') or read_pawn_start_position(which_player, table_size,  prefered_column, prefered_row, occupied_positions)
 
 
@@ -374,7 +377,7 @@ def read_int_from_range_with_preferred_value_or_options_recursion(what_to_read: 
         return preferred_or_options
 
     temp_int = check_if_string_is_number_in_range(temp, low, high)
-    if temp_int:
+    if temp_int != None:
         return temp_int
 
     print(f'{constants.MESSAGE_INVALID_NUMBER_INPUT} ({low} - {high})')

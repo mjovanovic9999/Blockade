@@ -1,3 +1,5 @@
+from queue import Queue
+from typing import List, Set
 from constants import COORDINATES
 
 
@@ -9,7 +11,7 @@ def table_coordinate_to_int(table_coordinate: str) -> int:
 
 
 def int_to_table_coordinate(int: int) -> str:
-    return COORDINATES[int % len(COORDINATES)]
+    return COORDINATES[(int - 1) % len(COORDINATES)]
 
 
 def replace_substring_in_string_from_index(str: str, start_index: int, substr: str) -> str:
@@ -35,5 +37,6 @@ def add_to_tuple(tuple_to_update: tuple, new_value) -> tuple:
     tuple_list.append(new_value)
     return tuple(tuple_list)
 
-def tuple_4_positions(first1row:int,first1column,first2row:int,first2column:int,second1row:int,second1column:int,second2row:int,second2column:int)->tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
-    return (((first1row,first1column),(first2row,first2column)),((second1row,second1column),(second2row,second2column)))
+
+def tuple_4_positions(first1row: int, first1column, first2row: int, first2column: int, second1row: int, second1column: int, second2row: int, second2column: int) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
+    return (((first1row, first1column), (first2row, first2column)), ((second1row, second1column), (second2row, second2column)))

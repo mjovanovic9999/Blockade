@@ -236,7 +236,7 @@ def min_value(
 
 
 def generate_walls_positions(
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     selected_player_index: int,
@@ -259,7 +259,7 @@ def generate_walls_positions(
 def generate_pawns_positions(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     selected_player_index: int
     )->tuple[list[tuple[int,int]],list[tuple[int,int]]]:

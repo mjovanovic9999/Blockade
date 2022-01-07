@@ -21,7 +21,7 @@ def h_calculate_optimized(dimensions: tuple[int, int], next_position: tuple[int,
 def find_path(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int,
@@ -36,7 +36,7 @@ def find_path(
 def find_path_to_one(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int,
@@ -88,7 +88,7 @@ def find_path_to_one(
 def generate_next_moves(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],#
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],#ovo je bio destination
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int,

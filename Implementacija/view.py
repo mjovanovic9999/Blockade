@@ -46,7 +46,7 @@ def add_horizontal_wall(table: str, table_columns: int, row: int, column: int) -
 
 
 def show_table(table_size: tuple[int, int],
-               walls: tuple[tuple, tuple],
+               walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
                start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]) -> None:
     table = generate_empty_table(table_size)
@@ -162,13 +162,17 @@ def resize_terminal(height: int, width: int) -> None:
 
 def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
               start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-              walls: tuple[tuple, tuple],
+              walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
               number_of_walls: tuple[tuple[int, int], tuple[int, int]],
               table_size: tuple[int, int],
-              x_to_move: bool) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]]]:
-    print(constants.MESSAGE_PLAYER_X_TO_MOVE if x_to_move else constants.MESSAGE_PLAYER_O_TO_MOVE)
+              computer_or_x_to_move: bool,
+              multiplayer: bool = True) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]]]:
+    if multiplayer:
+        print(constants.MESSAGE_PLAYER_X_TO_MOVE if computer_or_x_to_move else constants.MESSAGE_PLAYER_O_TO_MOVE)
+    else:
+        print("Computer's turn" if computer_or_x_to_move else "Player's turn")
 
-    selected_player_index = 0 if x_to_move else 1
+    selected_player_index = 0 if computer_or_x_to_move else 1
 
     selected_pawn_index = read_selected_pawn(
         current_pawn_positions[selected_player_index])
@@ -210,7 +214,7 @@ def read_selected_wall(current_players_number_of_walls: tuple[int, int]) -> int:
     return -1
 
 
-def read_wall_position_and_place_wall(walls: tuple[tuple, tuple],
+def read_wall_position_and_place_wall(walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                                       number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                                       heat_map: dict[tuple[int, int], int],
                                       table_size: tuple[int, int],
@@ -258,7 +262,7 @@ def read_selected_pawn(current_players_pawn_positions: tuple[tuple[int, int], tu
 
 def read_pawn_position_and_move_pawn(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
                                      start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-                                     walls: tuple[tuple, tuple],
+                                     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                                      table_size: tuple[int, int],
                                      selected_player_index: int,
                                      selected_pawn_index: int,

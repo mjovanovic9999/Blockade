@@ -13,7 +13,7 @@ def is_game_end(
 def is_wall_place_valid(
     # current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     # start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     new_wall: tuple[int, int],
     is_wall_horizontal: bool,
@@ -38,7 +38,7 @@ def is_wall_place_valid(
 def is_pawn_move_valid(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int,
@@ -165,7 +165,7 @@ def is_pawn_move_valid(
 def is_pawn_move_valid(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int,
@@ -194,7 +194,7 @@ def move_pawn(
     current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     new_pawn_position: tuple[int, int],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int
@@ -217,7 +217,7 @@ def move_pawn(
 
 
 def place_wall(
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     heat_map: dict[tuple[int, int], int],
     table_size: tuple[int, int],
@@ -252,7 +252,7 @@ def update_heat_map(heat_map: dict[tuple[int, int], int], table_size: tuple[int,
 def is_wall_connected_with_two_or_more_walls(wall: tuple[int, int],
                                              is_horizontal: bool,
                                              table_size: tuple[int, int],
-                                             walls: tuple[tuple, tuple]) -> bool:
+                                             walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]) -> bool:
 
     if is_horizontal:
         left_neighbor = wall[1] == 1
@@ -297,7 +297,7 @@ def is_wall_connected_with_two_or_more_walls(wall: tuple[int, int],
 
 def get_pawns_for_path_finding(wall: tuple[int, int],
                                is_horizontal: bool,
-                               walls: tuple[tuple, tuple],
+                               walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                                paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]],
                                table_size: tuple[int, int]) -> list[tuple[int, int]]:
     pawns_for_path_finding = []
@@ -334,7 +334,7 @@ def get_indexes_of_pawns_whose_path_is_cut(wall: tuple[int, int],
 
 def get_neighbor_walls_indexes(wall: tuple[int, int],
                                is_horizontal: bool,
-                               walls: tuple[tuple, tuple]) -> list[tuple[int, int]]:
+                               walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]) -> list[tuple[int, int]]:
     neighbors = []
 
     if is_horizontal:

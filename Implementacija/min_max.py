@@ -3,10 +3,17 @@ from path_finding import generate_next_moves
 from utility import  add_wall_in_tuple, decrement_number_of_walls, update_pawn_positions
 
 
+#current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+#walls: tuple[tuple, tuple],
+# number_of_walls: tuple[tuple[int, int], tuple[int, int]],
+# heat_map: dict[tuple[int, int], int],
+# 
+
 def min_max(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple, tuple],
+    number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int],
     depth:int,
@@ -25,9 +32,9 @@ def min_max(
     #                     #x je stanje
     # return funct([min_max(x,depth-1,not is_player_min) for x in new_states])
     
-    return min_value(current_pawns_positions,start_positions,walls,table_size,heat_map,depth,is_player_min,alpha,beta)\
+    return min_value(current_pawns_positions,start_positions,walls,number_of_walls,table_size,heat_map,depth,is_player_min,alpha,beta)\
             if is_player_min else \
-            max_value(current_pawns_positions,start_positions,walls,table_size,heat_map,depth,is_player_min,alpha,beta)    
+            max_value(current_pawns_positions,start_positions,walls,number_of_walls,table_size,heat_map,depth,is_player_min,alpha,beta)    
 
 def next_states(#nije testirano!!!!!!!!!!!!!!!!
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -67,6 +74,7 @@ def evaluate_state(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple, tuple],
+    number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int]#jos neki param za sl fazu
 )->int:#koliko smo blizu pobede
@@ -80,41 +88,74 @@ def evaluate_state(
     distance(current_pawns_positions[1][1],start_positions[0][0])+\
     distance(current_pawns_positions[1][1],start_positions[0][1])
     return min-max
-
+#current_pawns_positions,start_positions,walls,number_of_walls,table_size,heat_map,depth,is_player_min,alpha,beta
 def max_value(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple, tuple],
+    number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int],
     depth:int,
     is_player_min:bool,
     alpha:int,
     beta:int
-    )->int:
+    ):
     if depth==0:
         return (
         current_pawns_positions,
         start_positions,
         walls,
+        number_of_walls,
         table_size,
         heat_map,
-        evaluate_state(current_pawns_positions, start_positions,walls,table_size,heat_map)
+        depth,
+        is_player_min,
+        alpha,
+        beta,
+        evaluate_state(current_pawns_positions, start_positions,walls,number_of_walls,table_size,heat_map)
         )
     beta=(0,beta)#0 je placeholder
     alpha=(0,alpha)
-    for (a,b,c,d,e,f,g) in next_states(
+    for (
+        new_current_pawns_positions,
+        new_start_positions,
+        new_walls,
+        new_number_of_walls,
+        new_table_size,
+        new_heat_map,
+        new_depth,
+        new_is_player_min,
+        new_alpha,
+        new_beta,
+    ) in next_states(
         current_pawns_positions,
         start_positions,
         walls,
+        number_of_walls,
         table_size,
         heat_map,
+        depth,
         is_player_min,
-        heat_map,
+        alpha,
+        beta,
         ):
         alpha=max(alpha,
-            min_value(a,b,c,d,e,f,g,depth-1,alpha[-1],beta[-1]),
-            key=lambda x: x[-1]
+            min_value(
+                    new_current_pawns_positions,
+                    new_start_positions,
+                    new_walls,
+                    new_number_of_walls,
+                    new_table_size,
+                    new_heat_map,
+                    depth-1,
+                    not new_is_player_min,
+                    new_alpha,
+                    new_beta,
+                    alpha[-1],
+                    beta[-1]
+                ),
+                key=lambda x: x[-1]
         )
         if alpha[-1]>=beta[-1]:
             return beta
@@ -125,36 +166,69 @@ def min_value(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple, tuple],
+    number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int],
     depth:int,
     is_player_min:bool,
     alpha:int,
     beta:int
-    )->int:
+    ):
     if depth==0:
         return (
         current_pawns_positions,
         start_positions,
         walls,
+        number_of_walls,
         table_size,
         heat_map,
-        evaluate_state(current_pawns_positions, start_positions,walls,table_size,heat_map)
+        depth,
+        is_player_min,
+        alpha,
+        beta,
+        evaluate_state(current_pawns_positions, start_positions,walls,number_of_walls,table_size,heat_map)
         )
     beta=(0,beta)#0 je placeholder
     alpha=(0,alpha)
-    for (a,b,c,d,e,f,g) in next_states(
+    for ( 
+        new_current_pawns_positions,
+        new_start_positions,
+        new_walls,
+        new_number_of_walls,
+        new_table_size,
+        new_heat_map,
+        new_depth,
+        new_is_player_min,
+        new_alpha,
+        new_beta
+        ) in next_states(
         current_pawns_positions,
         start_positions,
         walls,
+        number_of_walls,
         table_size,
         heat_map,
+        depth,
         is_player_min,
-        heat_map,
+        alpha,
+        beta,
         ):
         beta=min(beta,
-            max_value(a,b,c,d,e,f,g,depth-1,alpha[-1],beta[-1]),
-            key=lambda x: x[-1]
+        max_value(
+                new_current_pawns_positions,
+                new_start_positions,
+                new_walls,
+                new_number_of_walls,
+                new_table_size,
+                new_heat_map,
+                depth-1,
+                not new_is_player_min,
+                new_alpha,
+                new_beta,
+                alpha[-1],
+                beta[-1]
+                ),
+                key=lambda x: x[-1]
         )
         if alpha[-1]>=beta[-1]:
             return beta

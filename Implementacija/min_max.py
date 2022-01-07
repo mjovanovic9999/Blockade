@@ -189,5 +189,5 @@ def generate_pawns_positions(
     table_size: tuple[int, int],
     selected_player_index: int
     )->tuple[list[tuple[int,int]],list[tuple[int,int]]]:
-   return (generate_next_moves(current_pawns_positions,start_positions,walls,table_size,selected_player_index,0,current_pawns_positions[selected_player_index][0]),
+    return (generate_next_moves(current_pawns_positions,start_positions,walls,table_size,selected_player_index,0,current_pawns_positions[selected_player_index][0]),
     generate_next_moves(current_pawns_positions,start_positions,walls,table_size,selected_player_index,1,current_pawns_positions[selected_player_index][1]))

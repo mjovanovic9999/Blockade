@@ -1,5 +1,5 @@
 from queue import Queue
-from utility import add_to_tuple, update_tuple
+from utility import add_to_tuple, add_wall_in_tuple, update_tuple
 
 
 def is_game_end(
@@ -11,19 +11,26 @@ def is_game_end(
 
 
 def is_wall_place_valid(
+    # current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    # start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple, tuple],
     table_size: tuple[int, int],
-    wall_position: tuple[int, int],
-    is_horizontal: bool
+    new_wall: tuple[int, int],
+    is_wall_horizontal: bool,
+    # first_player_paths:tuple[tuple[tuple[int,int],...],tuple[tuple[int,int],...]],
+    # second_player_paths:tuple[tuple[tuple[int,int],...],tuple[tuple[int,int],...]],
 ) -> bool:
-    if table_size[0] <= wall_position[0] or table_size[1] <= wall_position[1] or wall_position[0] < 0 or wall_position[1] < 0:
+    if table_size[0] <= new_wall[0] or table_size[1] <= new_wall[1] or new_wall[0] < 0 or new_wall[1] < 0:
         return False
 
-    if is_horizontal and (wall_position in walls[1] or (wall_position[0], wall_position[1] - 1) in walls[1] or (wall_position[0], wall_position[1] + 1) in walls[1] or wall_position in walls[0]):
+    if is_wall_horizontal and (new_wall in walls[1] or (new_wall[0], new_wall[1] - 1) in walls[1] or (new_wall[0], new_wall[1] + 1) in walls[1] or new_wall in walls[0]):
         return False
 
-    if not is_horizontal and (wall_position in walls[0] or (wall_position[0] - 1, wall_position[1]) in walls[0] or (wall_position[0] + 1, wall_position[1]) in walls[0] or wall_position in walls[1]):
+    if not is_wall_horizontal and (new_wall in walls[0] or (new_wall[0] - 1, new_wall[1]) in walls[0] or (new_wall[0] + 1, new_wall[1]) in walls[0] or new_wall in walls[1]):
         return False
+
+    #temp_walls=add_wall_in_tuple(walls,new_wall,is_wall_horizontal)
+
 
     return True
 
@@ -167,20 +174,20 @@ def is_pawn_move_valid(
     return is_pawn_move_valid(current_pawns_positions,start_positions,walls,table_size,selected_player_index,selected_pawn_index,current_pawns_positions[selected_player_index][selected_pawn_index],new_pawn_position)
 
 
-def transform_position_if_occupied(old_position: tuple[int, int], new_position: tuple[int, int]) -> tuple[int, int]:
+# def transform_position_if_occupied(old_position: tuple[int, int], new_position: tuple[int, int]) -> tuple[int, int]:
 
-    if(old_position[0] == new_position[0]):
-        return (new_position[0], new_position[1] + (-1 if old_position[1] < new_position[1] else 1))
+#     if(old_position[0] == new_position[0]):
+#         return (new_position[0], new_position[1] + (-1 if old_position[1] < new_position[1] else 1))
 
-    if(old_position[1] == new_position[1]):
-        return (new_position[0] + (-1 if old_position[0] < new_position[0] else 1), new_position[1])
+#     if(old_position[1] == new_position[1]):
+#         return (new_position[0] + (-1 if old_position[0] < new_position[0] else 1), new_position[1])
 
-    return old_position
+#     return old_position
 
 
-def transform_position_if_pawn_skips_start_position(new_position: tuple[int, int], opponent_start_positions: tuple[tuple[int, int], tuple[int, int]]) -> tuple[int, int]:
-    if(new_position[0] == new_position[0]):
-        return (new_position[0], new_position[1] + (-1 if new_position[1] < new_position[1] else 1))
+# def transform_position_if_pawn_skips_start_position(new_position: tuple[int, int], opponent_start_positions: tuple[tuple[int, int], tuple[int, int]]) -> tuple[int, int]:
+#     if(new_position[0] == new_position[0]):
+#         return (new_position[0], new_position[1] + (-1 if new_position[1] < new_position[1] else 1))
 
 
 def move_pawn(
@@ -218,6 +225,7 @@ def place_wall(
     wall_index: int,
     player_index: int
 ) -> tuple[tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]], dict[tuple[int, int], int]]:
+    # raise Exception("losi params od ispod") 
     if not is_wall_place_valid(walls, table_size, wall_position, wall_index):
         return (walls, number_of_walls, heat_map)
 
@@ -312,7 +320,7 @@ def get_pawns_for_path_finding(wall: tuple[int, int],
                 if wall not in visited_walls:
                     walls_to_visit.put(wall)
 
-        pass
+        # pass
 
     return pawns_for_path_finding
 
@@ -320,6 +328,7 @@ def get_pawns_for_path_finding(wall: tuple[int, int],
 def get_indexes_of_pawns_whose_path_is_cut(wall: tuple[int, int],
                                            is_horizontal: bool,
                                            paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]]) -> list:
+    #okida se 
     pass
 
 

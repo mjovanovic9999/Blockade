@@ -162,7 +162,7 @@ def is_pawn_move_valid(
     return True
 
 
-def is_pawn_move_valid(
+def is_pawn_move_valid_with_indexes(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
@@ -199,13 +199,12 @@ def move_pawn(
     selected_player_index: int,
     selected_pawn_index: int
 ) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
-    if not is_pawn_move_valid(current_pawn_positions,
+    if not is_pawn_move_valid_with_indexes(current_pawn_positions,
                               start_positions,
                               walls,
                               table_size,
                               selected_player_index,
-                              selected_pawn_index,
-                              current_pawn_positions[selected_player_index][selected_pawn_index],
+                              selected_pawn_index,                             
                               new_pawn_position):
         return current_pawn_positions
 
@@ -356,3 +355,4 @@ def get_neighbor_walls_indexes(wall: tuple[int, int],
                 neighbors.append((0, index))
 
     return neighbors
+

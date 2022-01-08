@@ -166,7 +166,7 @@ def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, in
               number_of_walls: tuple[tuple[int, int], tuple[int, int]],
               table_size: tuple[int, int],
               computer_or_x_to_move: bool,
-              multiplayer: bool = True) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]]]:
+              multiplayer: bool = True) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
     if multiplayer:
         print(constants.MESSAGE_PLAYER_X_TO_MOVE if computer_or_x_to_move else constants.MESSAGE_PLAYER_O_TO_MOVE)
     else:

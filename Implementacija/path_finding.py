@@ -1,4 +1,4 @@
-from moves import is_pawn_move_valid
+from moves import is_pawn_move_valid, is_pawn_move_valid_with_indexes
 
 
 # sto manja to bolja

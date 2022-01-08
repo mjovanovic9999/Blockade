@@ -2,6 +2,7 @@
 from min_max import min_max
 from moves import is_game_end
 from view import read_game_mode, read_move, read_table_size, read_wall_count, read_first_player, read_start_positions, resize_terminal, show_end_screen, show_start_screen, show_table
+import constants
 
 
 def blockade() -> bool:
@@ -37,7 +38,7 @@ def blockade() -> bool:
 
     game_ended = False
     while not game_ended:
-        pawn_positions, walls, number_of_walls, a = game_mode(
+        pawn_positions, walls, number_of_walls = game_mode(
             pawn_positions, start_positions, walls, number_of_walls, table_size, computer_or_x_to_move)
 
         computer_or_x_to_move = not computer_or_x_to_move
@@ -54,7 +55,7 @@ def multiplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], t
                 walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                 number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                 table_size: tuple[int, int],
-                x_to_move: bool) -> tuple[tuple[int, int]]:
+                x_to_move: bool) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
 
     return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move)
 
@@ -64,7 +65,16 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                  walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                  number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                  table_size: tuple[int, int],
-                 computer_to_move: bool) -> bool:
+                 computer_to_move: bool) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
     if computer_to_move:
-        return min_max()
+        min_max_state = min_max(pawn_positions,
+                                start_positions,
+                                walls, number_of_walls,
+                                table_size,
+                                {},
+                                3,
+                                False,
+                                constants.MIN_VALUE,
+                                constants.MAX_VALUE)
+        return (min_max_state[0], min_max_state[2], min_max_state[3])
     return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, computer_to_move, False)

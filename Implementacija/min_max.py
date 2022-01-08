@@ -1,6 +1,6 @@
 from moves import is_pawn_move_valid_with_indexes, is_wall_place_valid
 from path_finding import generate_next_moves
-from utility import add_wall_in_tuple, decrement_number_of_walls, update_pawn_positions
+from utility import add_wall_in_tuple, decrement_number_of_walls, update_pawn_positions, update_tuple, update_tuple_many
 
 
 # current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -89,6 +89,14 @@ def evaluate_state(
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int]  # jos neki param za sl fazu
 ) -> int:  # koliko smo blizu pobede
+    if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
+            current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
+        return 1000
+
+    if current_pawns_positions[1][0] == start_positions[0][0] or current_pawns_positions[1][0] == start_positions[0][1] or\
+            current_pawns_positions[1][1] == start_positions[0][0] or current_pawns_positions[1][1] == start_positions[0][1]:
+        return -1000
+
     max = distance(current_pawns_positions[0][0], start_positions[1][0]) +\
         distance(current_pawns_positions[0][0], start_positions[1][1]) +\
         distance(current_pawns_positions[0][1], start_positions[1][0]) +\
@@ -129,8 +137,28 @@ def max_value(
             evaluate_state(current_pawns_positions, start_positions,
                            walls, number_of_walls, table_size, heat_map)
         )
-    beta = (0, beta)  # 0 je placeholder
-    alpha = (0, alpha)
+    beta = (current_pawns_positions,
+            start_positions,
+            walls,
+            number_of_walls,
+            table_size,
+            heat_map,
+            depth,
+            is_player_min,
+            alpha,
+            beta,
+            beta)  # 0 je placeholder
+    alpha = (current_pawns_positions,
+             start_positions,
+             walls,
+             number_of_walls,
+             table_size,
+             heat_map,
+             depth,
+             is_player_min,
+             alpha,
+             beta,
+             alpha)
     for (
         new_current_pawns_positions,
         new_start_positions,
@@ -148,21 +176,21 @@ def max_value(
         is_player_min,
         heat_map
     ):
-        alpha = max(alpha,
-                    min_value(
-                        new_current_pawns_positions,
-                        new_start_positions,
-                        new_walls,
-                        new_number_of_walls,
-                        new_table_size,
-                        new_heat_map,
-                        depth-1,
-                        new_is_player_min,
-                        alpha[-1],
-                        beta[-1]
-                    ),
-                    key=lambda x: x[-1]
-                    )
+        newalpha = min_value(new_current_pawns_positions,
+                             new_start_positions,
+                             new_walls,
+                             new_number_of_walls,
+                             new_table_size,
+                             new_heat_map,
+                             depth-1,
+                             new_is_player_min,
+                             alpha[-1],
+                             beta[-1]
+                             )
+
+        if newalpha[-1] > alpha[-1]:
+            alpha = update_tuple_many(
+                newalpha, {0: new_current_pawns_positions, 2: new_walls, 3: new_number_of_walls})
         if alpha[-1] >= beta[-1]:
             return beta
     return alpha
@@ -179,6 +207,8 @@ def min_value(
     is_player_min: bool,
     alpha: int,
     beta: int
+
+
 ):
     if depth == 0:
         return (
@@ -195,8 +225,27 @@ def min_value(
             evaluate_state(current_pawns_positions, start_positions,
                            walls, number_of_walls, table_size, heat_map)
         )
-    beta = (0, beta)  # 0 je placeholder
-    alpha = (0, alpha)
+    beta = (current_pawns_positions,
+            start_positions,
+            walls,
+            number_of_walls,
+            table_size,
+            heat_map,
+            depth,
+            is_player_min,
+            alpha,
+            beta,
+            beta)  # 0 je placeholder
+    alpha = (current_pawns_positions,
+             start_positions,
+             walls,
+             number_of_walls,
+             table_size,
+             heat_map,
+             depth,
+             is_player_min,
+             alpha,
+             beta, alpha)
     for (
         new_current_pawns_positions,
         new_start_positions,
@@ -214,21 +263,21 @@ def min_value(
         is_player_min,
         heat_map,
     ):
-        beta = min(beta,
-                   max_value(
-                       new_current_pawns_positions,
-                       new_start_positions,
-                       new_walls,
-                       new_number_of_walls,
-                       new_table_size,
-                       new_heat_map,
-                       depth-1,
-                       new_is_player_min,
-                       alpha[-1],
-                       beta[-1]
-                   ),
-                   key=lambda x: x[-1]
-                   )
+        newbeta = max_value(new_current_pawns_positions,
+                            new_start_positions,
+                            new_walls,
+                            new_number_of_walls,
+                            new_table_size,
+                            new_heat_map,
+                            depth-1,
+                            new_is_player_min,
+                            alpha[-1],
+                            beta[-1]
+                            )
+        if newbeta[-1] < beta[-1]:
+            beta = update_tuple_many(
+                newbeta, {0: new_current_pawns_positions, 2: new_walls, 3: new_number_of_walls})
+
         if alpha[-1] >= beta[-1]:
             return alpha
     return beta

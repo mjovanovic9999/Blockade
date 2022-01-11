@@ -46,22 +46,30 @@ def next_states(  # nije testirano!!!!!!!!!!!!!!!!
         number_of_walls, is_player_min, False)
     for new_pawn in all_pawn_positions[0]:
         new_pawns_positions = update_pawn_positions(
-            current_pawns_positions, is_player_min, 0, new_pawn)
-        for new_wall in all_walls[0]:
-            # if is_wall_place_valid(walls,table_size,new_wall,False): #ne pozivam jer moguc update za params!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            new_walls = add_wall_in_tuple(walls, new_wall, 0)
-            state.append((new_pawns_positions, start_positions, new_walls,
-                         new_number_of_walls, table_size, not is_player_min, heat_map))
+            current_pawns_positions, is_player_min, 0, new_pawn)  
+        if all_walls!=[]:
+            for new_wall in all_walls[0]:
+                # if is_wall_place_valid(walls,table_size,new_wall,False): #ne pozivam jer moguc update za params!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                new_walls = add_wall_in_tuple(walls, new_wall, 0)
+                state.append((new_pawns_positions, start_positions, new_walls,
+                            new_number_of_walls, table_size, not is_player_min, heat_map))
+        else:
+            state.append((new_pawns_positions, start_positions, walls,
+                            number_of_walls, table_size, not is_player_min, heat_map))
 
     new_number_of_walls = decrement_number_of_walls(
         number_of_walls, is_player_min, True)
     for new_pawn in all_pawn_positions[1]:
         new_pawns_positions = update_pawn_positions(
             current_pawns_positions, is_player_min, 1, new_pawn)
-        for new_wall in all_walls[1]:
-            new_walls = add_wall_in_tuple(walls, new_wall, 1)
-            state.append((new_pawns_positions, start_positions, new_walls,
-                         new_number_of_walls, table_size, not is_player_min, heat_map))
+        if all_walls!=[]:
+            for new_wall in all_walls[1]:
+                new_walls = add_wall_in_tuple(walls, new_wall, 1)
+                state.append((new_pawns_positions, start_positions, new_walls,
+                            new_number_of_walls, table_size, not is_player_min, heat_map))
+        else:
+            state.append((new_pawns_positions, start_positions, walls,
+                        number_of_walls, table_size, not is_player_min, heat_map))
 
     return state
 

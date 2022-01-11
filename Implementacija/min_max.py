@@ -81,7 +81,7 @@ def distance(next_pos: tuple[int, int], dest_pos: tuple[int, int]) -> int:
 def evaluate_state(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int]  # jos neki param za sl fazu
@@ -110,7 +110,7 @@ def evaluate_state(
 def max_value(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int],
@@ -207,7 +207,7 @@ def max_value(
 def min_value(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int],
@@ -307,7 +307,7 @@ def generate_walls_positions(
     table_size: tuple[int, int],
     selected_player_index: int,
 ) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
-    new_walls = ([], [])
+    new_walls = ((),() )
     if number_of_walls[selected_player_index][0] > 0:
         for i in range(1, table_size[0]):
             for j in range(1, table_size[1]+1):

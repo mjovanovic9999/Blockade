@@ -302,12 +302,12 @@ def min_value(
 
 
 def generate_walls_positions(
-    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],#(((1,1),(2,2)),((1,1),(2,2)))
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     selected_player_index: int,
 ) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
-    new_walls = ((),() )
+    new_walls = (((()),),((()),) )
     if number_of_walls[selected_player_index][0] > 0:
         for i in range(1, table_size[0]):
             for j in range(1, table_size[1]+1):

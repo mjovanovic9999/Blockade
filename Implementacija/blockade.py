@@ -21,6 +21,8 @@ def blockade() -> bool:
 
     paths = (((), ()), ((), ()))
 
+    wall_connection_points = {}
+
     heat_map = dict[tuple[int, int], int]()
     for row in range(table_size[0]):
         for column in range(table_size[1]):
@@ -72,10 +74,10 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                                 walls, number_of_walls,
                                 table_size,
                                 {},
-                                2,
+                                3,
                                 False,
                                 constants.MIN_VALUE,
                                 constants.MAX_VALUE)
         
-        return (min_max_state[0], min_max_state[2], min_max_state[3])
+        return (min_max_state[-4], min_max_state[-3], min_max_state[-2])
     return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, computer_to_move, False)

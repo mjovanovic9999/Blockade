@@ -240,6 +240,7 @@ def place_wall(
                                       number_of_walls[player_index][wall_index] - 1)),
             new_heatmap)
 
+#def update_wall_connection_points()
 
 def update_heat_map(heat_map: dict[tuple[int, int], int], table_size: tuple[int, int], wall_position: tuple[int, int]) -> dict[tuple[int, int], int]:
     # position = (row, column)

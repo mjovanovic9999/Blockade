@@ -78,7 +78,7 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                                 walls, number_of_walls,
                                 table_size,
                                 {},
-                                2,
+                                3,
                                 False,
                                 constants.MIN_VALUE,
                                 constants.MAX_VALUE)

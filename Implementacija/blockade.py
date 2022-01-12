@@ -1,4 +1,5 @@
 
+from frozendict import frozendict
 from min_max import min_max
 from moves import is_game_end
 from view import read_game_mode, read_move, read_table_size, read_wall_count, read_first_player, read_start_positions, resize_terminal, show_end_screen, show_start_screen, show_table
@@ -22,7 +23,7 @@ def blockade() -> bool:
 
     paths = (((), ()), ((), ()))
 
-    wall_connection_points = {}
+    wall_connection_points = frozendict({})
 
     heat_map = dict[tuple[int, int], int]()
     for row in range(table_size[0]):

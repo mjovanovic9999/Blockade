@@ -93,3 +93,9 @@ def tuple_4_positions(
     second1row: int, second1column: int, second2row: int, second2column: int
 ) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
     return (((first1row, first1column), (first2row, first2column)), ((second1row, second1column), (second2row, second2column)))
+
+def update_dict_neighbors_or_insert_new_node(dict: dict[Any, list], node, neighbor) -> None:
+    if node in dict.keys():
+        dict[node].append(neighbor)
+        return
+    dict[node] = [neighbor]

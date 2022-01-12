@@ -1,5 +1,7 @@
 from queue import Queue
-from utility import add_to_tuple, add_wall_in_tuple, update_tuple
+
+from frozendict import frozendict
+from utility import add_to_tuple, add_wall_in_tuple, update_dict_neighbors_or_insert_new_node, update_tuple
 
 
 def is_game_end(
@@ -240,10 +242,15 @@ def place_wall(
                                       number_of_walls[player_index][wall_index] - 1)),
             new_heatmap)
 
-def update_wall_connection_points(wall_connection_points: dict[tuple[int, int], list[tuple[int, int]]], new_wall_position: tuple[int, int], is_horizontal: bool) -> dict:
-    new_wall_connection_positions = (new_wall_position, (new_wall_position[0] + 1, new_wall_position[1]) if is_horizontal else (new_wall_position[0], new_wall_position[1] + 1))
-    for wall_connection_point in wall_connection_points:
-        pass
+def update_wall_connection_points(wall_connection_points: frozendict[tuple[int, int], list[tuple[int, int]]], new_wall_position: tuple[int, int], is_horizontal: bool) -> frozendict[tuple[int, int], list[tuple[int, int]]]:
+    new_wall_connection_positions = (new_wall_position, (new_wall_position[0] + 2, new_wall_position[1]) if is_horizontal else (new_wall_position[0], new_wall_position[1] + 2))
+    wall_connection_points_dict = dict(wall_connection_points)
+
+    update_dict_neighbors_or_insert_new_node(wall_connection_points_dict, new_wall_connection_positions[0], new_wall_connection_positions[1])
+    update_dict_neighbors_or_insert_new_node(wall_connection_points_dict, new_wall_connection_positions[1], new_wall_connection_positions[0])
+        
+
+    return frozendict(wall_connection_points)
 
 def update_heat_map(heat_map: dict[tuple[int, int], int], table_size: tuple[int, int], wall_position: tuple[int, int]) -> dict[tuple[int, int], int]:
     # position = (row, column)

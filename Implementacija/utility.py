@@ -60,6 +60,14 @@ def add_wall_in_tuple(
     updated_walls.append(new_wall)
     return (walls[0], updated_walls) if is_wall_horizontal else (updated_walls, walls[1])
 
+def remove_wall_from_tuple(
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
+    to_remove_wall: tuple[int, int],
+    is_wall_horizontal: bool,
+    ):
+    updated_walls = list(walls[is_wall_horizontal])
+    updated_walls.remove(to_remove_wall)
+    return (walls[0], updated_walls) if is_wall_horizontal else (updated_walls, walls[1])
 
 def decrement_number_of_walls(
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],

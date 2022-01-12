@@ -109,6 +109,10 @@ def evaluate_state(
     return result
 # current_pawns_positions,start_positions,walls,number_of_walls,table_size,heat_map,depth,is_player_min,alpha,beta
 
+previous_pawns=[]
+rez_array=[]
+threads=[]
+count=[0]
 
 def max_value(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -157,7 +161,7 @@ def max_value(
             state_current_pawns_positions,
             state_walls,
             state_number_of_walls,
-            beta,)  # 0 je placeholder
+            beta)  # 0 je placeholder
     alpha = (current_pawns_positions,
              start_positions,
              walls,
@@ -181,8 +185,11 @@ def max_value(
         table_size,
         is_player_min,
         heat_map,
-        previous_generated_walls,
+        previous_generated_walls
     )
+    
+
+
 
     for (
         new_current_pawns_positions,
@@ -193,7 +200,23 @@ def max_value(
         new_is_player_min,
         new_heat_map
         ) in states[0]:
-        alpha=max(alpha,max_value(new_current_pawns_positions,
+        
+        def max_thread(id):
+            rez=max_value(new_current_pawns_positions, new_start_positions,   new_walls,  new_number_of_walls,
+                            new_table_size, new_heat_map,  depth-1,  new_is_player_min,  alpha[-1],   beta[-1],   states[1],
+                            new_current_pawns_positions if state_current_pawns_positions is None else state_current_pawns_positions,
+                            new_walls if state_walls is None else state_walls,
+                            new_number_of_walls if state_number_of_walls is None else state_number_of_walls)
+            rez_array.append(rez)
+
+        if depth==3 and new_current_pawns_positions not in previous_pawns:
+            previous_pawns.append(new_current_pawns_positions)
+            threads.append( threading.Thread(target= max_thread,args=count))
+            count[0]=count[0]+1
+            threads[-1].start()
+
+        if depth != 3:
+            alpha=max(alpha,max_value(new_current_pawns_positions,
                             new_start_positions,
                             new_walls,
                             new_number_of_walls,
@@ -206,13 +229,22 @@ def max_value(
                             states[1],
                             new_current_pawns_positions if state_current_pawns_positions is None else state_current_pawns_positions,
                             new_walls if state_walls is None else state_walls,
-                            new_number_of_walls if state_number_of_walls is None else state_number_of_walls,
+                            new_number_of_walls if state_number_of_walls is None else state_number_of_walls
                             ),
             key=lambda x: x[-1]
         )
         if alpha[-1] >= beta[-1]:
             return beta
+    if depth==3:
+        for th in threads:
+            th.join()
+            
+        return max(rez_array,key=lambda x:x[-1])
     return alpha
+
+import threading
+
+import time
 
 
 def min_value(
@@ -283,7 +315,7 @@ def min_value(
         table_size,
         is_player_min,
         heat_map,
-        previous_generated_walls,
+        previous_generated_walls
     )
 
     for (
@@ -308,7 +340,7 @@ def min_value(
                             states[1], 
                             new_current_pawns_positions if state_current_pawns_positions is None else state_current_pawns_positions,
                             new_walls if state_walls is None else state_walls,
-                            new_number_of_walls if state_number_of_walls is None else state_number_of_walls,
+                            new_number_of_walls if state_number_of_walls is None else state_number_of_walls
                             ),
             key=lambda x: x[-1]
         )
@@ -329,7 +361,6 @@ def generate_walls_positions(
         for i in range(1, table_size[0]):
             for j in range(1, table_size[1]+1):
                 if (i, j) not in walls[0] and is_wall_place_valid(walls, table_size, (i, j), 0):
-                    #new_walls[0].append((i, j))
                     vertical_walls.append((i,j))
 
     horizontal_walls=[]
@@ -337,7 +368,6 @@ def generate_walls_positions(
         for i in range(1, table_size[0]+1):
             for j in range(1, table_size[1]):
                 if (i, j) not in walls[1] and is_wall_place_valid(walls, table_size, (i, j), 1):
-                    # new_walls[1].append((i, j))
                     horizontal_walls.append((i,j))
 
     return (tuple(vertical_walls),tuple(horizontal_walls))

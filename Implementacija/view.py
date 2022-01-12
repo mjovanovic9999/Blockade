@@ -170,7 +170,7 @@ def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, in
     if multiplayer:
         print(constants.MESSAGE_PLAYER_X_TO_MOVE if computer_or_x_to_move else constants.MESSAGE_PLAYER_O_TO_MOVE)
     else:
-        print("Computer's turn" if computer_or_x_to_move else "Player's turn")
+        print("Player's turn")
 
     selected_player_index = 0 if computer_or_x_to_move else 1
 

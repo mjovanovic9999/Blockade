@@ -240,7 +240,10 @@ def place_wall(
                                       number_of_walls[player_index][wall_index] - 1)),
             new_heatmap)
 
-#def update_wall_connection_points()
+def update_wall_connection_points(wall_connection_points: dict[tuple[int, int], list[tuple[int, int]]], new_wall_position: tuple[int, int], is_horizontal: bool) -> dict:
+    new_wall_connection_positions = (new_wall_position, (new_wall_position[0] + 1, new_wall_position[1]) if is_horizontal else (new_wall_position[0], new_wall_position[1] + 1))
+    for wall_connection_point in wall_connection_points:
+        pass
 
 def update_heat_map(heat_map: dict[tuple[int, int], int], table_size: tuple[int, int], wall_position: tuple[int, int]) -> dict[tuple[int, int], int]:
     # position = (row, column)

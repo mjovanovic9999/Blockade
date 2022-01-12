@@ -5,6 +5,7 @@ from view import read_game_mode, read_move, read_table_size, read_wall_count, re
 import constants
 
 
+
 def blockade() -> bool:
     resize_terminal(30, 90)
     show_start_screen()
@@ -28,10 +29,11 @@ def blockade() -> bool:
         for column in range(table_size[1]):
             heat_map[(row, column)] = 0
 
-    computer_or_x_to_move = True
+    x_to_move = True
+    computer_is_x = True
     game_mode = multiplayer
     if read_game_mode():
-        computer_or_x_to_move = read_first_player()
+        x_to_move = read_first_player()
         game_mode = singleplayer
 
     resize_terminal(9999, 4 * table_size[1] + 12)
@@ -41,15 +43,15 @@ def blockade() -> bool:
     game_ended = False
     while not game_ended:
         pawn_positions, walls, number_of_walls = game_mode(
-            pawn_positions, start_positions, walls, number_of_walls, table_size, computer_or_x_to_move)
+            pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move)
 
-        computer_or_x_to_move = not computer_or_x_to_move
+        x_to_move = not x_to_move
         show_table(table_size, walls,
                    pawn_positions, start_positions)
 
         game_ended = is_game_end(pawn_positions, start_positions)
 
-    return show_end_screen(computer_or_x_to_move, game_mode == multiplayer)
+    return show_end_screen(x_to_move, game_mode == multiplayer)
 
 
 def multiplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -67,14 +69,16 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                  walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                  number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                  table_size: tuple[int, int],
-                 computer_to_move: bool) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
+                 computer_to_move: bool
+                 ) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
     if computer_to_move:
+        print("Computer's turn:")
         min_max_state = min_max(pawn_positions,
                                 start_positions,
                                 walls, number_of_walls,
                                 table_size,
                                 {},
-                                3,
+                                2,
                                 False,
                                 constants.MIN_VALUE,
                                 constants.MAX_VALUE)

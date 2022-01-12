@@ -1,6 +1,7 @@
+from os import stat
 from moves import is_pawn_move_valid_with_indexes, is_wall_place_valid
 from path_finding import generate_next_moves
-from utility import add_wall_in_tuple, decrement_number_of_walls, update_pawn_positions, update_tuple, update_tuple_many
+from utility import add_wall_in_tuple, decrement_number_of_walls, remove_wall_from_tuple, update_pawn_positions, update_tuple, update_tuple_many
 
 
 # current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -21,13 +22,13 @@ def min_max(
     alpha: int,
     beta: int,
 ):
-    return min_value(current_pawns_positions, start_positions, walls, number_of_walls, table_size, heat_map, depth, is_player_min, alpha, beta)\
+    return min_value(current_pawns_positions, start_positions, walls, number_of_walls, table_size, heat_map, depth, is_player_min, alpha, beta,None,None,None,None)\
         if is_player_min else \
         max_value(current_pawns_positions, start_positions, walls, number_of_walls,
-                  table_size, heat_map, depth, is_player_min, alpha, beta)
+                  table_size, heat_map, depth, is_player_min, alpha, beta,None,None,None,None)
 
 
-def next_states(  # nije testirano!!!!!!!!!!!!!!!!
+def next_states(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
@@ -35,10 +36,10 @@ def next_states(  # nije testirano!!!!!!!!!!!!!!!!
     table_size: tuple[int, int],
     is_player_min: bool,  # isto kao selected index
     heat_map: dict[tuple[int, int], int],
+    previous_generated_walls:tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]=None,
 ):  # list novih stanja
     state = []
-    all_walls = generate_walls_positions(
-        walls, number_of_walls, table_size, is_player_min)
+    all_walls = generate_walls_positions(walls, number_of_walls, table_size, is_player_min) if previous_generated_walls is None else previous_generated_walls
     all_pawn_positions = generate_pawns_positions(
         current_pawns_positions, start_positions, walls, table_size, is_player_min)
 
@@ -47,7 +48,7 @@ def next_states(  # nije testirano!!!!!!!!!!!!!!!!
     for new_pawn in all_pawn_positions[0]:
         new_pawns_positions = update_pawn_positions(
             current_pawns_positions, is_player_min, 0, new_pawn)  
-        if all_walls!=[]:
+        if all_walls!=((),()):
             for new_wall in all_walls[0]:
                 # if is_wall_place_valid(walls,table_size,new_wall,False): #ne pozivam jer moguc update za params!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 new_walls = add_wall_in_tuple(walls, new_wall, 0)
@@ -62,7 +63,7 @@ def next_states(  # nije testirano!!!!!!!!!!!!!!!!
     for new_pawn in all_pawn_positions[1]:
         new_pawns_positions = update_pawn_positions(
             current_pawns_positions, is_player_min, 1, new_pawn)
-        if all_walls!=[]:
+        if all_walls!=((),()):
             for new_wall in all_walls[1]:
                 new_walls = add_wall_in_tuple(walls, new_wall, 1)
                 state.append((new_pawns_positions, start_positions, new_walls,
@@ -71,7 +72,7 @@ def next_states(  # nije testirano!!!!!!!!!!!!!!!!
             state.append((new_pawns_positions, start_positions, walls,
                         number_of_walls, table_size, not is_player_min, heat_map))
 
-    return state
+    return (state,all_walls)
 
 
 def distance(next_pos: tuple[int, int], dest_pos: tuple[int, int]) -> int:
@@ -81,18 +82,12 @@ def distance(next_pos: tuple[int, int], dest_pos: tuple[int, int]) -> int:
 def evaluate_state(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int]  # jos neki param za sl fazu
 ) -> int:  # koliko smo blizu pobede
-    if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
-            current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
-        return 1000
 
-    if current_pawns_positions[1][0] == start_positions[0][0] or current_pawns_positions[1][0] == start_positions[0][1] or\
-            current_pawns_positions[1][1] == start_positions[0][0] or current_pawns_positions[1][1] == start_positions[0][1]:
-        return -1000
 
     max = distance(current_pawns_positions[0][0], start_positions[1][0]) +\
         distance(current_pawns_positions[0][0], start_positions[1][1]) +\
@@ -103,14 +98,22 @@ def evaluate_state(
         distance(current_pawns_positions[1][0], start_positions[0][1]) +\
         distance(current_pawns_positions[1][1], start_positions[0][0]) +\
         distance(current_pawns_positions[1][1], start_positions[0][1])
-    return min-max
+    result=min-max
+    if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
+            current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
+        result+=2
+
+    if current_pawns_positions[1][0] == start_positions[0][0] or current_pawns_positions[1][0] == start_positions[0][1] or\
+            current_pawns_positions[1][1] == start_positions[0][0] or current_pawns_positions[1][1] == start_positions[0][1]:
+        result-=2
+    return result
 # current_pawns_positions,start_positions,walls,number_of_walls,table_size,heat_map,depth,is_player_min,alpha,beta
 
 
 def max_value(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int],
@@ -118,6 +121,7 @@ def max_value(
     is_player_min: bool,
     alpha: int,
     beta: int,
+    previous_generated_walls:tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]=None,
     state_current_pawns_positions:tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]=None,
     state_walls:tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]=None,
     state_number_of_walls:tuple[tuple[int, int], tuple[int, int]]=None
@@ -168,6 +172,18 @@ def max_value(
              state_walls,
              state_number_of_walls,
              alpha)
+
+    states=next_states(
+        current_pawns_positions,
+        start_positions,
+        walls,
+        number_of_walls,
+        table_size,
+        is_player_min,
+        heat_map,
+        previous_generated_walls,
+    )
+
     for (
         new_current_pawns_positions,
         new_start_positions,
@@ -175,30 +191,25 @@ def max_value(
         new_number_of_walls,
         new_table_size,
         new_is_player_min,
-        new_heat_map,
-    ) in next_states(
-        current_pawns_positions,
-        start_positions,
-        walls,
-        number_of_walls,
-        table_size,
-        is_player_min,
-        heat_map
-    ):
-        alpha = min_value(new_current_pawns_positions,
-                             new_start_positions,
-                             new_walls,
-                             new_number_of_walls,
-                             new_table_size,
-                             new_heat_map,
-                             depth-1,
-                             new_is_player_min,
-                             alpha[-1],
-                             beta[-1],
-                             new_current_pawns_positions if state_current_pawns_positions==None else state_current_pawns_positions,
-                             new_walls if state_walls==None else state_walls,
-                             new_number_of_walls if state_number_of_walls==None else state_number_of_walls,
-                             )
+        new_heat_map
+        ) in states[0]:
+        alpha=max(alpha,max_value(new_current_pawns_positions,
+                            new_start_positions,
+                            new_walls,
+                            new_number_of_walls,
+                            new_table_size,
+                            new_heat_map,
+                            depth-1,
+                            new_is_player_min,
+                            alpha[-1],
+                            beta[-1],
+                            states[1],
+                            new_current_pawns_positions if state_current_pawns_positions is None else state_current_pawns_positions,
+                            new_walls if state_walls is None else state_walls,
+                            new_number_of_walls if state_number_of_walls is None else state_number_of_walls,
+                            ),
+            key=lambda x: x[-1]
+        )
         if alpha[-1] >= beta[-1]:
             return beta
     return alpha
@@ -207,7 +218,7 @@ def max_value(
 def min_value(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    walls: tuple[tuple, tuple],
+    walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     heat_map: dict[tuple[int, int], int],
@@ -215,6 +226,7 @@ def min_value(
     is_player_min: bool,
     alpha: int,
     beta: int,
+    previous_generated_walls:tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]=None,
     state_current_pawns_positions:tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]=None,
     state_walls:tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]=None,
     state_number_of_walls:tuple[tuple[int, int], tuple[int, int]]=None
@@ -247,7 +259,6 @@ def min_value(
             is_player_min,
             alpha,
             beta,
-            state_current_pawns_positions,
             state_walls,
             state_number_of_walls,
             beta)  # 0 je placeholder
@@ -261,19 +272,10 @@ def min_value(
              is_player_min,
              alpha,
              beta[-1],
-             state_current_pawns_positions,
              state_walls,
              state_number_of_walls,
              alpha)
-    for (
-        new_current_pawns_positions,
-        new_start_positions,
-        new_walls,
-        new_number_of_walls,
-        new_table_size,
-        new_is_player_min,
-        new_heat_map,
-    ) in next_states(
+    states=next_states(
         current_pawns_positions,
         start_positions,
         walls,
@@ -281,8 +283,19 @@ def min_value(
         table_size,
         is_player_min,
         heat_map,
-    ):
-        beta = max_value(new_current_pawns_positions,
+        previous_generated_walls,
+    )
+
+    for (
+        new_current_pawns_positions,
+        new_start_positions,
+        new_walls,
+        new_number_of_walls,
+        new_table_size,
+        new_is_player_min,
+        new_heat_map
+        ) in states[0]:
+        beta=min(beta,max_value(new_current_pawns_positions,
                             new_start_positions,
                             new_walls,
                             new_number_of_walls,
@@ -292,10 +305,13 @@ def min_value(
                             new_is_player_min,
                             alpha[-1],
                             beta[-1],
-                            new_current_pawns_positions if state_current_pawns_positions==None else state_current_pawns_positions,
-                            new_walls if state_walls==None else state_walls,
-                            new_number_of_walls if state_number_of_walls==None else state_number_of_walls,
-                            )
+                            states[1], 
+                            new_current_pawns_positions if state_current_pawns_positions is None else state_current_pawns_positions,
+                            new_walls if state_walls is None else state_walls,
+                            new_number_of_walls if state_number_of_walls is None else state_number_of_walls,
+                            ),
+            key=lambda x: x[-1]
+        )
         if alpha[-1] >= beta[-1]:
             return alpha
     return beta
@@ -306,21 +322,25 @@ def generate_walls_positions(
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
     selected_player_index: int,
-) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
-    new_walls = ([], [])
+) -> tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]:
+    new_walls = ((),() )
+    vertical_walls=[]
     if number_of_walls[selected_player_index][0] > 0:
         for i in range(1, table_size[0]):
             for j in range(1, table_size[1]+1):
                 if (i, j) not in walls[0] and is_wall_place_valid(walls, table_size, (i, j), 0):
-                    new_walls[0].append((i, j))
+                    #new_walls[0].append((i, j))
+                    vertical_walls.append((i,j))
 
+    horizontal_walls=[]
     if number_of_walls[selected_player_index][1] > 0:
         for i in range(1, table_size[0]+1):
             for j in range(1, table_size[1]):
                 if (i, j) not in walls[1] and is_wall_place_valid(walls, table_size, (i, j), 1):
-                    new_walls[1].append((i, j))
+                    # new_walls[1].append((i, j))
+                    horizontal_walls.append((i,j))
 
-    return new_walls
+    return (tuple(vertical_walls),tuple(horizontal_walls))
 
 
 def generate_pawns_positions(

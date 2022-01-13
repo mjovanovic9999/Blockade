@@ -291,7 +291,7 @@ def read_pawn_position_and_move_pawn(current_pawn_positions: tuple[tuple[tuple[i
 
 
 def read_first_player() -> bool:
-    return read_yes_no_prefered(constants.MESSAGE_COMPUTER_PLAYS_FIRST, False)
+    return read_yes_no_prefered(constants.MESSAGE_COMPUTER_PLAYS_FIRST, True)
 
 
 def read_game_mode() -> bool:

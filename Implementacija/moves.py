@@ -1,7 +1,8 @@
 from queue import Queue
 
 from frozendict import frozendict
-from utility import add_to_tuple, add_wall_in_tuple, update_dict_neighbors_or_insert_new_node, update_tuple
+from utility import add_to_tuple, add_wall_in_tuple, remove_from_tuple, update_coordinate_tuple_dict_neighbors_or_insert_new_node, update_tuple
+import path_finding
 
 
 def is_game_end(
@@ -18,9 +19,9 @@ def is_wall_place_valid(
     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     new_wall: tuple[int, int],
-    is_wall_horizontal: bool,
-    # first_player_paths:tuple[tuple[tuple[int,int],...],tuple[tuple[int,int],...]],
-    # second_player_paths:tuple[tuple[tuple[int,int],...],tuple[tuple[int,int],...]],
+    is_wall_horizontal: bool
+    # connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],
+    # x_to_move: bool
 ) -> bool:
     if table_size[0] <= new_wall[0] or table_size[1] <= new_wall[1] or new_wall[0] < 0 or new_wall[1] < 0:
         return False
@@ -31,8 +32,37 @@ def is_wall_place_valid(
     if not is_wall_horizontal and (new_wall in walls[0] or (new_wall[0] - 1, new_wall[1]) in walls[0] or (new_wall[0] + 1, new_wall[1]) in walls[0] or new_wall in walls[1]):
         return False
 
-    #temp_walls=add_wall_in_tuple(walls,new_wall,is_wall_horizontal)
+    # start = new_wall
+    # end1 = None
+    # end2 = None
+    # temp_connection_points1 = dict(connection_points)
+    # temp_connection_points2 = dict(connection_points)
+    # temp_connection_points1 = update_wall_connection_points(connection_points, new_wall, is_wall_horizontal)
+    # if is_wall_horizontal:
+    #     end1 = (new_wall[0] - 1, new_wall[1])
+    #     end2 = (new_wall[0] + 1, new_wall[1])
+    #     temp_connection_points1[new_wall] = remove_from_tuple(
+    #         temp_connection_points1[new_wall], end1)
+    #     temp_connection_points2[new_wall] = remove_from_tuple(
+    #         temp_connection_points2[new_wall], end2)
+    # else:
+    #     end1 = (new_wall[0], new_wall[1] - 1)
+    #     end2 = (new_wall[0], new_wall[1] + 1)
+    #     temp_connection_points1[new_wall] = remove_from_tuple(
+    #         temp_connection_points1[new_wall], end1)
+    #     temp_connection_points2[new_wall] = remove_from_tuple(
+    #         temp_connection_points2[new_wall], end2)
 
+    # if is_wall_connected_with_two_or_more_walls(new_wall, is_wall_horizontal, table_size, walls) and (path_finding.do_walls_make_polygon(temp_connection_points1, start, end1) or path_finding.do_walls_make_polygon(temp_connection_points2, start, end2)):
+    #     path = path_finding.find_path(current_pawns_positions, start_positions,
+    #                      walls, table_size, x_to_move, 0, {})
+    #     if not path[0] or not path[1]:
+    #         return False
+
+    #     path = path_finding.find_path(current_pawns_positions, start_positions,
+    #                      walls, table_size, x_to_move, 1, {})
+    #     if not path[0] or not path[1]:
+    #         return False
 
     return True
 
@@ -173,7 +203,7 @@ def is_pawn_move_valid_with_indexes(
     selected_pawn_index: int,
     new_pawn_position: tuple[int, int]
 ) -> bool:
-    return is_pawn_move_valid(current_pawns_positions,start_positions,walls,table_size,selected_player_index,selected_pawn_index,current_pawns_positions[selected_player_index][selected_pawn_index],new_pawn_position)
+    return is_pawn_move_valid(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index, current_pawns_positions[selected_player_index][selected_pawn_index], new_pawn_position)
 
 
 # def transform_position_if_occupied(old_position: tuple[int, int], new_position: tuple[int, int]) -> tuple[int, int]:
@@ -202,12 +232,12 @@ def move_pawn(
     selected_pawn_index: int
 ) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
     if not is_pawn_move_valid_with_indexes(current_pawn_positions,
-                              start_positions,
-                              walls,
-                              table_size,
-                              selected_player_index,
-                              selected_pawn_index,                             
-                              new_pawn_position):
+                                           start_positions,
+                                           walls,
+                                           table_size,
+                                           selected_player_index,
+                                           selected_pawn_index,
+                                           new_pawn_position):
         return current_pawn_positions
 
     return update_tuple(current_pawn_positions,
@@ -218,6 +248,8 @@ def move_pawn(
 
 
 def place_wall(
+    # current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    # start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     heat_map: dict[tuple[int, int], int],
@@ -225,12 +257,12 @@ def place_wall(
     wall_position: tuple[int, int],
     wall_index: int,
     player_index: int
+    # connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],
 ) -> tuple[tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]], dict[tuple[int, int], int]]:
-    # raise Exception("losi params od ispod") 
     if not is_wall_place_valid(walls, table_size, wall_position, wall_index):
         return (walls, number_of_walls, heat_map)
 
-    new_heatmap = update_heat_map(heat_map, table_size, wall_position)
+    #new_heatmap = update_heat_map(heat_map, table_size, wall_position)
 
     return (update_tuple(walls,
                          wall_index,
@@ -240,17 +272,65 @@ def place_wall(
                          update_tuple(number_of_walls[player_index],
                                       wall_index,
                                       number_of_walls[player_index][wall_index] - 1)),
-            new_heatmap)
+            {})
 
-def update_wall_connection_points(wall_connection_points: frozendict[tuple[int, int], list[tuple[int, int]]], new_wall_position: tuple[int, int], is_horizontal: bool) -> frozendict[tuple[int, int], list[tuple[int, int]]]:
-    new_wall_connection_positions = (new_wall_position, (new_wall_position[0] + 2, new_wall_position[1]) if is_horizontal else (new_wall_position[0], new_wall_position[1] + 2))
+
+def update_wall_connection_points(wall_connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],
+                                  new_wall_position: tuple[int, int],
+                                  is_horizontal: bool) -> frozendict[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], ...]]:
     wall_connection_points_dict = dict(wall_connection_points)
+    new_wall_position = update_tuple(
+        new_wall_position, is_horizontal, new_wall_position[is_horizontal] - 1)
 
-    update_dict_neighbors_or_insert_new_node(wall_connection_points_dict, new_wall_connection_positions[0], new_wall_connection_positions[1])
-    update_dict_neighbors_or_insert_new_node(wall_connection_points_dict, new_wall_connection_positions[1], new_wall_connection_positions[0])
-        
+    new_wall_position = add_neighbor_connection_point(
+        new_wall_position, is_horizontal, wall_connection_points_dict)
 
-    return frozendict(wall_connection_points)
+    add_neighbor_connection_point(
+        new_wall_position, is_horizontal, wall_connection_points_dict)
+
+    return frozendict(wall_connection_points_dict)
+
+
+def add_neighbor_connection_point(new_connection_point: tuple[int, int], is_horizontal: bool, wall_connection_points: dict[tuple[int, int], tuple[tuple[int, int], ...]]) -> tuple[int, int]:
+    new_connection_points = (
+        new_connection_point, (new_connection_point[0], new_connection_point[1] + 1) if is_horizontal else (new_connection_point[0] + 1, new_connection_point[1]))
+
+    update_coordinate_tuple_dict_neighbors_or_insert_new_node(
+        wall_connection_points, new_connection_points[0], new_connection_points[1])
+    update_coordinate_tuple_dict_neighbors_or_insert_new_node(
+        wall_connection_points, new_connection_points[1], new_connection_points[0])
+
+    return new_connection_points[1]
+
+
+def generate_border_connection_points(table_size: tuple[int, int]) -> frozendict[tuple[int, int], tuple[tuple[int, int], ...]]:
+    border_connection_points = {}
+    right_border = table_size[1] - 1
+    bot_border = table_size[0] - 1
+
+    border_connection_points[(0, 0)] = ((1, 0), (0, 1))
+
+    for width in range(1, table_size[1]):
+        border_connection_points[(0, width)] = ((0, width - 1), (0, width + 1))
+        border_connection_points[(table_size[0], width)] = (
+            (table_size[0], width - 1), (table_size[0], width + 1))
+
+    border_connection_points[(0, table_size[1])] = (
+        (0, right_border), (1, table_size[1]))
+    border_connection_points[(table_size[0], 0)] = (
+        (table_size[0], 1), (bot_border, 0))
+
+    for height in range(1, table_size[0]):
+        border_connection_points[(height, 0)] = (
+            (height - 1, 0), (height + 1, 0))
+        border_connection_points[(height, table_size[1])] = (
+            (height - 1, table_size[1]), (height + 1, table_size[1]))
+
+    border_connection_points[table_size] = (
+        (bot_border, table_size[1]), (table_size[0], right_border))
+
+    return frozendict(border_connection_points)
+
 
 def update_heat_map(heat_map: dict[tuple[int, int], int], table_size: tuple[int, int], wall_position: tuple[int, int]) -> dict[tuple[int, int], int]:
     # position = (row, column)
@@ -305,65 +385,64 @@ def is_wall_connected_with_two_or_more_walls(wall: tuple[int, int],
     return False
 
 
-def get_pawns_for_path_finding(wall: tuple[int, int],
-                               is_horizontal: bool,
-                               walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
-                               paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]],
-                               table_size: tuple[int, int]) -> list[tuple[int, int]]:
-    pawns_for_path_finding = []
-    visited_walls = set()
-    walls_to_visit = Queue()
+# def get_pawns_for_path_finding(wall: tuple[int, int],
+#                                is_horizontal: bool,
+#                                walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
+#                                paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]],
+#                                table_size: tuple[int, int]) -> list[tuple[int, int]]:
+#     pawns_for_path_finding = []
+#     visited_walls = set()
+#     walls_to_visit = Queue()
 
-    for wall in get_neighbor_walls_indexes(wall, is_horizontal, walls):
-        walls_to_visit.put(wall)
+#     for wall in get_neighbor_walls_indexes(wall, is_horizontal, walls):
+#         walls_to_visit.put(wall)
 
-    print(walls_to_visit)
+#     print(walls_to_visit)
 
-    while not walls_to_visit.empty() and len(pawns_for_path_finding) < 4:
-        current_wall_tuple = walls_to_visit.get()
-        current_wall = walls[current_wall[0]][current_wall[1]]
-        is_horizontal = current_wall[0] == 1
-        visited_walls.add(current_wall_tuple)
+#     while not walls_to_visit.empty() and len(pawns_for_path_finding) < 4:
+#         current_wall_tuple = walls_to_visit.get()
+#         current_wall = walls[current_wall[0]][current_wall[1]]
+#         is_horizontal = current_wall[0] == 1
+#         visited_walls.add(current_wall_tuple)
 
-        if is_wall_connected_with_two_or_more_walls(current_wall, is_horizontal, table_size):
-            for wall in get_neighbor_walls_indexes(wall, is_horizontal, walls):
-                if wall not in visited_walls:
-                    walls_to_visit.put(wall)
+#         if is_wall_connected_with_two_or_more_walls(current_wall, is_horizontal, table_size):
+#             for wall in get_neighbor_walls_indexes(wall, is_horizontal, walls):
+#                 if wall not in visited_walls:
+#                     walls_to_visit.put(wall)
 
-        # pass
+#         # pass
 
-    return pawns_for_path_finding
-
-
-def get_indexes_of_pawns_whose_path_is_cut(wall: tuple[int, int],
-                                           is_horizontal: bool,
-                                           paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]]) -> list:
-    #okida se 
-    pass
+#     return pawns_for_path_finding
 
 
-def get_neighbor_walls_indexes(wall: tuple[int, int],
-                               is_horizontal: bool,
-                               walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]) -> list[tuple[int, int]]:
-    neighbors = []
+# def get_indexes_of_pawns_whose_path_is_cut(wall: tuple[int, int],
+#                                            is_horizontal: bool,
+#                                            paths: tuple[tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]]) -> list:
+#     # okida se
+#     pass
 
-    if is_horizontal:
-        for index, horizontal_wall in enumerate(walls[1]):
-            if horizontal_wall[0] == wall[0] and (horizontal_wall[1] == wall[1] - 2 or horizontal_wall[1] == wall[1] + 2):
-                neighbors.append((1, index))
 
-        for index, vertical_wall in enumerate(walls[0]):
-            if (vertical_wall[1] == wall[1] - 1 or vertical_wall[1] == wall[1] + 1 or vertical_wall[1] == wall[1]) and (vertical_wall[0] == wall[0] or vertical_wall[0] == wall[0] - 1 or vertical_wall[0] == wall[0] + 1):
-                neighbors.append((0, index))
+# def get_neighbor_walls_indexes(wall: tuple[int, int],
+#                                is_horizontal: bool,
+#                                walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]) -> list[tuple[int, int]]:
+#     neighbors = []
 
-    else:
-        for index, horizontal_wall in enumerate(walls[1]):
-            if (horizontal_wall[0] == wall[0] - 1 or horizontal_wall[0] == wall[0] + 1) and (horizontal_wall[1] == wall[1] or horizontal_wall[1] == wall[1] - 1 or horizontal_wall[1] == wall[1] + 1):
-                neighbors.append((1, index))
+#     if is_horizontal:
+#         for index, horizontal_wall in enumerate(walls[1]):
+#             if horizontal_wall[0] == wall[0] and (horizontal_wall[1] == wall[1] - 2 or horizontal_wall[1] == wall[1] + 2):
+#                 neighbors.append((1, index))
 
-        for index, vertical_wall in enumerate(walls[0]):
-            if vertical_wall[1] == wall[1] and (vertical_wall[0] == wall[0] - 2 or vertical_wall[0] == wall[0] + 2):
-                neighbors.append((0, index))
+#         for index, vertical_wall in enumerate(walls[0]):
+#             if (vertical_wall[1] == wall[1] - 1 or vertical_wall[1] == wall[1] + 1 or vertical_wall[1] == wall[1]) and (vertical_wall[0] == wall[0] or vertical_wall[0] == wall[0] - 1 or vertical_wall[0] == wall[0] + 1):
+#                 neighbors.append((0, index))
 
-    return neighbors
+#     else:
+#         for index, horizontal_wall in enumerate(walls[1]):
+#             if (horizontal_wall[0] == wall[0] - 1 or horizontal_wall[0] == wall[0] + 1) and (horizontal_wall[1] == wall[1] or horizontal_wall[1] == wall[1] - 1 or horizontal_wall[1] == wall[1] + 1):
+#                 neighbors.append((1, index))
 
+#         for index, vertical_wall in enumerate(walls[0]):
+#             if vertical_wall[1] == wall[1] and (vertical_wall[0] == wall[0] - 2 or vertical_wall[0] == wall[0] + 2):
+#                 neighbors.append((0, index))
+
+#     return neighbors

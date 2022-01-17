@@ -87,6 +87,11 @@ def add_to_tuple(tuple_to_update: tuple, new_value) -> tuple:
     tuple_list.append(new_value)
     return tuple(tuple_list)
 
+def remove_from_tuple(tuple_to_update: tuple, value_to_delete) -> tuple:
+    tuple_list = list(tuple_to_update)
+    if value_to_delete in tuple_list:
+        tuple_list.remove(value_to_delete)
+    return tuple(tuple_list)
 
 def tuple_4_positions(
     first1row: int, first1column, first2row: int, first2column: int,
@@ -94,8 +99,9 @@ def tuple_4_positions(
 ) -> tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]]:
     return (((first1row, first1column), (first2row, first2column)), ((second1row, second1column), (second2row, second2column)))
 
-def update_dict_neighbors_or_insert_new_node(dict: dict[Any, list], node, neighbor) -> None:
+def update_coordinate_tuple_dict_neighbors_or_insert_new_node(dict: dict[tuple[int, int], tuple[tuple[int, int], ...]], node: tuple[int, int], neighbor: tuple[int, int]) -> None:
     if node in dict.keys():
-        dict[node].append(neighbor)
+        if neighbor not in dict[node]:
+            dict[node] = add_to_tuple(dict[node], neighbor)
         return
-    dict[node] = [neighbor]
+    dict[node] = ((neighbor),)

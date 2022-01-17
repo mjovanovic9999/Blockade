@@ -1,7 +1,7 @@
-
 from frozendict import frozendict
 from min_max import min_max
-from moves import is_game_end
+from moves import generate_border_connection_points, is_game_end
+from path_finding import find_path
 from view import read_game_mode, read_move, read_table_size, read_wall_count, read_first_player, read_start_positions, resize_terminal, show_end_screen, show_start_screen, show_table
 import constants
 
@@ -19,17 +19,17 @@ def blockade() -> bool:
 
     pawn_positions = start_positions
 
-    walls = ((), ())
+    walls = (((7,10),(7,11)), ((8,11),))
 
-    paths = (((), ()), ((), ()))
 
-    wall_connection_points = frozendict({})
+    wall_connection_points = generate_border_connection_points(table_size)
 
     heat_map = dict[tuple[int, int], int]()
     for row in range(table_size[0]):
         for column in range(table_size[1]):
             heat_map[(row, column)] = 0
 
+    
     x_to_move = True
     computer_is_x = True
     game_mode = multiplayer
@@ -44,7 +44,7 @@ def blockade() -> bool:
     game_ended = False
     while not game_ended:
         pawn_positions, walls, number_of_walls = game_mode(
-            pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move)
+            pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move, wall_connection_points)
 
         x_to_move = not x_to_move
         show_table(table_size, walls,
@@ -60,9 +60,10 @@ def multiplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], t
                 walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                 number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                 table_size: tuple[int, int],
-                x_to_move: bool) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
+                x_to_move: bool,
+                connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
 
-    return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move)
+    return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move, connection_points)
 
 
 def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -70,7 +71,8 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                  walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                  number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                  table_size: tuple[int, int],
-                 computer_to_move: bool
+                 computer_to_move: bool,
+                 connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],
                  ) -> tuple[tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]], tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]], tuple[tuple[int, int], tuple[int, int]]]:
     if computer_to_move:
         print("Computer's turn:")
@@ -85,4 +87,4 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                                 constants.MAX_VALUE)
         
         return (min_max_state[-4], min_max_state[-3], min_max_state[-2])
-    return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, computer_to_move, False)
+    return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, computer_to_move, connection_points,False)

@@ -14,14 +14,14 @@ def is_game_end(
 
 
 def is_wall_place_valid(
-    # current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    # start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     table_size: tuple[int, int],
     new_wall: tuple[int, int],
-    is_wall_horizontal: bool
-    # connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],
-    # x_to_move: bool
+    is_wall_horizontal: bool,
+    connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],
+    x_to_move: bool
 ) -> bool:
     if table_size[0] <= new_wall[0] or table_size[1] <= new_wall[1] or new_wall[0] < 0 or new_wall[1] < 0:
         return False
@@ -258,18 +258,18 @@ def move_pawn(
 
 
 def place_wall(
-    # current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-    # start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+    start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     heat_map: dict[tuple[int, int], int],
     table_size: tuple[int, int],
     wall_position: tuple[int, int],
     wall_index: int,
-    player_index: int
-    # connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]],
+    player_index: int,
+    connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]]
 ) -> tuple[tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]], dict[tuple[int, int], int]]:
-    if not is_wall_place_valid(walls, table_size, wall_position, wall_index):
+    if not is_wall_place_valid(current_pawns_positions, start_positions, walls, table_size, wall_position, wall_index, connection_points, not player_index):
         return (walls, number_of_walls, heat_map)
 
     #new_heatmap = update_heat_map(heat_map, table_size, wall_position)

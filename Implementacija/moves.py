@@ -26,10 +26,20 @@ def is_wall_place_valid(
     if table_size[0] <= new_wall[0] or table_size[1] <= new_wall[1] or new_wall[0] < 0 or new_wall[1] < 0:
         return False
 
-    if is_wall_horizontal and (new_wall in walls[1] or (new_wall[0], new_wall[1] - 1) in walls[1] or (new_wall[0], new_wall[1] + 1) in walls[1] or new_wall in walls[0]):
+    if is_wall_horizontal and \
+        (
+            new_wall in walls[1] or\
+            (new_wall[0], new_wall[1] - 1) in walls[1] or \
+            (new_wall[0], new_wall[1] + 1) in walls[1] or \
+            new_wall in walls[0]
+        ):
         return False
 
-    if not is_wall_horizontal and (new_wall in walls[0] or (new_wall[0] - 1, new_wall[1]) in walls[0] or (new_wall[0] + 1, new_wall[1]) in walls[0] or new_wall in walls[1]):
+    if not is_wall_horizontal and (
+        new_wall in walls[0] or\
+        (new_wall[0] - 1, new_wall[1]) in walls[0] or\
+        (new_wall[0] + 1, new_wall[1]) in walls[0] or\
+        new_wall in walls[1]):
         return False
 
     # start = new_wall
@@ -164,7 +174,7 @@ def is_pawn_move_valid(
             if\
                 (old_pawn_position[0], old_pawn_position[1]) in walls[0] or \
                 (old_pawn_position[0], old_pawn_position[1]) in walls[1] or \
-                ((old_pawn_position[0], old_pawn_position[1]-1) in walls[0] and (old_pawn_position[0]-1, old_pawn_position[1]) in walls[1]) or \
+               ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] and (old_pawn_position[0], old_pawn_position[1]-1) in walls[1]) or \
                 ((old_pawn_position[0]+1, old_pawn_position[1]) in walls[0] and (old_pawn_position[0], old_pawn_position[1]+1) in walls[1]) or\
                 ((old_pawn_position[0]-1, old_pawn_position[1]) in walls[0] and (old_pawn_position[0]+1, old_pawn_position[1]) in walls[0]) or\
                     ((old_pawn_position[0], old_pawn_position[1]-1) in walls[1] and (old_pawn_position[0], old_pawn_position[1]+1) in walls[1]):

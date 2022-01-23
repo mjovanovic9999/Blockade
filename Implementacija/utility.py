@@ -56,8 +56,7 @@ def add_wall_in_tuple(
     new_wall: tuple[int, int],
     is_wall_horizontal: bool,
 ) -> tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]]:
-    updated_walls = list(walls[is_wall_horizontal])
-    updated_walls.append(new_wall)
+    updated_walls = add_to_tuple(walls[is_wall_horizontal], new_wall)
     return (walls[0], updated_walls) if is_wall_horizontal else (updated_walls, walls[1])
 
 def remove_wall_from_tuple(

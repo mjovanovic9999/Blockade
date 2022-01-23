@@ -4,6 +4,7 @@ from moves import move_pawn, place_wall
 from utility import check_if_string_is_number_in_range, int_to_table_coordinate, replace_substring_in_string_from_index, table_coordinate_to_int, update_tuple
 from frozendict import frozendict
 
+
 def generate_empty_table(table_size: tuple[int, int]) -> str:
     top = constants.TABLE_TOP_LEFT_CORNER + (constants.TABLE_TOP_BOTTOM * 3 + constants.TABLE_TOP_WITH_WALL_PLACEHOLDER) * \
         (table_size[1] - 1) + constants.TABLE_TOP_BOTTOM * \
@@ -191,13 +192,16 @@ def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, in
 
     if selected_wall_index != -1:
         new_wall_state = read_wall_position_and_place_wall(
-                                                           walls,
-                                                           number_of_walls,
-                                                           {},
-                                                           table_size,
-                                                           selected_wall_index,
-                                                           selected_player_index,
-                                                           )
+            current_pawn_positions,
+            start_positions,
+            walls,
+            number_of_walls,
+            {},
+            table_size,
+            selected_wall_index,
+            selected_player_index,
+            connection_points
+        )
         return (new_pawn_position, new_wall_state[0], new_wall_state[1])
     return (new_pawn_position, walls, number_of_walls)
 
@@ -217,41 +221,47 @@ def read_selected_wall(current_players_number_of_walls: tuple[int, int]) -> int:
     return -1
 
 
-def read_wall_position_and_place_wall(#current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-                                     # start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+def read_wall_position_and_place_wall(current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
+                                      start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
                                       walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
                                       number_of_walls: tuple[tuple[int, int], tuple[int, int]],
                                       heat_map: dict[tuple[int, int], int],
                                       table_size: tuple[int, int],
                                       wall_index: int,
-                                      player_index: int
-                                      #connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]]
+                                      player_index: int,
+                                      connection_points: frozendict[tuple[int,
+                                                                          int], tuple[tuple[int, int], ...]]
                                       ) -> tuple[tuple[tuple, tuple], tuple[tuple[int, int], tuple[int, int]], dict[tuple[int, int], int]]:
     wall_position = read_row_and_column(table_size,
                                         constants.MESSAGE_WALL_ROW,
                                         constants.MESSAGE_WALL_COLUMN)
 
-    new_wall_state = place_wall(
+    new_wall_state = place_wall(current_pawns_positions,
+                                start_positions,
                                 walls,
                                 number_of_walls,
                                 heat_map,
                                 table_size,
                                 wall_position,
                                 wall_index,
-                                player_index)
+                                player_index,
+                                connection_points)
 
     if new_wall_state != (walls, number_of_walls, heat_map):
         return new_wall_state
 
     print(constants.MESSAGE_INVALID_WALL_POSITION)
     return read_wall_position_and_place_wall(
-                                             walls,
-                                             number_of_walls,
-                                             heat_map,
-                                             table_size,
-                                             wall_index,
-                                             player_index,
-                                            )
+        current_pawns_positions,
+        start_positions,
+        walls,
+        number_of_walls,
+        heat_map,
+        table_size,
+        wall_index,
+        player_index,
+        connection_points
+    )
 
 
 def read_row_and_column(table_size: tuple[int, int],

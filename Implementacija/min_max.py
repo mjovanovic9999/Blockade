@@ -40,7 +40,7 @@ def min_max(
     max_second_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[0] ,{})
     max_second_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[1] ,{})
 
-    max_second=max_second_temp1 if len(max_second_temp1)<=len(max_second_temp2) else max_second_temp2
+    max_second=max_second_temp1 if len(max_second_temp1)<len(max_second_temp2) else max_second_temp2
 
     max_paths=(
             max_first,
@@ -91,6 +91,7 @@ def next_states(
     state = []
     all_pawn_positions = generate_less_pawn_positions(
         current_pawns_positions, start_positions, walls, table_size, is_player_min)
+
 
     new_number_of_walls = decrement_number_of_walls(
         number_of_walls, is_player_min, False)
@@ -164,22 +165,22 @@ def is_state_good(
         if pawn[1] < dest_column:  # ide na desno #mozda da se smanji zbog bliski susret
             if temp in [
                 (-3, 1),
-                (-2, 0), (-2, 1), (-2, 2), (-2, 3),  # dodato je i -2,3
+                (-2, 0), (-2, 1),# (-2, 2), (-2, 3),  # dodato je i -2,3
                 (-1, 0), (-1, 1), (-1, 2),
                 (0, 0), (0, 1), (0, 2), (0, 3),
                 (1, 0), (1, 1), (1, 2), (2, 3),
-                (2, 0), (2, 1), (2, 2),
+                (2, 0), (2, 1), #(2, 2),
                 (3, 1)
             ]:
                 return False
         elif pawn[1] > dest_column:  # ide na levo
             if temp in [
                 (-3, -2),
-                (-2, -1), (-2, -2), (-2, -3), (-2, -4),
+                (-2, -1), (-2, -2),# (-2, -3), (-2, -4),
                 (-1, -1), (-1, -2), (-1, -3),
                 (0, -1), (0, -2), (0, -3), (0, -4),
                 (1, -1), (1, -2), (1, -3),
-                (2, -1), (2, -2), (2, -3), (2, -4),
+                (2, -1), (2, -2),# (2, -3), (2, -4),
                 (3, -2)
             ]:
                 return False
@@ -308,15 +309,16 @@ def evaluate_state(
 
     max_paths=paths[0]
     if current_pawns_positions[0][0] in max_paths[0]:
-        result+=50
+        result+=100
     if current_pawns_positions[0][1] in max_paths[1]:
-        result+=50
+        result+=100
+
 
     min_paths=paths[1]
     if current_pawns_positions[1][0] in min_paths[0]:
-        result-=50
+        result-=100
     if current_pawns_positions[1][1] in min_paths[1]:
-        result-=50
+        result-=100
 
     # result =(len(max_paths[0])+len(max_paths[1])-len(min_paths[0])-len(min_paths[1]))*-10
 
@@ -599,6 +601,7 @@ def generate_less_pawn_positions(
 ) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
     all_pawn_positions = generate_pawns_positions(
         current_pawns_positions, start_positions, walls, table_size, is_player_min)
+        
     dest_column = start_positions[not is_player_min][0][1]
 
     pawn_colum = current_pawns_positions[is_player_min][0][1]

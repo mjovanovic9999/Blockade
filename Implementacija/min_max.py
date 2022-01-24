@@ -102,7 +102,7 @@ def next_states(
 
                 if is_state_good(new_pawns_positions, start_positions, new_wall, is_player_min):
                     if not is_wall_place_valid(current_pawns_positions, start_positions, walls, table_size, new_wall, False, connection_points, not is_player_min):
-                        continue  # ne pozivam jer moguc update za params!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        continue  
 
                     new_walls = add_wall_in_tuple(walls, new_wall, 0)
                     connection_points = update_wall_connection_points(connection_points,new_wall, 0)
@@ -112,7 +112,6 @@ def next_states(
             for new_wall in previous_generated_walls[1]:
 
                 if is_state_good(new_pawns_positions, start_positions, new_wall, is_player_min):
-                    # ne pozivam jer moguc update za params!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if not is_wall_place_valid(current_pawns_positions, start_positions, walls, table_size, new_wall, True, connection_points, not is_player_min):
                         continue
                     new_walls = add_wall_in_tuple(walls, new_wall, 1)

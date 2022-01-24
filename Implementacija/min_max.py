@@ -218,14 +218,14 @@ def evaluate_state(
 
     if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
             current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
-        result += 5  # bilo je 2
+        result += 100  # bilo je 2
 
     if current_pawns_positions[1][0] == start_positions[0][0] or current_pawns_positions[1][0] == start_positions[0][1] or\
             current_pawns_positions[1][1] == start_positions[0][0] or current_pawns_positions[1][1] == start_positions[0][1]:
-        result -= 5  # bilo je 2
+        result -= 100  # bilo je 2
 
     # wall_factor=1 #mozda po /4 hmmm
-    result *= 8
+    result *= 4
 
     for min_pawns in current_pawns_positions[1]:
 

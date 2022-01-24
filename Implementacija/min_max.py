@@ -32,13 +32,13 @@ def min_max(
     dest_pos=start_positions[not is_player_min]
 
 
-    max_first_temp1=a_star(current_pawns_positions,start_positions,walls,table_size, is_player_min,0,dest_pos[0] ,{}),
-    max_first_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,0,dest_pos[1] ,{}),
+    max_first_temp1=a_star(current_pawns_positions,start_positions,walls,table_size, is_player_min,0,dest_pos[0] ,{})
+    max_first_temp2=a_star(current_pawns_positions,start_positions,walls,table_size, is_player_min,0,dest_pos[1] ,{})
 
     max_first=max_first_temp1 if len(max_first_temp1)<len(max_first_temp2) else max_first_temp2
 
-    max_second_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[0] ,{}),
-    max_second_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[1] ,{}),
+    max_second_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[0] ,{})
+    max_second_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[1] ,{})
 
     max_second=max_second_temp1 if len(max_second_temp1)<=len(max_second_temp2) else max_second_temp2
 
@@ -50,13 +50,13 @@ def min_max(
 
     dest_pos=start_positions[is_player_min]
 
-    min_first_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,0,dest_pos[0] ,{}),
-    min_first_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,0,dest_pos[1] ,{}),
+    min_first_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,0,dest_pos[0] ,{})
+    min_first_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,0,dest_pos[1] ,{})
 
     min_first=min_first_temp1 if len(min_first_temp1)<len(min_first_temp2) else min_first_temp2
 
-    min_second_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,1,dest_pos[0] ,{}),
-    min_second_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,1,dest_pos[1] ,{}),
+    min_second_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,1,dest_pos[0] ,{})
+    min_second_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,1,dest_pos[1] ,{})
 
     min_second=min_second_temp1 if len(min_second_temp1)<=len(min_second_temp2) else min_second_temp2
 
@@ -242,17 +242,17 @@ def evaluate_state(
 
     heat_map: dict[tuple[int, int], int]
 ) -> int:
-    # max = distance(current_pawns_positions[0][0], start_positions[1][0]) +\
-    #     distance(current_pawns_positions[0][0], start_positions[1][1]) +\
-    #     distance(current_pawns_positions[0][1], start_positions[1][0]) +\
-    #     distance(current_pawns_positions[0][1], start_positions[1][1])
+    max = distance(current_pawns_positions[0][0], start_positions[1][0]) +\
+        distance(current_pawns_positions[0][0], start_positions[1][1]) +\
+        distance(current_pawns_positions[0][1], start_positions[1][0]) +\
+        distance(current_pawns_positions[0][1], start_positions[1][1])
 
-    # min = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
-    #     distance(current_pawns_positions[1][0], start_positions[0][1]) +\
-    #     distance(current_pawns_positions[1][1], start_positions[0][0]) +\
-    #     distance(current_pawns_positions[1][1], start_positions[0][1])
+    min = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
+        distance(current_pawns_positions[1][0], start_positions[0][1]) +\
+        distance(current_pawns_positions[1][1], start_positions[0][0]) +\
+        distance(current_pawns_positions[1][1], start_positions[0][1])
 
-    result =0# min-max #jer je manja vrenost bolja
+    result = min-max #jer je manja vrenost bolja
 
     # if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
     #         current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
@@ -263,7 +263,7 @@ def evaluate_state(
     #     result -= 100  # bilo je 2
 
 
-    # result *= 6#mozda za 6
+    result *= 2#mozda za 6
 
     # for min_pawn in current_pawns_positions[1]:
 
@@ -299,27 +299,27 @@ def evaluate_state(
     for min in current_pawns_positions[1]:
         for walls_in_type in walls:
             for wall in walls_in_type:
-                result += distance(wall, min)
+                result += distance(wall, min)*2
 
     for max in current_pawns_positions[0]:
         for walls_in_type in walls:
             for wall in walls_in_type:
-                result -= distance(wall, max)
+                result -= distance(wall, max)*2
 
 
     max_paths=paths[0]
     if current_pawns_positions[0][0] in max_paths[0]:
-        result+=100
+        result+=50
     if current_pawns_positions[0][1] in max_paths[1]:
-        result+=100
+        result+=50
 
     min_paths=paths[1]
     if current_pawns_positions[1][0] in min_paths[0]:
-        result-=100
+        result-=50
     if current_pawns_positions[1][1] in min_paths[1]:
-        result-=100
+        result-=50
 
-    result =(len(max_paths[0])+len(max_paths[1])-len(min_paths[0])-len(min_paths[1]))*10
+    # result =(len(max_paths[0])+len(max_paths[1])-len(min_paths[0])-len(min_paths[1]))*-10
 
     return result
 

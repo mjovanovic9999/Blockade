@@ -415,7 +415,7 @@ def max_value(
         connection_points
     ):
 
-        alpha = max(alpha, max_value(new_current_pawns_positions,
+        alpha = max(alpha, min_value(new_current_pawns_positions,
                                      new_start_positions,
                                      new_walls,
                                      new_number_of_walls,
@@ -525,7 +525,7 @@ def min_value(
         table_size,
         is_player_min,
         heat_map,
-        paths,
+        previous_generated_walls,
         connection_points
     ):
         beta = min(beta, max_value(new_current_pawns_positions,

@@ -88,5 +88,5 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                                 constants.MIN_VALUE,
                                 constants.MAX_VALUE)
         
-        return (min_max_state[-4], min_max_state[-3], min_max_state[-2], connection_points)
+        return (min_max_state[-4], min_max_state[-3], min_max_state[-2], min_max_state[-9])
     return read_move(pawn_positions, start_positions, walls, number_of_walls, table_size, x_to_move, connection_points,False)

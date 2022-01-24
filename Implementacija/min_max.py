@@ -1,8 +1,8 @@
 import imp
 from frozendict import frozendict
 from os import stat
-from moves import is_pawn_move_valid_with_indexes, is_wall_place_valid
-from path_finding import generate_next_moves
+from moves import is_pawn_move_valid_with_indexes, is_wall_place_valid, update_wall_connection_points
+from path_finding import a_star, generate_next_moves
 from utility import add_wall_in_tuple, decrement_number_of_walls, remove_wall_from_tuple, update_pawn_positions, update_tuple, update_tuple_many
 
 
@@ -28,12 +28,51 @@ def min_max(
     generate_vertical = number_of_walls[0][0] > 0 or number_of_walls[1][0] > 0
     generate_horizontal = number_of_walls[0][1] > 0 or number_of_walls[1][1] > 0
 
+
+    dest_pos=start_positions[not is_player_min]
+
+
+    max_first_temp1=a_star(current_pawns_positions,start_positions,walls,table_size, is_player_min,0,dest_pos[0] ,{}),
+    max_first_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,0,dest_pos[1] ,{}),
+
+    max_first=max_first_temp1 if len(max_first_temp1)<len(max_first_temp2) else max_first_temp2
+
+    max_second_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[0] ,{}),
+    max_second_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,is_player_min,1,dest_pos[1] ,{}),
+
+    max_second=max_second_temp1 if len(max_second_temp1)<=len(max_second_temp2) else max_second_temp2
+
+    max_paths=(
+            max_first,
+            max_second
+        )
+
+
+    dest_pos=start_positions[is_player_min]
+
+    min_first_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,0,dest_pos[0] ,{}),
+    min_first_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,0,dest_pos[1] ,{}),
+
+    min_first=min_first_temp1 if len(min_first_temp1)<len(min_first_temp2) else min_first_temp2
+
+    min_second_temp1=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,1,dest_pos[0] ,{}),
+    min_second_temp2=a_star(current_pawns_positions,start_positions,walls,table_size,not is_player_min,1,dest_pos[1] ,{}),
+
+    min_second=min_second_temp1 if len(min_second_temp1)<=len(min_second_temp2) else min_second_temp2
+
+    min_paths=(
+            min_first,
+            min_second
+        )
+   
+
+
     previous_generated_walls = generate_walls_positions(current_pawns_positions, start_positions,
                                                         walls, table_size, connection_points, generate_vertical, generate_horizontal, not is_player_min)
-    pom = min_value(current_pawns_positions, start_positions, walls, number_of_walls, table_size, heat_map, connection_points, depth, is_player_min, alpha, beta, previous_generated_walls, None, None, None)\
+    pom = min_value(current_pawns_positions, start_positions, walls, number_of_walls, table_size, heat_map, connection_points, depth, is_player_min, alpha, beta,(max_paths,min_paths), previous_generated_walls, None, None, None)\
         if is_player_min else \
         max_value(current_pawns_positions, start_positions, walls, number_of_walls,
-                  table_size, heat_map, connection_points, depth, is_player_min, alpha, beta, previous_generated_walls, None, None, None)
+                  table_size, heat_map, connection_points, depth, is_player_min, alpha, beta,(max_paths,min_paths), previous_generated_walls ,None, None, None)
 
     return pom
 
@@ -66,8 +105,9 @@ def next_states(
                         continue  # ne pozivam jer moguc update za params!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                     new_walls = add_wall_in_tuple(walls, new_wall, 0)
+                    connection_points = update_wall_connection_points(connection_points,new_wall, 0)
                     state.append((new_pawns_positions, start_positions, new_walls,
-                                  new_number_of_walls, table_size, not is_player_min, heat_map))
+                                  new_number_of_walls, table_size, not is_player_min, heat_map, connection_points))
 
             for new_wall in previous_generated_walls[1]:
 
@@ -76,11 +116,12 @@ def next_states(
                     if not is_wall_place_valid(current_pawns_positions, start_positions, walls, table_size, new_wall, True, connection_points, not is_player_min):
                         continue
                     new_walls = add_wall_in_tuple(walls, new_wall, 1)
+                    connection_points = update_wall_connection_points(connection_points,new_wall, 1)
                     state.append((new_pawns_positions, start_positions, new_walls,
-                                  new_number_of_walls, table_size, not is_player_min, heat_map))
+                                  new_number_of_walls, table_size, not is_player_min, heat_map, connection_points))
         else:
             state.append((new_pawns_positions, start_positions, walls,
-                         number_of_walls, table_size, not is_player_min, heat_map))
+                         number_of_walls, table_size, not is_player_min, heat_map, connection_points))
 
     new_number_of_walls = decrement_number_of_walls(
         number_of_walls, is_player_min, True)
@@ -93,19 +134,21 @@ def next_states(
                     if not is_wall_place_valid(current_pawns_positions, start_positions, walls, table_size, new_wall, False, connection_points, not is_player_min):
                         continue
                     new_walls = add_wall_in_tuple(walls, new_wall, 0)
+                    connection_points = update_wall_connection_points(connection_points,new_wall, 0)
                     state.append((new_pawns_positions, start_positions, new_walls,
-                                  new_number_of_walls, table_size, not is_player_min, heat_map))
+                                  new_number_of_walls, table_size, not is_player_min, heat_map, connection_points))
 
             for new_wall in previous_generated_walls[1]:
                 if is_state_good(new_pawns_positions, start_positions, new_wall, is_player_min):
                     if not is_wall_place_valid(current_pawns_positions, start_positions, walls, table_size, new_wall, True, connection_points, not is_player_min):
                         continue
                     new_walls = add_wall_in_tuple(walls, new_wall, 1)
+                    connection_points = update_wall_connection_points(connection_points,new_wall, 1)
                     state.append((new_pawns_positions, start_positions, new_walls,
-                                  new_number_of_walls, table_size, not is_player_min, heat_map))
+                                  new_number_of_walls, table_size, not is_player_min, heat_map, connection_points))
         else:
             state.append((new_pawns_positions, start_positions, walls,
-                         number_of_walls, table_size, not is_player_min, heat_map))
+                         number_of_walls, table_size, not is_player_min, heat_map, connection_points))
     return state
 
 
@@ -185,12 +228,6 @@ def is_near(position1: tuple[int, int], position2: tuple[int, int], distance: in
     # return True
 
 
-# def evaluate_wall(new_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-#                   start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-#                   new_wall: tuple[int, int]) -> int:
-#     pass
-
-
 def distance(next_pos: tuple[int, int], dest_pos: tuple[int, int]) -> int:
     return abs(next_pos[0]-dest_pos[0])+abs(next_pos[1]-dest_pos[1])
 
@@ -201,61 +238,88 @@ def evaluate_state(
     walls: tuple[tuple[tuple[int, int], ...], tuple[tuple[int, int], ...]],
     number_of_walls: tuple[tuple[int, int], tuple[int, int]],
     table_size: tuple[int, int],
+    paths: tuple[tuple[list[tuple[int, int]], list[tuple[int, int]]], tuple[list[tuple[int, int]], list[tuple[int, int]]]],
+
     heat_map: dict[tuple[int, int], int]
 ) -> int:
-    max = distance(current_pawns_positions[0][0], start_positions[1][0]) +\
-        distance(current_pawns_positions[0][0], start_positions[1][1]) +\
-        distance(current_pawns_positions[0][1], start_positions[1][0]) +\
-        distance(current_pawns_positions[0][1], start_positions[1][1])
+    # max = distance(current_pawns_positions[0][0], start_positions[1][0]) +\
+    #     distance(current_pawns_positions[0][0], start_positions[1][1]) +\
+    #     distance(current_pawns_positions[0][1], start_positions[1][0]) +\
+    #     distance(current_pawns_positions[0][1], start_positions[1][1])
 
-    min = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
-        distance(current_pawns_positions[1][0], start_positions[0][1]) +\
-        distance(current_pawns_positions[1][1], start_positions[0][0]) +\
-        distance(current_pawns_positions[1][1], start_positions[0][1])
+    # min = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
+    #     distance(current_pawns_positions[1][0], start_positions[0][1]) +\
+    #     distance(current_pawns_positions[1][1], start_positions[0][0]) +\
+    #     distance(current_pawns_positions[1][1], start_positions[0][1])
 
-    # result = min-max
-    result = min-max
+    result =0# min-max #jer je manja vrenost bolja
 
-    if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
-            current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
-        result += 100  # bilo je 2
+    # if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
+    #         current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
+    #     result += 100  # bilo je 2
 
-    if current_pawns_positions[1][0] == start_positions[0][0] or current_pawns_positions[1][0] == start_positions[0][1] or\
-            current_pawns_positions[1][1] == start_positions[0][0] or current_pawns_positions[1][1] == start_positions[0][1]:
-        result -= 100  # bilo je 2
+    # if current_pawns_positions[1][0] == start_positions[0][0] or current_pawns_positions[1][0] == start_positions[0][1] or\
+    #         current_pawns_positions[1][1] == start_positions[0][0] or current_pawns_positions[1][1] == start_positions[0][1]:
+    #     result -= 100  # bilo je 2
 
-    # wall_factor=1 #mozda po /4 hmmm
-    result *= 4
 
-    for min_pawns in current_pawns_positions[1]:
+    # result *= 6#mozda za 6
 
-        min_dest = (
-            start_positions[0][0][0],
-            start_positions[0][0][1]
-        ) \
-            if (start_positions[0][0][0]+start_positions[0][1][0])/2 > min_pawns[0] else \
-            (
-            start_positions[0][1][0],
-            start_positions[0][0][1])
+    # for min_pawn in current_pawns_positions[1]:
 
+    #     min_dest = (
+    #         start_positions[0][0][0],
+    #         start_positions[0][0][1]
+    #     ) \
+    #         if (start_positions[0][0][0]+start_positions[0][1][0])/2 > min_pawn[0] else \
+    #         (
+    #         start_positions[0][1][0],
+    #         start_positions[0][0][1])
+
+    #     for walls_in_type in walls:
+    #         for wall in walls_in_type:
+    #             result -= distance(wall, min_dest)
+        
+    # for max_pawn in current_pawns_positions[0]:
+
+    #     max_dest = (
+    #         start_positions[1][0][0],
+    #         start_positions[1][0][1]
+    #     ) \
+    #         if (start_positions[0][0][0]+start_positions[0][1][0])/2 > max_pawn[0] else \
+    #         (
+    #         start_positions[1][1][0],
+    #         start_positions[1][0][1])
+
+    #     for walls_in_type in walls:
+    #         for wall in walls_in_type:
+    #             result += distance(wall, max_dest)
+
+############
+    for min in current_pawns_positions[1]:
         for walls_in_type in walls:
             for wall in walls_in_type:
-                result -= distance(wall, min_dest)
+                result += distance(wall, min)
 
-    for max_pawns in current_pawns_positions[0]:
-
-        max_dest = (
-            start_positions[1][0][0],
-            start_positions[1][0][1]
-        ) \
-            if (start_positions[0][0][0]+start_positions[0][1][0])/2 > max_pawns[0] else \
-            (
-            start_positions[1][1][0],
-            start_positions[1][0][1])
-
+    for max in current_pawns_positions[0]:
         for walls_in_type in walls:
             for wall in walls_in_type:
-                result += distance(wall, max_dest)
+                result -= distance(wall, max)
+
+
+    max_paths=paths[0]
+    if current_pawns_positions[0][0] in max_paths[0]:
+        result+=100
+    if current_pawns_positions[0][1] in max_paths[1]:
+        result+=100
+
+    min_paths=paths[1]
+    if current_pawns_positions[1][0] in min_paths[0]:
+        result-=100
+    if current_pawns_positions[1][1] in min_paths[1]:
+        result-=100
+
+    result =(len(max_paths[0])+len(max_paths[1])-len(min_paths[0])-len(min_paths[1]))*10
 
     return result
 
@@ -272,8 +336,9 @@ def max_value(
     is_player_min: bool,
     alpha: int,
     beta: int,
+    paths: tuple[tuple[list[tuple[int, int]], list[tuple[int, int]]], tuple[list[tuple[int, int]], list[tuple[int, int]]]],
     previous_generated_walls: tuple[tuple[tuple[int,
-                                                int], ...], tuple[tuple[int, int], ...]] = None,
+                                                int], ...], tuple[tuple[int, int], ...]],
     state_current_pawns_positions: tuple[tuple[tuple[int, int],
                                                tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]] = None,
     state_walls: tuple[tuple[tuple[int, int], ...],
@@ -288,6 +353,7 @@ def max_value(
             number_of_walls,
             table_size,
             heat_map,
+            connection_points,
             depth,
             is_player_min,
             alpha,
@@ -296,7 +362,7 @@ def max_value(
             state_walls,
             state_number_of_walls,
             evaluate_state(current_pawns_positions, start_positions,
-                           walls, number_of_walls, table_size, heat_map)
+                           walls, number_of_walls, table_size,paths, heat_map)
         )
     beta = (current_pawns_positions,
             start_positions,
@@ -304,6 +370,7 @@ def max_value(
             number_of_walls,
             table_size,
             heat_map,
+            connection_points,
             depth,
             is_player_min,
             alpha,
@@ -318,6 +385,7 @@ def max_value(
              number_of_walls,
              table_size,
              heat_map,
+             connection_points,
              depth,
              is_player_min,
              alpha,
@@ -334,7 +402,8 @@ def max_value(
         new_number_of_walls,
         new_table_size,
         new_is_player_min,
-        new_heat_map
+        new_heat_map,
+        new_connection_points
     ) in next_states(
         current_pawns_positions,
         start_positions,
@@ -353,11 +422,12 @@ def max_value(
                                      new_number_of_walls,
                                      new_table_size,
                                      new_heat_map,
-                                     connection_points,
+                                     new_connection_points,
                                      depth-1,
                                      new_is_player_min,
                                      alpha[-1],
                                      beta[-1],
+                                     paths,
                                      previous_generated_walls,
                                      new_current_pawns_positions if state_current_pawns_positions is None else state_current_pawns_positions,
                                      new_walls if state_walls is None else state_walls,
@@ -383,6 +453,7 @@ def min_value(
     is_player_min: bool,
     alpha: int,
     beta: int,
+    paths: tuple[tuple[list[tuple[int, int]], list[tuple[int, int]]], tuple[list[tuple[int, int]], list[tuple[int, int]]]],
     previous_generated_walls: tuple[tuple[tuple[int,  int], ...], tuple[tuple[int, int], ...]],
     state_current_pawns_positions: tuple[tuple[tuple[int, int],
                                                tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]] = None,
@@ -398,6 +469,7 @@ def min_value(
             number_of_walls,
             table_size,
             heat_map,
+            connection_points,
             depth,
             is_player_min,
             alpha,
@@ -406,7 +478,7 @@ def min_value(
             state_walls,
             state_number_of_walls,
             evaluate_state(current_pawns_positions, start_positions,
-                           walls, number_of_walls, table_size, heat_map)
+                           walls, number_of_walls, table_size,paths, heat_map)
         )
     beta = (current_pawns_positions,
             start_positions,
@@ -414,6 +486,7 @@ def min_value(
             number_of_walls,
             table_size,
             heat_map,
+            connection_points,
             depth,
             is_player_min,
             alpha,
@@ -427,6 +500,7 @@ def min_value(
              number_of_walls,
              table_size,
              heat_map,
+             connection_points,
              depth,
              is_player_min,
              alpha,
@@ -442,7 +516,8 @@ def min_value(
         new_number_of_walls,
         new_table_size,
         new_is_player_min,
-        new_heat_map
+        new_heat_map,
+        new_connection_points
     ) in next_states(
         current_pawns_positions,
         start_positions,
@@ -451,7 +526,7 @@ def min_value(
         table_size,
         is_player_min,
         heat_map,
-        previous_generated_walls,
+        paths,
         connection_points
     ):
         beta = min(beta, max_value(new_current_pawns_positions,
@@ -460,11 +535,12 @@ def min_value(
                                    new_number_of_walls,
                                    new_table_size,
                                    new_heat_map,
-                                   connection_points,
+                                   new_connection_points,
                                    depth-1,
                                    new_is_player_min,
                                    alpha[-1],
                                    beta[-1],
+                                   paths,
                                    previous_generated_walls,
                                    new_current_pawns_positions if state_current_pawns_positions is None else state_current_pawns_positions,
                                    new_walls if state_walls is None else state_walls,

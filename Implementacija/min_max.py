@@ -184,15 +184,19 @@ def is_state_good(
         if enemy_pawn[1] < start_column:
             if temp in [
                 (-1, 0),  (-1, 1),
-                (0, 0),  (0, 1), (0, 2),
-                (-1, 0),  (-1, 1),
+                (0, 0),  (0, 1), #(0, 2),
+                (1, 0),  #(1, 1),
             ]:  # moze i dodatno samo: (-2,2),(2,2)
                 return True
         elif enemy_pawn[1] > start_column:
             if temp in [
-                (-1, -0),  (-1, -1),
-                (0, 0),  (0, -1), (0, -2),
-                (-1, -0),  (-1, -1),
+                (-1,-2), (-1,-1),
+                #(0,-3), 
+                (0, -2), (0, -1),
+                (1, -1), #(1, -2)
+                # (-1, -0),  (-1, -1),
+                # (0, 0),  (0, -1), (0, -2),
+                # (-1, -0),  (-1, -1),
             ]:
                 return True
         else:
@@ -220,26 +224,38 @@ def evaluate_state(
         distance(current_pawns_positions[0][1], start_positions[1][0]) +\
         distance(current_pawns_positions[0][1], start_positions[1][1])
 
-    min = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
+    max = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
         distance(current_pawns_positions[1][0], start_positions[0][1]) +\
         distance(current_pawns_positions[1][1], start_positions[0][0]) +\
         distance(current_pawns_positions[1][1], start_positions[0][1])
 
-    result = min-max #jer je manja vrenost bolja
+    result = max-max #jer je manja vrenost bolja
 
 
 
     result *= 2#mozda za 6
 
-    for min in current_pawns_positions[1]:
+    # for min in current_pawns_positions[1]:
+    #     for walls_in_type in walls:
+    #         for wall in walls_in_type:
+    #             result -= distance(wall, min)*2
+
+    # for max in current_pawns_positions[0]:
+    #     for walls_in_type in walls:
+    #         for wall in walls_in_type:
+    #             result += distance(wall, max)*2
+
+    for max in start_positions[0]:
+        for walls_in_type in walls:
+            for wall in walls_in_type:
+                result -= distance(wall, max)*2
+
+    for min in start_positions[1]:
         for walls_in_type in walls:
             for wall in walls_in_type:
                 result += distance(wall, min)*2
 
-    for max in current_pawns_positions[0]:
-        for walls_in_type in walls:
-            for wall in walls_in_type:
-                result -= distance(wall, max)*2
+
 
 
     max_paths=paths[0]

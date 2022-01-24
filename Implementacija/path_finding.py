@@ -102,12 +102,10 @@ def find_path(
     table_size: tuple[int, int],
     selected_player_index: int,
     selected_pawn_index: int,
+    selected_destination_index: int,
     heat_map: dict[tuple[int, int], int]
 ):
-
-    my_both_destinations = list(start_positions[not selected_player_index])
-    return(tuple(a_star(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index, my_both_destinations[0], heat_map)),
-           tuple(a_star(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index, my_both_destinations[1], heat_map)))
+    return(tuple(a_star(current_pawns_positions, start_positions, walls, table_size, selected_player_index, selected_pawn_index, start_positions[not selected_player_index][selected_destination_index], heat_map)))
 
 # najoptimalnije na zatvaranje da se proveri da l je neka putanja presecena; ako jeste opet se poziva
 

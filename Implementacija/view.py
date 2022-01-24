@@ -202,8 +202,8 @@ def read_move(current_pawn_positions: tuple[tuple[tuple[int, int], tuple[int, in
             selected_player_index,
             connection_points
         )
-        return (new_pawn_position, new_wall_state[0], new_wall_state[1])
-    return (new_pawn_position, walls, number_of_walls)
+        return (new_pawn_position, new_wall_state[0], new_wall_state[1], new_wall_state[3])
+    return (new_pawn_position, walls, number_of_walls, connection_points)
 
 
 def read_selected_wall(current_players_number_of_walls: tuple[int, int]) -> int:
@@ -247,7 +247,7 @@ def read_wall_position_and_place_wall(current_pawns_positions: tuple[tuple[tuple
                                 player_index,
                                 connection_points)
 
-    if new_wall_state != (walls, number_of_walls, heat_map):
+    if new_wall_state != (walls, number_of_walls, heat_map, connection_points):
         return new_wall_state
 
     print(constants.MESSAGE_INVALID_WALL_POSITION)

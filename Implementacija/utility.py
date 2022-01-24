@@ -1,10 +1,10 @@
-from queue import Queue
+from frozendict import frozendict
 from typing import Any, List, Set
 from constants import COORDINATES
 
 
 def table_coordinate_to_int(table_coordinate: str) -> int:
-    if len(table_coordinate) > 1 or table_coordinate not in COORDINATES:
+    if len(table_coordinate) != 1 or table_coordinate not in COORDINATES:
         return -1
 
     return COORDINATES.index(table_coordinate) + 1
@@ -104,3 +104,10 @@ def update_coordinate_tuple_dict_neighbors_or_insert_new_node(dict: dict[tuple[i
             dict[node] = add_to_tuple(dict[node], neighbor)
         return
     dict[node] = ((neighbor),)
+
+def remove_neighbor_coordinate_tuple_from_dict(connection_points: frozendict[tuple[int, int], tuple[tuple[int, int], ...]], node: tuple[int, int], neighbor: tuple[int, int]) -> dict[tuple[int, int], tuple[tuple[int, int], ...]]:
+    connection_points_dict = dict(connection_points)
+    if node in connection_points_dict.keys():
+        if neighbor in connection_points_dict[node]:
+            connection_points_dict[node] = remove_from_tuple(connection_points_dict[node], neighbor)
+    return connection_points_dict

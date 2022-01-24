@@ -6,12 +6,6 @@ from path_finding import a_star, generate_next_moves
 from utility import add_wall_in_tuple, decrement_number_of_walls, remove_wall_from_tuple, update_pawn_positions, update_tuple, update_tuple_many
 
 
-# current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
-# walls: tuple[tuple, tuple],
-# number_of_walls: tuple[tuple[int, int], tuple[int, int]],
-# heat_map: dict[tuple[int, int], int],
-#
-
 def min_max(
     current_pawns_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
     start_positions: tuple[tuple[tuple[int, int], tuple[int, int]], tuple[tuple[int, int], tuple[int, int]]],
@@ -159,10 +153,9 @@ def is_state_good(
     is_player_min: bool
 ) -> bool:
     dest_column = start_positions[not is_player_min][0][1]
-    # mozda bez celo ovo jer evaluate ga nema odabere ili da se smanji
     for pawn in new_pawns_positions[is_player_min]:
         temp = (new_wall[0]-pawn[0], new_wall[1]-pawn[1])
-        if pawn[1] < dest_column:  # ide na desno #mozda da se smanji zbog bliski susret
+        if pawn[1] < dest_column:  # ide na desno
             if temp in [
                 (-3, 1),
                 (-2, 0), (-2, 1),# (-2, 2), (-2, 3),  # dodato je i -2,3
@@ -185,11 +178,6 @@ def is_state_good(
             ]:
                 return False
 
-        # da se orgadi kuca
-    # if is_near(start_positions[is_player_min][0], new_wall, 1) or is_near(start_positions[is_player_min][1], new_wall, 1):
-    #     # new_wall is in  (-2,-2),(-2,2)...
-    #     return True
-
     start_column = start_positions[is_player_min][0][1]
     for enemy_pawn in new_pawns_positions[not is_player_min]:
         temp = (new_wall[0]-enemy_pawn[0], new_wall[1]-enemy_pawn[1])
@@ -202,30 +190,15 @@ def is_state_good(
                 return True
         elif enemy_pawn[1] > start_column:
             if temp in [
-                (-1, -1),  (-1, -1),
-                (0, -1),  (0, -2), (0, -2),
-                (-1, -1),  (-1, -1),
+                (-1, -0),  (-1, -1),
+                (0, 0),  (0, -1), (0, -2),
+                (-1, -0),  (-1, -1),
             ]:
                 return True
         else:
             True
 
     return False
-
-
-# rez_array = []
-# previous_pawns = []
-
-
-def is_near(position1: tuple[int, int], position2: tuple[int, int], distance: int) -> bool:
-    if abs(position1[0]-position2[0]) <= distance and abs(position1[1]-position2[1]) <= distance:
-        # near[0]+=1
-        # print("near"+str(near[0]))
-        return True
-    # far[0]+=1
-    # print("far"+str(far[0]))
-    return False
-    # return True
 
 
 def distance(next_pos: tuple[int, int], dest_pos: tuple[int, int]) -> int:
@@ -254,48 +227,10 @@ def evaluate_state(
 
     result = min-max #jer je manja vrenost bolja
 
-    # if current_pawns_positions[0][0] == start_positions[1][0] or current_pawns_positions[0][0] == start_positions[1][1] or\
-    #         current_pawns_positions[0][1] == start_positions[1][0] or current_pawns_positions[0][1] == start_positions[1][1]:
-    #     result += 100  # bilo je 2
-
-    # if current_pawns_positions[1][0] == start_positions[0][0] or current_pawns_positions[1][0] == start_positions[0][1] or\
-    #         current_pawns_positions[1][1] == start_positions[0][0] or current_pawns_positions[1][1] == start_positions[0][1]:
-    #     result -= 100  # bilo je 2
 
 
     result *= 2#mozda za 6
 
-    # for min_pawn in current_pawns_positions[1]:
-
-    #     min_dest = (
-    #         start_positions[0][0][0],
-    #         start_positions[0][0][1]
-    #     ) \
-    #         if (start_positions[0][0][0]+start_positions[0][1][0])/2 > min_pawn[0] else \
-    #         (
-    #         start_positions[0][1][0],
-    #         start_positions[0][0][1])
-
-    #     for walls_in_type in walls:
-    #         for wall in walls_in_type:
-    #             result -= distance(wall, min_dest)
-        
-    # for max_pawn in current_pawns_positions[0]:
-
-    #     max_dest = (
-    #         start_positions[1][0][0],
-    #         start_positions[1][0][1]
-    #     ) \
-    #         if (start_positions[0][0][0]+start_positions[0][1][0])/2 > max_pawn[0] else \
-    #         (
-    #         start_positions[1][1][0],
-    #         start_positions[1][0][1])
-
-    #     for walls_in_type in walls:
-    #         for wall in walls_in_type:
-    #             result += distance(wall, max_dest)
-
-############
     for min in current_pawns_positions[1]:
         for walls_in_type in walls:
             for wall in walls_in_type:
@@ -309,18 +244,16 @@ def evaluate_state(
 
     max_paths=paths[0]
     if current_pawns_positions[0][0] in max_paths[0]:
-        result+=100
+        result+=200
     if current_pawns_positions[0][1] in max_paths[1]:
-        result+=100
+        result+=200
 
 
     min_paths=paths[1]
     if current_pawns_positions[1][0] in min_paths[0]:
-        result-=100
+        result-=200
     if current_pawns_positions[1][1] in min_paths[1]:
-        result-=100
-
-    # result =(len(max_paths[0])+len(max_paths[1])-len(min_paths[0])-len(min_paths[1]))*-10
+        result-=200
 
     return result
 

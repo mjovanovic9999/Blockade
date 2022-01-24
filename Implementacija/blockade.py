@@ -83,7 +83,7 @@ def singleplayer(pawn_positions: tuple[tuple[tuple[int, int], tuple[int, int]], 
                                 table_size,
                                 {},
                                 connection_points,
-                                2,
+                                3,
                                 not computer_is_x,
                                 constants.MIN_VALUE,
                                 constants.MAX_VALUE)

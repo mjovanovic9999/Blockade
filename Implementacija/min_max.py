@@ -224,12 +224,12 @@ def evaluate_state(
         distance(current_pawns_positions[0][1], start_positions[1][0]) +\
         distance(current_pawns_positions[0][1], start_positions[1][1])
 
-    max = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
+    min = distance(current_pawns_positions[1][0], start_positions[0][0]) +\
         distance(current_pawns_positions[1][0], start_positions[0][1]) +\
         distance(current_pawns_positions[1][1], start_positions[0][0]) +\
         distance(current_pawns_positions[1][1], start_positions[0][1])
 
-    result = max-max #jer je manja vrenost bolja
+    result = min-max #jer je manja vrenost bolja
 
 
 
